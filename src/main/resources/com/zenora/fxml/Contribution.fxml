@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.ContributionController"
+            prefWidth="1080" prefHeight="760"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Contribution Log" styleClass="zn-page-title"/>
+                <Label text="CATAT SETORAN NYATA — terhubung ke semua progress &amp; reports" styleClass="zn-page-badge"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <VBox spacing="16" styleClass="zn-body">
+                    <!-- ADD FORM -->
+                    <VBox styleClass="zn-panel" spacing="0">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-green"/>
+                            <Label text="Tambah Setoran" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <GridPane hgap="14" vgap="0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="35"/>
+                                <ColumnConstraints percentWidth="20"/>
+                                <ColumnConstraints percentWidth="20"/>
+                                <ColumnConstraints percentWidth="25"/>
+                            </columnConstraints>
+                            <Label text="GOAL" styleClass="zn-field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="TANGGAL" styleClass="zn-field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label text="NOMINAL (RP)" styleClass="zn-field-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                            <Label text="CATATAN" styleClass="zn-field-label" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                            <ChoiceBox fx:id="goalChoice" styleClass="zn-choicebox" maxWidth="Infinity"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <DatePicker fx:id="datePicker" maxWidth="Infinity"
+                                        GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <TextField fx:id="amountField" styleClass="zn-field" promptText="500000"
+                                       GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                            <TextField fx:id="noteField" styleClass="zn-field" promptText="opsional"
+                                       GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                        </GridPane>
+                        <Region minHeight="12"/>
+                        <HBox spacing="10">
+                            <Button text="+ Catat Setoran" styleClass="zn-btn-primary" onAction="#addContribution"/>
+                            <Button text="🗑  Hapus Terpilih" styleClass="zn-btn-danger" onAction="#removeSelected"/>
+                        </HBox>
+                        <Region minHeight="12"/>
+                        <HBox spacing="16" alignment="CENTER_LEFT">
+                            <VBox spacing="2">
+                                <Label text="TOTAL DISETOR KE GOAL INI" styleClass="zn-stat-label"/>
+                                <Label fx:id="totalLabel" text="-" styleClass="zn-stat-value zn-stat-green"/>
+                            </VBox>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="goalProgressLabel" text="-" styleClass="zn-badge"/>
+                        </HBox>
+                    </VBox>
+                    <!-- HISTORY TABLE -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-indigo"/>
+                            <Label text="Riwayat Setoran" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <TableView fx:id="table" prefHeight="380" styleClass="zn-table">
+                            <placeholder>
+                                <VBox styleClass="zn-empty-state" alignment="CENTER" spacing="8">
+                                    <Label text="💳" styleClass="zn-empty-icon"/>
+                                    <Label text="Belum ada setoran" styleClass="zn-empty-title"/>
+                                    <Label text="Catat setoran pertama Anda di atas." styleClass="zn-empty-sub"/>
+                                </VBox>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="colDate" text="TANGGAL" prefWidth="140"/>
+                                <TableColumn fx:id="colGoal" text="GOAL" prefWidth="240"/>
+                                <TableColumn fx:id="colAmount" text="NOMINAL" prefWidth="180"/>
+                                <TableColumn fx:id="colNote" text="CATATAN" prefWidth="380"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

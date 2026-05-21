@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.ReportsController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Reports &amp; Analytics" styleClass="zn-page-title"/>
+                <Label text="VISUALISASI PROGRESS DAN PROYEKSI KEUANGAN" styleClass="zn-page-badge"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="GOAL:" styleClass="zn-stat-label"/>
+            <ChoiceBox fx:id="goalChoice" styleClass="zn-choicebox" prefWidth="220"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <VBox spacing="16" styleClass="zn-body">
+
+                    <!-- Summary -->
+                    <VBox styleClass="zn-panel" spacing="8">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-indigo"/>
+                            <Label text="Ringkasan Goal" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <Label fx:id="summaryLabel" text="-" styleClass="zn-stat-label" wrapText="true"/>
+                    </VBox>
+
+                    <!-- Projection Chart -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-violet"/>
+                            <Label text="Proyeksi vs Aktual" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <LineChart fx:id="projectionChart" prefHeight="280" styleClass="zn-chart">
+                            <xAxis><NumberAxis fx:id="xAxis" label="Bulan ke-"/></xAxis>
+                            <yAxis><NumberAxis fx:id="yAxis" label="Tabungan (Rp)"/></yAxis>
+                        </LineChart>
+                    </VBox>
+
+                    <!-- Bar + Pie Charts Row -->
+                    <HBox spacing="16">
+                        <VBox styleClass="zn-panel" spacing="10" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-cyan"/>
+                                <Label text="Setoran per Bulan" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <BarChart fx:id="monthlyChart" prefHeight="240" styleClass="zn-chart">
+                                <xAxis><CategoryAxis label="Bulan"/></xAxis>
+                                <yAxis><NumberAxis label="Total (Rp)"/></yAxis>
+                            </BarChart>
+                        </VBox>
+                        <VBox styleClass="zn-panel" spacing="10" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-amber"/>
+                                <Label text="Distribusi per Kategori" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <PieChart fx:id="categoryChart" prefHeight="240" legendVisible="true"/>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

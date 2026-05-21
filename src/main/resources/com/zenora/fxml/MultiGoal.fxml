@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.MultiGoalController"
+            prefWidth="1200" prefHeight="820"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Multi-Goal Planning" styleClass="zn-page-title"/>
+                <Label text="MODUL 05 — KELOLA BEBERAPA GOAL SEKALIGUS" styleClass="zn-page-badge"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🔢  Hitung Alokasi" styleClass="zn-btn-secondary" onAction="#allocate"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <VBox spacing="16" styleClass="zn-body">
+                    <!-- Add form -->
+                    <VBox styleClass="zn-panel" spacing="0">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-amber"/>
+                            <Label text="Tambah Goal" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <GridPane hgap="14" vgap="0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="22"/>
+                                <ColumnConstraints percentWidth="12"/>
+                                <ColumnConstraints percentWidth="15"/>
+                                <ColumnConstraints percentWidth="12"/>
+                                <ColumnConstraints percentWidth="10"/>
+                                <ColumnConstraints percentWidth="14"/>
+                                <ColumnConstraints percentWidth="15"/>
+                            </columnConstraints>
+                            <Label text="NAMA" styleClass="zn-field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="KATEGORI" styleClass="zn-field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label text="TARGET (RP)" styleClass="zn-field-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                            <Label text="BULAN" styleClass="zn-field-label" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                            <Label text="RETURN %" styleClass="zn-field-label" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+                            <Label text="PRIORITAS (1-10)" styleClass="zn-field-label" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+                            <Label text="KAPASITAS / BLN" styleClass="zn-field-label" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
+                            <TextField fx:id="nameField" styleClass="zn-field" promptText="Nama goal" GridPane.columnIndex="0" GridPane.rowIndex="1" maxWidth="Infinity"/>
+                            <ChoiceBox fx:id="categoryChoice" styleClass="zn-choicebox" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <TextField fx:id="targetField" styleClass="zn-field" promptText="20000000" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                            <TextField fx:id="monthsField" styleClass="zn-field" promptText="12" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                            <TextField fx:id="rateField" styleClass="zn-field" promptText="0" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
+                            <TextField fx:id="priorityField" styleClass="zn-field" promptText="5" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
+                            <TextField fx:id="capacityField" styleClass="zn-field" promptText="otomatis" GridPane.columnIndex="6" GridPane.rowIndex="1"/>
+                        </GridPane>
+                        <Region minHeight="12"/>
+                        <HBox spacing="10">
+                            <Button text="+ Tambah Goal" styleClass="zn-btn-primary" onAction="#addGoal"/>
+                            <Button text="🗑  Hapus Terpilih" styleClass="zn-btn-danger" onAction="#removeSelected"/>
+                        </HBox>
+                    </VBox>
+                    <!-- Goal Table -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-amber"/>
+                            <Label text="Daftar Goal" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <TableView fx:id="goalTable" prefHeight="280" styleClass="zn-table">
+                            <placeholder>
+                                <VBox styleClass="zn-empty-state" alignment="CENTER" spacing="8">
+                                    <Label text="📋" styleClass="zn-empty-icon"/>
+                                    <Label text="Belum ada goal" styleClass="zn-empty-title"/>
+                                    <Label text="Tambah goal lewat form di atas atau modul Goal Planning." styleClass="zn-empty-sub"/>
+                                </VBox>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="colName" text="NAMA" prefWidth="200"/>
+                                <TableColumn fx:id="colCat" text="KATEGORI" prefWidth="130"/>
+                                <TableColumn fx:id="colTarget" text="TARGET" prefWidth="160"/>
+                                <TableColumn fx:id="colMonths" text="BULAN" prefWidth="80"/>
+                                <TableColumn fx:id="colPriority" text="PRIORITAS" prefWidth="90"/>
+                                <TableColumn fx:id="colMonthly" text="BULANAN" prefWidth="160"/>
+                                <TableColumn fx:id="colPct" text="PROGRESS" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                    <!-- Allocation Result -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-green"/>
+                            <Label text="Analisis Alokasi" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                                  wrapText="true" editable="false" prefHeight="200"
+                                  promptText="Klik 'Hitung Alokasi' di atas untuk melihat rekomendasi..."/>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

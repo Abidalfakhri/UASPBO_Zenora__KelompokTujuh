@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.RetirementController"
+            prefWidth="1020" prefHeight="680"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Retirement Planning" styleClass="zn-page-title"/>
+                <Label text="MODUL 01 — ESTIMASI DANA PENSIUN" styleClass="zn-page-badge"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <HBox spacing="16" styleClass="zn-body">
+            <!-- INPUT -->
+            <VBox spacing="0" styleClass="zn-panel" prefWidth="400">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                    <Label text="●" styleClass="zn-dot-indigo"/>
+                    <Label text="Parameter Pensiun" styleClass="zn-panel-title"/>
+                </HBox>
+                <Label text="USIA SAAT INI" styleClass="zn-field-label"/>
+                <TextField fx:id="currentAgeField" styleClass="zn-field" promptText="contoh: 28" maxWidth="Infinity"/>
+                <Label text="USIA PENSIUN TARGET" styleClass="zn-field-label"/>
+                <TextField fx:id="retirementAgeField" styleClass="zn-field" promptText="contoh: 55" maxWidth="Infinity"/>
+                <Label text="LAMA PENSIUN (TAHUN)" styleClass="zn-field-label"/>
+                <TextField fx:id="yearsInRetirementField" styleClass="zn-field" promptText="contoh: 25" maxWidth="Infinity"/>
+                <Region minHeight="8"/>
+                <Region styleClass="zn-divider" minHeight="1" maxHeight="1"/>
+                <Region minHeight="8"/>
+                <Label text="KEBUTUHAN BULANAN SAAT PENSIUN (RP)" styleClass="zn-field-label"/>
+                <TextField fx:id="monthlyNeedField" styleClass="zn-field" promptText="contoh: 5000000" maxWidth="Infinity"/>
+                <Label text="Dalam nilai uang saat ini, akan disesuaikan inflasi." styleClass="zn-hint"/>
+                <Label text="INFLASI (% / TAHUN)" styleClass="zn-field-label"/>
+                <TextField fx:id="inflationField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
+                <Label text="RETURN INVESTASI PRA-PENSIUN (% / TAHUN)" styleClass="zn-field-label"/>
+                <TextField fx:id="returnPreField" styleClass="zn-field" promptText="contoh: 8.0" maxWidth="Infinity"/>
+                <Label text="RETURN INVESTASI PASCA-PENSIUN (% / TAHUN)" styleClass="zn-field-label"/>
+                <TextField fx:id="returnPostField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
+                <Region minHeight="16"/>
+                <Button text="🔢  Hitung" styleClass="zn-btn-primary" maxWidth="Infinity" onAction="#calculate"/>
+            </VBox>
+            <!-- RESULT -->
+            <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                    <Label text="●" styleClass="zn-dot-indigo"/>
+                    <Label text="Estimasi Dana Pensiun" styleClass="zn-panel-title"/>
+                </HBox>
+                <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                          wrapText="true" editable="false"
+                          VBox.vgrow="ALWAYS" promptText="Isi semua parameter dan klik Hitung..."/>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.WhatIfController"
+            prefWidth="980" prefHeight="720"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="What-If Simulation" styleClass="zn-page-title"/>
+                <Label text="MODUL 04 — EKSPLORASI SKENARIO KEUANGAN" styleClass="zn-page-badge"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <HBox spacing="16" styleClass="zn-body">
+                    <VBox spacing="0" styleClass="zn-panel" prefWidth="390" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-violet"/>
+                            <Label text="Skenario" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <Region minHeight="14"/>
+                        <Label text="TARGET DANA (RP)" styleClass="zn-field-label"/>
+                        <TextField fx:id="targetField" styleClass="zn-field" promptText="contoh: 50000000" maxWidth="Infinity"/>
+                        <Label text="TABUNGAN BULANAN (RP)" styleClass="zn-field-label"/>
+                        <TextField fx:id="monthlyField" styleClass="zn-field" promptText="contoh: 1000000" maxWidth="Infinity"/>
+                        <Label text="RETURN INVESTASI (% / TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="rateField" styleClass="zn-field" promptText="contoh: 6" maxWidth="Infinity"/>
+                        <Label text="Ubah salah satu nilai lalu simulasikan." styleClass="zn-hint"/>
+                        <Region VBox.vgrow="ALWAYS" minHeight="20"/>
+                        <Button text="⚡  Simulasikan" styleClass="zn-btn-primary" onAction="#simulate" maxWidth="Infinity"/>
+                    </VBox>
+                    <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-violet"/>
+                            <Label text="Hasil Simulasi" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <Region minHeight="14"/>
+                        <TextArea fx:id="resultArea" wrapText="true" editable="false"
+                                  styleClass="zn-result-area" maxWidth="Infinity" VBox.vgrow="ALWAYS"
+                                  promptText="Isi form dan klik Simulasikan..."/>
+                    </VBox>
+                </HBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

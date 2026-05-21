@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.ProgressController"
+            prefWidth="980" prefHeight="720"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Progress Tracker" styleClass="zn-page-title"/>
+                <Label text="MODUL 06 — MONITOR PERTUMBUHAN TABUNGAN" styleClass="zn-page-badge"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ChoiceBox fx:id="goalChoice" prefWidth="260" styleClass="zn-choicebox"/>
+            <Button text="↻  Refresh" styleClass="zn-btn-secondary" onAction="#update"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <VBox spacing="16" styleClass="zn-body">
+                    <Label text="Progress dihitung otomatis dari Contribution Log — tidak perlu input manual."
+                           styleClass="zn-hint"/>
+                    <VBox styleClass="zn-panel" spacing="12">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-cyan"/>
+                            <Label text="Status Progress Goal" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <ProgressBar fx:id="progressBar" prefWidth="99999" prefHeight="18" styleClass="zn-progress"/>
+                        <Label fx:id="progressLabel" text="-" styleClass="zn-stat-label"/>
+                        <TextArea fx:id="resultArea" wrapText="true" editable="false"
+                                  prefHeight="380" styleClass="zn-result-area"
+                                  promptText="Pilih goal di kanan atas lalu klik Refresh..."/>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

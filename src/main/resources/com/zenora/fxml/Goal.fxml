@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.GoalController"
+            prefWidth="1080" prefHeight="760"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Goal Planning" styleClass="zn-page-title"/>
+                <Label text="MODUL 02 — STRATEGI TABUNGAN PERSONAL" styleClass="zn-page-badge"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <HBox spacing="16" styleClass="zn-body" fillHeight="true" maxWidth="Infinity">
+                    <!-- INPUT -->
+                    <VBox spacing="0" styleClass="zn-panel" prefWidth="400" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-violet"/>
+                            <Label text="Input Goal Baru" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <Label text="NAMA TUJUAN" styleClass="zn-field-label"/>
+                        <TextField fx:id="nameField" styleClass="zn-field" promptText="contoh: Beli laptop" maxWidth="Infinity"/>
+                        <Label text="KATEGORI" styleClass="zn-field-label"/>
+                        <ChoiceBox fx:id="categoryChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                        <Label text="TARGET DANA (RP)" styleClass="zn-field-label"/>
+                        <TextField fx:id="targetField" styleClass="zn-field" promptText="contoh: 20000000" maxWidth="Infinity"/>
+                        <Label text="JANGKA WAKTU (BULAN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="monthsField" styleClass="zn-field" promptText="contoh: 12" maxWidth="Infinity"/>
+                        <Label text="TARGET SELESAI (opsional)" styleClass="zn-field-label"/>
+                        <DatePicker fx:id="targetDatePicker" maxWidth="Infinity"/>
+                        <Label text="Jika diisi, jangka waktu dihitung dari tanggal ini." styleClass="zn-hint"/>
+                        <Label text="RETURN INVESTASI (% / TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="rateField" styleClass="zn-field" promptText="0 = tabungan biasa" maxWidth="Infinity"/>
+                        <Label text="KAPASITAS MENABUNG / BULAN (RP)" styleClass="zn-field-label"/>
+                        <TextField fx:id="capacityField" styleClass="zn-field" promptText="dari profil Anda" maxWidth="Infinity"/>
+                        <Region minHeight="16"/>
+                        <HBox spacing="10">
+                            <Button text="🔢  Hitung" styleClass="zn-btn-secondary" onAction="#calculate" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            <Button fx:id="saveButton" text="💾  Simpan" styleClass="zn-btn-primary" onAction="#saveToMulti" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        </HBox>
+                    </VBox>
+                    <!-- RESULT -->
+                    <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-violet"/>
+                            <Label text="Hasil &amp; Rekomendasi" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                                  wrapText="true" editable="false"
+                                  VBox.vgrow="ALWAYS" promptText="Isi form dan klik Hitung..."/>
+                    </VBox>
+                </HBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

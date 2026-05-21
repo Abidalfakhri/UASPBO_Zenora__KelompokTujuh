@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.ProfileController"
+            prefWidth="960" prefHeight="720"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Profil &amp; Pengaturan" styleClass="zn-page-title"/>
+                <Label text="DATA KEUANGAN PRIBADI" styleClass="zn-page-badge"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="💾  Simpan Profil" styleClass="zn-btn-primary" onAction="#save"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <VBox spacing="16" styleClass="zn-body">
+
+                    <HBox spacing="16">
+                        <!-- Identitas -->
+                        <VBox styleClass="zn-panel" spacing="0" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-indigo"/>
+                                <Label text="Identitas" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <Label text="NAMA LENGKAP" styleClass="zn-field-label"/>
+                            <TextField fx:id="nameField" styleClass="zn-field" promptText="contoh: Budi Santoso" maxWidth="Infinity"/>
+                            <Label text="USIA SAAT INI" styleClass="zn-field-label"/>
+                            <TextField fx:id="ageField" styleClass="zn-field" promptText="contoh: 28" maxWidth="Infinity"/>
+                            <Label text="STATUS RUMAH TANGGA" styleClass="zn-field-label"/>
+                            <ChoiceBox fx:id="statusChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                        </VBox>
+
+                        <!-- Keuangan -->
+                        <VBox styleClass="zn-panel" spacing="0" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-green"/>
+                                <Label text="Keuangan Bulanan" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <Label text="PENDAPATAN BULANAN (RP)" styleClass="zn-field-label"/>
+                            <TextField fx:id="incomeField" styleClass="zn-field" promptText="contoh: 8000000" maxWidth="Infinity"/>
+                            <Label text="PENGELUARAN BULANAN (RP)" styleClass="zn-field-label"/>
+                            <TextField fx:id="expenseField" styleClass="zn-field" promptText="contoh: 4000000" maxWidth="Infinity"/>
+                            <Label text="OVERRIDE KAPASITAS (opsional)" styleClass="zn-field-label"/>
+                            <TextField fx:id="capacityOverrideField" styleClass="zn-field" promptText="kosongkan = otomatis" maxWidth="Infinity"/>
+                            <Label text="Jika diisi, kapasitas dihitung dari nilai ini, bukan dari pendapatan - pengeluaran." styleClass="zn-hint"/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="16">
+                        <!-- Lanjutan -->
+                        <VBox styleClass="zn-panel" spacing="0" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-amber"/>
+                                <Label text="Asumsi &amp; Dana Darurat" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <Label text="INFLASI (% / TAHUN)" styleClass="zn-field-label"/>
+                            <TextField fx:id="inflationField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
+                            <Label text="TARGET BULAN DANA DARURAT" styleClass="zn-field-label"/>
+                            <ChoiceBox fx:id="emergencyMonthsChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                            <Label text="Standar: 3-6 bulan untuk karyawan, 6-12 bulan untuk freelancer." styleClass="zn-hint"/>
+                        </VBox>
+
+                        <!-- Summary -->
+                        <VBox styleClass="zn-panel" spacing="8" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-violet"/>
+                                <Label text="Kalkulasi Otomatis" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <VBox spacing="4" style="-fx-padding: 8 0 0 0;">
+                                <Label text="KAPASITAS MENABUNG / BULAN" styleClass="zn-stat-label"/>
+                                <Label fx:id="derivedCapacityLabel" text="-" styleClass="zn-stat-value zn-stat-indigo"/>
+                            </VBox>
+                            <Region minHeight="8"/>
+                            <VBox spacing="4">
+                                <Label text="SAVING RATE" styleClass="zn-stat-label"/>
+                                <Label fx:id="derivedRateLabel" text="-" styleClass="zn-stat-value-sm zn-stat-green"/>
+                            </VBox>
+                            <Region minHeight="8"/>
+                            <VBox spacing="4">
+                                <Label text="TARGET DANA DARURAT" styleClass="zn-stat-label"/>
+                                <Label fx:id="derivedEfLabel" text="-" styleClass="zn-stat-value-sm zn-stat-amber"/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

@@ -1,0 +1,24 @@
+package com.zenora.controller;
+
+import com.zenora.service.StorageService;
+import com.zenora.util.SceneNavigator;
+import javafx.fxml.FXML;
+
+public class MainMenuController {
+    private static final String BASE = "/com/zenora/fxml/";
+
+    @FXML private void openDashboard()    { SceneNavigator.navigateTo(BASE + "Dashboard.fxml"); }
+    @FXML private void openProfile()      { SceneNavigator.navigateTo(BASE + "Profile.fxml"); }
+    @FXML private void openContributions(){ SceneNavigator.navigateTo(BASE + "Contribution.fxml"); }
+    @FXML private void openReports()      { SceneNavigator.navigateTo(BASE + "Reports.fxml"); }
+
+    @FXML private void openRetirement()   { SceneNavigator.navigateTo(BASE + "Retirement.fxml"); }
+    @FXML private void openGoal()         { SceneNavigator.navigateTo(BASE + "Goal.fxml"); }
+    @FXML private void openEmergency()    { SceneNavigator.navigateTo(BASE + "Emergency.fxml"); }
+    @FXML private void openWhatIf()       { SceneNavigator.navigateTo(BASE + "WhatIf.fxml"); }
+    @FXML private void openMulti()        { SceneNavigator.navigateTo(BASE + "MultiGoal.fxml"); }
+    @FXML private void openProgress()     { SceneNavigator.navigateTo(BASE + "Progress.fxml"); }
+    @FXML private void openMilestone()    { SceneNavigator.navigateTo(BASE + "Milestone.fxml"); }
+
+    @FXML private void saveNow()          { StorageService.save(); }
+}

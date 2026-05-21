@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.MainMenuController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="fp-root">
+
+    <top>
+        <HBox style="-fx-background-color:#13161F; -fx-padding:14 44; -fx-border-color:transparent transparent rgba(255,255,255,0.06) transparent; -fx-border-width:0 0 1 0;"
+              alignment="CENTER_LEFT" spacing="14">
+            <Label text="Z" styleClass="zn-logo-mark"/>
+            <Label text="Zenora" style="-fx-font-size:16px; -fx-font-weight:800; -fx-text-fill:#F0F0F6;"/>
+            <Label text="v4.0.0" style="-fx-font-size:10px; -fx-text-fill:#6B7280; -fx-font-family:'Consolas',monospace;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="← Dashboard" styleClass="zn-btn-secondary" onAction="#openDashboard"/>
+            <Button text="👤  Profil" styleClass="zn-btn-secondary" onAction="#openProfile"/>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="fp-scroll">
+            <content>
+                <VBox spacing="0" styleClass="fp-page" fillWidth="true">
+
+                    <!-- HERO -->
+                    <HBox styleClass="fp-hero" alignment="BOTTOM_LEFT" spacing="40">
+                        <VBox spacing="0" HBox.hgrow="ALWAYS">
+                            <Label text="PERSONAL FINANCIAL SUITE" styleClass="fp-hero-eyebrow"/>
+                            <Region minHeight="14"/>
+                            <Label text="Zenora" styleClass="fp-hero-title-gold"/>
+                            <Region minHeight="14"/>
+                            <Label text="A structured workspace to plan retirement, savings goals, emergency funds, and future financial scenarios with clarity."
+                                   wrapText="true" maxWidth="620" styleClass="fp-hero-sub"/>
+                        </VBox>
+                        <VBox spacing="0" alignment="TOP_RIGHT" minWidth="140">
+                            <VBox alignment="TOP_RIGHT">
+                                <Label text="6" style="-fx-font-size:36px; -fx-font-weight:800; -fx-text-fill:#818CF8;"/>
+                                <Label text="MODULES" styleClass="zn-stat-label"/>
+                            </VBox>
+                            <Region minHeight="18"/>
+                            <Region styleClass="zn-divider" minWidth="1" minHeight="42"/>
+                            <Region minHeight="18"/>
+                            <VBox alignment="TOP_RIGHT">
+                                <Label text="∞" style="-fx-font-size:36px; -fx-font-weight:800; -fx-text-fill:#818CF8;"/>
+                                <Label text="SCENARIOS" styleClass="zn-stat-label"/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- SECTION HEADER -->
+                    <HBox styleClass="fp-section-header" alignment="CENTER_LEFT" spacing="12">
+                        <Region styleClass="fp-section-line" minWidth="28" minHeight="2" maxHeight="2"/>
+                        <Label text="PLANNING MODULES" styleClass="fp-section-label"/>
+                    </HBox>
+
+                    <!-- GRID -->
+                    <GridPane hgap="18" vgap="18" styleClass="fp-grid">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                            <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
+                        </columnConstraints>
+
+                        <!-- 01 Retirement -->
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="0" maxWidth="Infinity"
+                              styleClass="fp-card, fp-card-featured" onMouseClicked="#openRetirement">
+                            <HBox alignment="CENTER_LEFT"><Label text="01" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
+                            <Region minHeight="14"/>
+                            <Label text="📈" styleClass="fp-icon fp-icon-gold"/>
+                            <Region minHeight="14"/>
+                            <Label text="Retirement Planning" styleClass="fp-card-title"/>
+                            <Region minHeight="8"/>
+                            <Label text="Estimasi dana pensiun dan kebutuhan tabungan bulanan berdasarkan target usia pensiun." wrapText="true" styleClass="fp-card-desc"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-gold"/></HBox>
+                        </VBox>
+
+                        <!-- 02 Goal -->
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="0" maxWidth="Infinity"
+                              styleClass="fp-card" onMouseClicked="#openGoal">
+                            <HBox alignment="CENTER_LEFT"><Label text="02" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
+                            <Region minHeight="14"/>
+                            <Label text="🎯" styleClass="fp-icon fp-icon-blue"/>
+                            <Region minHeight="14"/>
+                            <Label text="Goal Planning" styleClass="fp-card-title"/>
+                            <Region minHeight="8"/>
+                            <Label text="Bangun strategi tabungan untuk pembelian, pendidikan, perjalanan, atau target keuangan lainnya." wrapText="true" styleClass="fp-card-desc"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-blue"/></HBox>
+                        </VBox>
+
+                        <!-- 03 Emergency -->
+                        <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="0" maxWidth="Infinity"
+                              styleClass="fp-card" onMouseClicked="#openEmergency">
+                            <HBox alignment="CENTER_LEFT"><Label text="03" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
+                            <Region minHeight="14"/>
+                            <Label text="🛡" styleClass="fp-icon fp-icon-green"/>
+                            <Region minHeight="14"/>
+                            <Label text="Emergency Fund" styleClass="fp-card-title"/>
+                            <Region minHeight="8"/>
+                            <Label text="Hitung dana darurat ideal berdasarkan pengeluaran bulanan dan tingkat keamanan finansial." wrapText="true" styleClass="fp-card-desc"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-green"/></HBox>
+                        </VBox>
+
+                        <!-- 04 What-If -->
+                        <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
+                              styleClass="fp-card" onMouseClicked="#openWhatIf">
+                            <HBox alignment="CENTER_LEFT"><Label text="04" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
+                            <Region minHeight="14"/>
+                            <Label text="⚡" styleClass="fp-icon fp-icon-purple"/>
+                            <Region minHeight="14"/>
+                            <Label text="What-If Simulation" styleClass="fp-card-title"/>
+                            <Region minHeight="8"/>
+                            <Label text="Eksplorasi skenario keuangan alternatif dan bandingkan hasil masa depan secara instan." wrapText="true" styleClass="fp-card-desc"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-purple"/></HBox>
+                        </VBox>
+
+                        <!-- 05 Multi-Goal -->
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
+                              styleClass="fp-card" onMouseClicked="#openMulti">
+                            <HBox alignment="CENTER_LEFT"><Label text="05" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
+                            <Region minHeight="14"/>
+                            <Label text="📋" styleClass="fp-icon fp-icon-orange"/>
+                            <Region minHeight="14"/>
+                            <Label text="Multi-Goal Planning" styleClass="fp-card-title"/>
+                            <Region minHeight="8"/>
+                            <Label text="Kelola beberapa goal finansial sekaligus dengan alokasi dan prioritas yang lebih jelas." wrapText="true" styleClass="fp-card-desc"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-orange"/></HBox>
+                        </VBox>
+
+                        <!-- 06 Progress -->
+                        <VBox GridPane.columnIndex="2" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
+                              styleClass="fp-card" onMouseClicked="#openProgress">
+                            <HBox alignment="CENTER_LEFT"><Label text="06" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
+                            <Region minHeight="14"/>
+                            <Label text="📊" styleClass="fp-icon fp-icon-teal"/>
+                            <Region minHeight="14"/>
+                            <Label text="Progress Tracker" styleClass="fp-card-title"/>
+                            <Region minHeight="8"/>
+                            <Label text="Monitor pertumbuhan tabungan, konsistensi setoran, dan pencapaian milestone dari waktu ke waktu." wrapText="true" styleClass="fp-card-desc"/>
+                            <Region VBox.vgrow="ALWAYS"/>
+                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-teal"/></HBox>
+                        </VBox>
+
+                    </GridPane>
+
+                    <!-- FOOTER -->
+                    <HBox styleClass="fp-footer" alignment="CENTER_LEFT">
+                        <Label text="© 2026 Zenora" styleClass="fp-footer-copy"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox spacing="20">
+                            <Label text="Dashboard" styleClass="fp-footer-link" onMouseClicked="#openDashboard"/>
+                            <Label text="Profil" styleClass="fp-footer-link" onMouseClicked="#openProfile"/>
+                        </HBox>
+                    </HBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

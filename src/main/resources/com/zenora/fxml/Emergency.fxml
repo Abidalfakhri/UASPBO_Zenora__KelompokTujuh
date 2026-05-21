@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.EmergencyController"
+            prefWidth="980" prefHeight="680"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Dana Darurat" styleClass="zn-page-title"/>
+                <Label text="MODUL 03 — EMERGENCY FUND CALCULATOR" styleClass="zn-page-badge"/>
+            </VBox>
+        </HBox>
+    </top>
+    <center>
+        <HBox spacing="16" styleClass="zn-body">
+            <VBox spacing="0" styleClass="zn-panel" prefWidth="380">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                    <Label text="●" styleClass="zn-dot-green"/>
+                    <Label text="Input Data" styleClass="zn-panel-title"/>
+                </HBox>
+                <Label text="PENGELUARAN BULANAN (RP)" styleClass="zn-field-label"/>
+                <TextField fx:id="expenseField" styleClass="zn-field" promptText="contoh: 4.000.000" maxWidth="Infinity"/>
+                <Label text="STATUS RUMAH TANGGA" styleClass="zn-field-label"/>
+                <ChoiceBox fx:id="statusChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                <Label text="Menentukan saran cakupan bulan yang ideal." styleClass="zn-hint"/>
+                <Region minHeight="8"/>
+                <Region styleClass="zn-divider" minHeight="1" maxHeight="1"/>
+                <Region minHeight="12"/>
+                <Label text="CAKUPAN BULAN (opsional)" styleClass="zn-field-label"/>
+                <TextField fx:id="monthsField" styleClass="zn-field" promptText="kosongkan = saran otomatis" maxWidth="Infinity"/>
+                <Label text="Override manual jika diperlukan" styleClass="zn-hint"/>
+                <Region minHeight="8"/>
+                <Label text="KAPASITAS MENABUNG / BULAN (RP)" styleClass="zn-field-label"/>
+                <TextField fx:id="capacityField" styleClass="zn-field" promptText="contoh: 1.000.000" maxWidth="Infinity"/>
+                <Region minHeight="16"/>
+                <Button text="🔢  Hitung" styleClass="zn-btn-primary" maxWidth="Infinity" onAction="#calculate"/>
+            </VBox>
+            <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                    <Label text="●" styleClass="zn-dot-green"/>
+                    <Label text="Hasil Kalkulasi" styleClass="zn-panel-title"/>
+                </HBox>
+                <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                          wrapText="true" editable="false"
+                          VBox.vgrow="ALWAYS" promptText="Isi form dan klik Hitung..."/>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

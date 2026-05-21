@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.DashboardController"
+            prefWidth="1280" prefHeight="820"
+            styleClass="zn-root">
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="zn-sidebar">
+            <!-- Logo -->
+            <VBox styleClass="zn-sidebar-logo-box" spacing="4">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Z" styleClass="zn-logo-mark"/>
+                    <VBox spacing="1">
+                        <Label text="Zenora" styleClass="zn-logo-name"/>
+                        <Label text="v4.0.0" styleClass="zn-logo-version"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Nav -->
+            <VBox styleClass="zn-sidebar-nav" VBox.vgrow="ALWAYS">
+                <Label text="MENU UTAMA" styleClass="zn-nav-section-label"/>
+                <Button text="⬛  Dashboard" styleClass="zn-nav-item, zn-nav-item-active"
+                        maxWidth="Infinity" onAction="#stayDashboard"/>
+                <Button text="🎯  Goal Planning" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openGoal"/>
+                <Button text="📋  Multi-Goal" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openMulti"/>
+                <Button text="🛡  Dana Darurat" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openEmergency"/>
+                <Button text="📈  Pensiun" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openRetirement"/>
+
+                <Label text="ANALYTICS" styleClass="zn-nav-section-label"/>
+                <Button text="💳  Setoran" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openContributions"/>
+                <Button text="📊  Reports" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openReports"/>
+                <Button text="⚡  What-If" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openWhatIf"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Label text="AKUN" styleClass="zn-nav-section-label"/>
+                <Button text="👤  Profil" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openProfile"/>
+                <Button text="📦  Semua Modul" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openMenu"/>
+            </VBox>
+
+            <!-- Footer -->
+            <VBox styleClass="zn-sidebar-footer" spacing="4">
+                <Label fx:id="sidebarCapLabel" text="Kapasitas: -" styleClass="zn-stat-label"/>
+                <Button text="Export CSV" styleClass="zn-btn-secondary"
+                        maxWidth="Infinity" onAction="#exportCsv"/>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- MAIN AREA -->
+    <center>
+        <VBox>
+            <!-- TOP BAR -->
+            <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+                <VBox spacing="2">
+                    <Label fx:id="greetingLabel" text="Halo 👋" styleClass="zn-page-title"/>
+                    <Label text="DASHBOARD — overview keuangan Anda" styleClass="zn-page-badge"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="↻  Refresh" styleClass="zn-btn-secondary" onAction="#refreshClick"/>
+            </HBox>
+
+            <!-- SCROLLABLE CONTENT -->
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                        styleClass="zn-scroll" VBox.vgrow="ALWAYS">
+                <content>
+                    <VBox spacing="16" styleClass="zn-body">
+
+                        <!-- STAT CARDS ROW -->
+                        <GridPane hgap="14" vgap="14">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                                <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <!-- Card 1: Kapasitas Menabung -->
+                            <VBox styleClass="zn-panel" GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="8">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                    <Label text="💰" style="-fx-font-size:18;"/>
+                                    <Label text="KAPASITAS MENABUNG" styleClass="zn-stat-label"/>
+                                </HBox>
+                                <Label fx:id="capacityLabel" text="-" styleClass="zn-stat-value zn-stat-indigo"/>
+                                <Label text="per bulan tersedia" styleClass="zn-stat-label"/>
+                            </VBox>
+
+                            <!-- Card 2: Total Terkumpul -->
+                            <VBox styleClass="zn-panel" GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="8">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                    <Label text="🏦" style="-fx-font-size:18;"/>
+                                    <Label text="TOTAL TERKUMPUL" styleClass="zn-stat-label"/>
+                                </HBox>
+                                <Label fx:id="savedLabel" text="-" styleClass="zn-stat-value zn-stat-green"/>
+                                <HBox spacing="4" alignment="CENTER_LEFT">
+                                    <Label text="dari" styleClass="zn-stat-label"/>
+                                    <Label fx:id="targetLabel" text="-" styleClass="zn-stat-label"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 3: Goals & Setoran -->
+                            <VBox styleClass="zn-panel" GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="8">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                    <Label text="🎯" style="-fx-font-size:18;"/>
+                                    <Label text="GOALS AKTIF" styleClass="zn-stat-label"/>
+                                </HBox>
+                                <Label fx:id="goalsCountLabel" text="0" styleClass="zn-stat-value zn-stat-violet"/>
+                                <HBox spacing="6" alignment="CENTER_LEFT">
+                                    <Label text="setoran tercatat:" styleClass="zn-stat-label"/>
+                                    <Label fx:id="contribCountLabel" text="0" styleClass="zn-stat-label"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Card 4: Dana Darurat -->
+                            <VBox styleClass="zn-panel" GridPane.columnIndex="3" GridPane.rowIndex="0" spacing="8">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                    <Label text="🛡" style="-fx-font-size:18;"/>
+                                    <Label text="DANA DARURAT" styleClass="zn-stat-label"/>
+                                </HBox>
+                                <Label fx:id="emergencyLabel" text="-" styleClass="zn-stat-value-sm"/>
+                                <ProgressBar fx:id="efProgress" prefWidth="180" prefHeight="8" styleClass="zn-progress"/>
+                                <Label fx:id="efStatusLabel" text="-" styleClass="zn-stat-label" wrapText="true"/>
+                                <Label fx:id="runwayLabel" text="-" styleClass="zn-stat-label" wrapText="true"/>
+                            </VBox>
+                        </GridPane>
+
+                        <!-- OVERALL PROGRESS -->
+                        <VBox styleClass="zn-panel" spacing="10">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-indigo"/>
+                                <Label text="Progress Agregat Semua Goal" styleClass="zn-panel-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="progressLabel" text="-" styleClass="zn-badge"/>
+                            </HBox>
+                            <ProgressBar fx:id="overallProgress" prefWidth="99999" prefHeight="16" styleClass="zn-progress"/>
+                        </VBox>
+
+                        <!-- ALERTS + PIE CHART ROW -->
+                        <HBox spacing="16">
+                            <VBox styleClass="zn-panel" spacing="8" HBox.hgrow="ALWAYS" prefWidth="560">
+                                <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                    <Label text="●" styleClass="zn-dot-amber"/>
+                                    <Label text="Insight &amp; Pengingat" styleClass="zn-panel-title"/>
+                                </HBox>
+                                <VBox fx:id="alertsBox" spacing="6"/>
+                            </VBox>
+
+                            <VBox styleClass="zn-panel" spacing="8" HBox.hgrow="ALWAYS">
+                                <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                    <Label text="●" styleClass="zn-dot-violet"/>
+                                    <Label text="Distribusi Target Goal" styleClass="zn-panel-title"/>
+                                </HBox>
+                                <PieChart fx:id="allocationChart" prefHeight="260" legendVisible="true"/>
+                            </VBox>
+                        </HBox>
+
+                        <!-- GOALS TABLE -->
+                        <VBox styleClass="zn-panel" spacing="10">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-cyan"/>
+                                <Label text="Goal Anda" styleClass="zn-panel-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Button text="+ Goal Baru" styleClass="zn-btn-primary" onAction="#openGoal"/>
+                            </HBox>
+                            <TableView fx:id="recentGoalsTable" prefHeight="260" styleClass="zn-table">
+                                <placeholder>
+                                    <VBox styleClass="zn-empty-state" alignment="CENTER" spacing="8">
+                                        <Label text="🎯" styleClass="zn-empty-icon"/>
+                                        <Label text="Belum ada goal" styleClass="zn-empty-title"/>
+                                        <Label text="Buat goal pertama Anda untuk mulai tracking." styleClass="zn-empty-sub"/>
+                                    </VBox>
+                                </placeholder>
+                                <columns>
+                                    <TableColumn fx:id="colGoalName" text="NAMA" prefWidth="220"/>
+                                    <TableColumn fx:id="colGoalCat" text="KATEGORI" prefWidth="160"/>
+                                    <TableColumn fx:id="colGoalTarget" text="TARGET" prefWidth="180"/>
+                                    <TableColumn fx:id="colGoalSaved" text="TERKUMPUL" prefWidth="180"/>
+                                    <TableColumn fx:id="colGoalPct" text="PROGRESS" prefWidth="120"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                    </VBox>
+                </content>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>
