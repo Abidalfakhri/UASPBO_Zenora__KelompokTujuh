@@ -14,7 +14,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        LOG.info("Zenora v3.0.0 starting...");
+        LOG.info("Zenora starting...");
 
         // Load persisted state before any UI is shown
         StorageService.init();

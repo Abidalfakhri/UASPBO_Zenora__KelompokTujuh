@@ -5,10 +5,7 @@ import javafx.scene.control.ButtonType;
 
 import java.util.Optional;
 
-/**
- * Centralized alert/dialog utility for Zenora V4.
- * Provides consistent styling and simple API for common dialog types.
- */
+
 public final class AlertUtil {
 
     private AlertUtil() {}
