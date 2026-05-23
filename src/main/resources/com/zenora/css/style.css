@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   ZENORA V4 — Global Design System
-   Professional dark fintech with indigo/violet accents
-   ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── ROOT ───────────────────────────────────────────────────────────────── */
 .zn-root, .fp-root {
     -fx-background-color: #0F1117;
     -fx-font-family: "Segoe UI", "Inter", "SF Pro Display", "Helvetica Neue", sans-serif;
@@ -318,5 +313,5 @@
 .fp-footer-link { -fx-font-size: 11px; -fx-text-fill: #4B5563; -fx-cursor: hand; }
 .fp-footer-link:hover { -fx-text-fill: #818CF8; }
 
-/* v3 stat extras on MainMenu */
+
 .zn-stat-value.zn-stat-gold { -fx-text-fill: #818CF8; }

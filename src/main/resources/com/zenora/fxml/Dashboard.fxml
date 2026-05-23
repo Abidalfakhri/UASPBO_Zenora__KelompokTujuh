@@ -18,7 +18,6 @@
                     <Label text="Z" styleClass="zn-logo-mark"/>
                     <VBox spacing="1">
                         <Label text="Zenora" styleClass="zn-logo-name"/>
-                        <Label text="v4.0.0" styleClass="zn-logo-version"/>
                     </VBox>
                 </HBox>
             </VBox>
