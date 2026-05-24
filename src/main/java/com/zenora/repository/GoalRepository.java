@@ -1,0 +1,47 @@
+package com.zenora.repository;
+
+import com.zenora.entity.GoalEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * ✅ PR-2: Repository untuk GoalEntity.
+ *
+ * ✅ KETENTUAN — Repository Pattern:
+ *   Interface ini memisahkan logika akses database dari logika bisnis.
+ *   Service layer hanya perlu memanggil method di sini tanpa tahu SQL-nya.
+ *
+ * ✅ OOP PILAR — ABSTRACTION:
+ *   JpaRepository menyembunyikan seluruh implementasi CRUD dari developer.
+ *   Kita hanya perlu mendefinisikan interface, implementasinya otomatis.
+ *
+ * ✅ JPA/Hibernate — Query otomatis dari nama method (method naming convention).
+ */
+@Repository
+public interface GoalRepository extends JpaRepository<GoalEntity, String> {
+
+    /** Cari goal berdasarkan nama (case-insensitive). */
+    List<GoalEntity> findByNameContainingIgnoreCase(String name);
+
+    /** Cari goal berdasarkan kategori. */
+    List<GoalEntity> findByCategory(String category);
+
+    /** Urutkan goal berdasarkan priority (1 = tertinggi). */
+    List<GoalEntity> findAllByOrderByPriorityAsc();
+
+    /** Cari goal yang currentSaving masih di bawah targetAmount (belum selesai). */
+    @Query("SELECT g FROM GoalEntity g WHERE g.currentSaving < g.targetAmount ORDER BY g.priority ASC")
+    List<GoalEntity> findActiveGoals();
+
+    /** Hitung total target semua goal. */
+    @Query("SELECT COALESCE(SUM(g.targetAmount), 0) FROM GoalEntity g")
+    Double sumAllTargetAmounts();
+
+    /** Hitung total tabungan saat ini dari semua goal. */
+    @Query("SELECT COALESCE(SUM(g.currentSaving), 0) FROM GoalEntity g")
+    Double sumAllCurrentSavings();
+}
