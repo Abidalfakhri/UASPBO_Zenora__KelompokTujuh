@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,20 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * ✅ PR-4: Konfigurasi Spring Security — autentikasi & otorisasi.
- *
- * ✅ KETENTUAN — Security:
- *   - BCrypt untuk hashing password (tidak disimpan plain text)
- *   - Endpoint /api/** butuh autentikasi
- *   - Endpoint /h2-console, /auth/**, /api/public/** boleh diakses bebas
- *   - Default admin dibuat saat startup (CommandLineRunner)
- *
- * ✅ OOP PILAR — ABSTRACTION:
- *   @Configuration menyembunyikan kompleksitas setup security dari developer lain.
- *   Cukup satu class ini yang perlu diubah jika aturan security berubah.
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   Detail implementasi BCrypt disembunyikan di balik PasswordEncoder interface.
+ * ✅ Security Configuration
  */
 @Configuration
 @EnableWebSecurity
@@ -40,90 +28,109 @@ public class SecurityConfig {
     }
 
     /**
-     * ✅ Security — Filter Chain: aturan akses setiap endpoint.
+     * ✅ Security Filter Chain
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
-            // Disable CSRF untuk REST API (stateless)
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**", "/api/**", "/auth/**"))
 
-            // Izinkan H2 Console iframe
-            .headers(headers -> headers.frameOptions(f -> f.sameOrigin()))
+            // ✅ Disable CSRF untuk REST API + H2 Console
+            .csrf(csrf -> csrf.disable())
 
-            // Aturan otorisasi per endpoint
-            .authorizeHttpRequests(auth -> auth
-                // ✅ Public endpoints (tidak butuh login)
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/api/public/**").permitAll()
-
-                // ✅ Admin-only endpoints
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                // ✅ Semua /api/** butuh autentikasi
-                .requestMatchers("/api/**").authenticated()
-
-                // Lainnya boleh diakses
-                .anyRequest().permitAll()
+            // ✅ H2 Console iframe support
+            .headers(headers ->
+                headers.frameOptions(frame -> frame.sameOrigin())
             )
 
-            // HTTP Basic auth (untuk testing via Postman / JavaFX)
-            .httpBasic(basic -> {})
+            // ✅ Authorization Rules
+            .authorizeHttpRequests(auth -> auth
 
-            // Form login (opsional — untuk browser)
-            .formLogin(form -> form
-                .loginPage("/auth/login")
-                .defaultSuccessUrl("/api/goals", true)
+                // Public endpoints
+                .requestMatchers(
+                    "/auth/**",
+                    "/h2-console/**",
+                    "/api/public/**"
+                ).permitAll()
+
+                // Admin only
+                .requestMatchers("/api/admin/**")
+                .hasRole("ADMIN")
+
+                // Semua API lain harus login
+                .requestMatchers("/api/**")
+                .authenticated()
+
+                // Sisanya bebas
+                .anyRequest()
                 .permitAll()
             )
 
-            .logout(logout -> logout.logoutUrl("/auth/logout").permitAll());
+            // ✅ BASIC AUTH
+            .httpBasic(Customizer.withDefaults());
+
+        // ❌ HAPUS formLogin()
+        // karena bentrok dengan REST API /auth/login
 
         return http.build();
     }
 
     /**
-     * ✅ Security — BCrypt Password Encoder.
-     * Password tidak pernah disimpan dalam plain text.
+     * ✅ BCrypt Password Encoder
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /** AuthenticationManager untuk keperluan login manual. */
+    /**
+     * ✅ Authentication Manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
+
         return config.getAuthenticationManager();
     }
 
     /**
-     * ✅ Security — Seed data: buat akun default saat aplikasi pertama kali jalan.
-     * username: admin | password: admin123
-     * username: user  | password: user123
+     * ✅ Seed default users
      */
     @Bean
-    public CommandLineRunner seedDefaultUsers(AppUserRepository userRepository,
-                                              PasswordEncoder encoder) {
+    public CommandLineRunner seedDefaultUsers(
+            AppUserRepository userRepository,
+            PasswordEncoder encoder) {
+
         return args -> {
+
             if (!userRepository.existsByUsername("admin")) {
-                userRepository.save(new AppUser(
-                    "admin",
-                    encoder.encode("admin123"),
-                    "ROLE_ADMIN"
-                ));
-                System.out.println("[Security] ✅ Default admin dibuat: admin / admin123");
+
+                userRepository.save(
+                    new AppUser(
+                        "admin",
+                        encoder.encode("admin123"),
+                        "ROLE_ADMIN"
+                    )
+                );
+
+                System.out.println(
+                    "[Security] ✅ Default admin dibuat: admin / admin123"
+                );
             }
+
             if (!userRepository.existsByUsername("user")) {
-                userRepository.save(new AppUser(
-                    "user",
-                    encoder.encode("user123"),
-                    "ROLE_USER"
-                ));
-                System.out.println("[Security] ✅ Default user dibuat: user / user123");
+
+                userRepository.save(
+                    new AppUser(
+                        "user",
+                        encoder.encode("user123"),
+                        "ROLE_USER"
+                    )
+                );
+
+                System.out.println(
+                    "[Security] ✅ Default user dibuat: user / user123"
+                );
             }
         };
     }
