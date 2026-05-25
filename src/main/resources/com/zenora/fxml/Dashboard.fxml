@@ -54,10 +54,13 @@
             </VBox>
 
             <!-- Footer -->
-            <VBox styleClass="zn-sidebar-footer" spacing="4">
+            <VBox styleClass="zn-sidebar-footer" spacing="6">
                 <Label fx:id="sidebarCapLabel" text="Kapasitas: -" styleClass="zn-stat-label"/>
                 <Button text="Export CSV" styleClass="zn-btn-secondary"
                         maxWidth="Infinity" onAction="#exportCsv"/>
+                <Button text="⎋  Logout" styleClass="zn-btn-danger"
+                        maxWidth="Infinity" onAction="#logout"
+                        style="-fx-font-size:11px; -fx-padding:7 12;"/>
             </VBox>
         </VBox>
     </left>

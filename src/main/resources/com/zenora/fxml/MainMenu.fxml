@@ -18,6 +18,8 @@
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="← Dashboard" styleClass="zn-btn-secondary" onAction="#openDashboard"/>
             <Button text="👤  Profil" styleClass="zn-btn-secondary" onAction="#openProfile"/>
+            <Button text="⎋  Logout" styleClass="zn-btn-danger" onAction="#logout"
+                    style="-fx-font-size:11px; -fx-padding:7 14;"/>
         </HBox>
     </top>
 
