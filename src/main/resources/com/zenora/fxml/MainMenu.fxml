@@ -74,9 +74,9 @@
                             <Region minHeight="14"/>
                             <Label text="📈" styleClass="fp-icon fp-icon-gold"/>
                             <Region minHeight="14"/>
-                            <Label text="Retirement Planning" styleClass="fp-card-title"/>
+                            <Label text="Dana Pensiun" styleClass="fp-card-title"/>
                             <Region minHeight="8"/>
-                            <Label text="Estimasi dana pensiun dan kebutuhan tabungan bulanan berdasarkan target usia pensiun." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Kalkulator + goal tracker dana pensiun dengan setoran &amp; progress nyata." wrapText="true" styleClass="fp-card-desc"/>
                             <Region VBox.vgrow="ALWAYS"/>
                             <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-gold"/></HBox>
                         </VBox>
@@ -102,9 +102,9 @@
                             <Region minHeight="14"/>
                             <Label text="🛡" styleClass="fp-icon fp-icon-green"/>
                             <Region minHeight="14"/>
-                            <Label text="Emergency Fund" styleClass="fp-card-title"/>
+                            <Label text="Dana Darurat" styleClass="fp-card-title"/>
                             <Region minHeight="8"/>
-                            <Label text="Hitung dana darurat ideal berdasarkan pengeluaran bulanan dan tingkat keamanan finansial." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Kalkulator + goal tracker dana darurat dengan setoran &amp; progress nyata." wrapText="true" styleClass="fp-card-desc"/>
                             <Region VBox.vgrow="ALWAYS"/>
                             <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-green"/></HBox>
                         </VBox>

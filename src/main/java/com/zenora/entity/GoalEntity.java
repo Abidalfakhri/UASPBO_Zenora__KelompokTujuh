@@ -37,6 +37,16 @@ public class GoalEntity extends BaseEntity {
     @Column(nullable = false)
     private String category = "UMUM";
 
+    /** Jenis tempat simpan: Bank, E-Wallet, Investasi, Tunai */
+    private String storageType = "Bank";
+
+    /** Nama spesifik: BCA, Mandiri, GoPay, OVO, dll. */
+    private String storageLocation = "";
+
+    /** Username pemilik data — auto-diisi oleh API controller. */
+    @Column(name = "owner_username")
+    private String ownerUsername;
+
     // ── Constructors ───────────────────────────────────────────────────────
 
     public GoalEntity() {}
@@ -84,4 +94,12 @@ public class GoalEntity extends BaseEntity {
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+
+    public String getStorageType() { return storageType; }
+    public void setStorageType(String storageType) { this.storageType = storageType; }
+
+    public String getStorageLocation() { return storageLocation; }
+    public void setStorageLocation(String storageLocation) { this.storageLocation = storageLocation; }
+    public String getOwnerUsername() { return ownerUsername; }
+    public void setOwnerUsername(String ownerUsername) { this.ownerUsername = ownerUsername; }
 }

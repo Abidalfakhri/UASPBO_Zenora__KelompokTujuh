@@ -315,3 +315,163 @@
 
 
 .zn-stat-value.zn-stat-gold { -fx-text-fill: #818CF8; }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   OPTIMIZATION PATCH — progress visibility, dropdown contrast, date picker
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── PROGRESS BAR FIX: hilangkan padding bawaan agar bar terlihat walau kecil ── */
+.progress-bar { -fx-indeterminate-bar-length: 60; }
+.progress-bar > .bar {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+.progress-bar > .track {
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+}
+.zn-progress { -fx-min-height: 8; }
+.zn-progress > .bar {
+    -fx-background-color: linear-gradient(90deg, #6366F1, #A78BFA);
+    -fx-padding: 0;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+}
+.zn-progress-green > .bar {
+    -fx-background-color: linear-gradient(90deg, #10B981, #34D399);
+    -fx-padding: 0; -fx-background-insets: 0; -fx-background-radius: 6;
+}
+.zn-progress-amber > .bar {
+    -fx-background-color: linear-gradient(90deg, #F59E0B, #FBBF24);
+    -fx-padding: 0; -fx-background-insets: 0; -fx-background-radius: 6;
+}
+.zn-progress-red > .bar {
+    -fx-background-color: linear-gradient(90deg, #EF4444, #F87171);
+    -fx-padding: 0; -fx-background-insets: 0; -fx-background-radius: 6;
+}
+
+/* ── TEXT SELECTION agar terbaca saat di-select ───────────────────────── */
+.zn-field, .zn-result-area, .text-input {
+    -fx-highlight-fill: #4F46E5;
+    -fx-highlight-text-fill: white;
+}
+
+/* ── CHOICEBOX / COMBOBOX POPUP — dark, item terlihat ─────────────────── */
+.choice-box .context-menu,
+.zn-choicebox .context-menu,
+.combo-box-popup > .list-view {
+    -fx-background-color: #1A1D27;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 16, 0, 0, 6);
+}
+.context-menu .menu-item {
+    -fx-background-color: transparent;
+    -fx-padding: 7 12;
+    -fx-background-radius: 6;
+}
+.context-menu .menu-item .label,
+.context-menu .label {
+    -fx-text-fill: #E5E7EB;
+}
+.context-menu .menu-item:focused,
+.context-menu .menu-item:hover {
+    -fx-background-color: rgba(79,70,229,0.22);
+}
+.context-menu .menu-item:focused .label,
+.context-menu .menu-item:hover .label {
+    -fx-text-fill: white;
+}
+.combo-box-popup > .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E5E7EB;
+    -fx-padding: 7 12;
+}
+.combo-box-popup > .list-view .list-cell:filled:hover,
+.combo-box-popup > .list-view .list-cell:filled:selected {
+    -fx-background-color: rgba(79,70,229,0.22);
+    -fx-text-fill: white;
+}
+
+/* ── DATE PICKER POPUP — agar tanggal terbaca di tema gelap ───────────── */
+.date-picker-popup {
+    -fx-background-color: #1A1D27;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 20, 0, 0, 8);
+}
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: #21253A;
+    -fx-background-radius: 10 10 0 0;
+    -fx-padding: 10;
+}
+.date-picker-popup > .month-year-pane .label,
+.date-picker-popup .spinner .label {
+    -fx-text-fill: #F0F0F6;
+    -fx-font-weight: 700;
+}
+.date-picker-popup .spinner .button {
+    -fx-background-color: transparent;
+}
+.date-picker-popup .spinner .left-arrow,
+.date-picker-popup .spinner .right-arrow {
+    -fx-background-color: #C7D2FE;
+}
+.date-picker-popup .day-name-cell {
+    -fx-text-fill: #818CF8;
+    -fx-font-weight: 700;
+    -fx-font-size: 10px;
+}
+.date-picker-popup .week-number-cell {
+    -fx-text-fill: #4B5563;
+}
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E5E7EB;
+    -fx-border-color: transparent;
+    -fx-background-radius: 6;
+}
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: rgba(79,70,229,0.22);
+    -fx-text-fill: white;
+}
+.date-picker-popup .selected,
+.date-picker-popup .day-cell:selected,
+.date-picker-popup .previous-month.selected,
+.date-picker-popup .next-month.selected {
+    -fx-background-color: #4F46E5;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+}
+.date-picker-popup .today {
+    -fx-background-color: rgba(79,70,229,0.28);
+    -fx-text-fill: white;
+    -fx-border-color: #818CF8;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+.date-picker-popup .previous-month,
+.date-picker-popup .next-month {
+    -fx-text-fill: #4B5563;
+}
+
+/* ── CHOICEBOX label kontras saat fokus ───────────────────────────────── */
+.zn-choicebox > .label,
+.zn-choicebox .text {
+    -fx-fill: #E5E7EB;
+    -fx-text-fill: #E5E7EB;
+}
+
+/* ── TABLE: pastikan teks header & cell tetap terbaca saat hover/selected ── */
+.zn-table .table-row-cell:selected .table-cell,
+.zn-table .table-row-cell:selected .text {
+    -fx-text-fill: #F0F0F6;
+    -fx-fill: #F0F0F6;
+}

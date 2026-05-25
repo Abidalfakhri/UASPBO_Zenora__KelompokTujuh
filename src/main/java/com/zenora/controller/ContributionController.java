@@ -46,6 +46,7 @@ public class ContributionController extends BaseModuleController implements Init
         goalChoice.setItems(DataStore.getInstance().getGoals());
         if (!goalChoice.getItems().isEmpty()) goalChoice.getSelectionModel().selectFirst();
         datePicker.setValue(LocalDate.now());
+        com.zenora.util.MoneyTextFormatter.attach(amountField);
 
         colDate.setCellValueFactory(c ->
                 new SimpleStringProperty(String.valueOf(c.getValue().getDate())));

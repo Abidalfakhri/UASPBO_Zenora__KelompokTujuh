@@ -21,6 +21,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfileEntity, 
     /** Ambil profil pengguna pertama (single-user application). */
     Optional<UserProfileEntity> findFirstByOrderByCreatedAtAsc();
 
+    Optional<UserProfileEntity> findFirstByOwnerUsernameOrderByCreatedAtAsc(String ownerUsername);
+
     /** Cek apakah profil sudah ada (untuk inisialisasi awal). */
     boolean existsByName(String name);
 }

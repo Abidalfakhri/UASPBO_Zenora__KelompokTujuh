@@ -38,6 +38,12 @@
                         <Label text="Jika diisi, jangka waktu dihitung dari tanggal ini." styleClass="zn-hint"/>
                         <Label text="RETURN INVESTASI (% / TAHUN)" styleClass="zn-field-label"/>
                         <TextField fx:id="rateField" styleClass="zn-field" promptText="0 = tabungan biasa" maxWidth="Infinity"/>
+                        <Label text="JENIS PENYIMPANAN" styleClass="zn-field-label"/>
+                        <ChoiceBox fx:id="storageTypeChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                        <Label text="Pilih jenis tempat menyimpan dana goal ini." styleClass="zn-hint"/>
+                        <Label text="NAMA BANK / E-WALLET / INSTITUSI" styleClass="zn-field-label"/>
+                        <TextField fx:id="storageLocationField" styleClass="zn-field" promptText="contoh: BCA, GoPay, Bibit, dll." maxWidth="Infinity"/>
+                        <Region minHeight="8"/>
                         <Label text="KAPASITAS MENABUNG / BULAN (RP)" styleClass="zn-field-label"/>
                         <TextField fx:id="capacityField" styleClass="zn-field" promptText="dari profil Anda" maxWidth="Infinity"/>
                         <Region minHeight="16"/>

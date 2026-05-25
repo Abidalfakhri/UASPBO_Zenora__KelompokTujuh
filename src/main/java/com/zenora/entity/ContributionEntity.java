@@ -24,6 +24,10 @@ public class ContributionEntity extends BaseEntity {
 
     private String note;
 
+    /** Username pemilik data — auto-diisi oleh API controller. */
+    @Column(name = "owner_username")
+    private String ownerUsername;
+
     // ── Constructors ───────────────────────────────────────────────────────
 
     public ContributionEntity() {}
@@ -54,4 +58,6 @@ public class ContributionEntity extends BaseEntity {
 
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }
+    public String getOwnerUsername() { return ownerUsername; }
+    public void setOwnerUsername(String ownerUsername) { this.ownerUsername = ownerUsername; }
 }

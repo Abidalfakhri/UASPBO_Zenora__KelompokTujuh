@@ -43,12 +43,13 @@ public class DashboardController implements Initializable {
 
     @FXML private Label greetingLabel, capacityLabel, savedLabel, targetLabel,
             progressLabel, emergencyLabel, goalsCountLabel, contribCountLabel,
-            efStatusLabel, runwayLabel, sidebarCapLabel;
-    @FXML private ProgressBar overallProgress, efProgress;
+            efStatusLabel, runwayLabel, sidebarCapLabel,
+            pensionPctLabel, pensionSavedLabel, pensionTargetLabel;
+    @FXML private ProgressBar overallProgress, efProgress, pensionProgress;
     @FXML private VBox alertsBox;
     @FXML private PieChart allocationChart;
     @FXML private TableView<Goal> recentGoalsTable;
-    @FXML private TableColumn<Goal, String> colGoalName, colGoalCat;
+    @FXML private TableColumn<Goal, String> colGoalName, colGoalCat, colGoalStorage;
     @FXML private TableColumn<Goal, Number> colGoalTarget, colGoalSaved, colGoalPct;
 
     @Override
@@ -115,6 +116,10 @@ public class DashboardController implements Initializable {
                     try { g.setCategory(Category.valueOf(obj.get("category").getAsString())); }
                     catch (Exception ex) { g.setCategory(Category.UMUM); }
                 }
+                if (obj.has("storageType") && !obj.get("storageType").isJsonNull())
+                    g.setStorageType(obj.get("storageType").getAsString());
+                if (obj.has("storageLocation") && !obj.get("storageLocation").isJsonNull())
+                    g.setStorageLocation(obj.get("storageLocation").getAsString());
                 ds.getGoals().add(g);
             }
         } catch (Exception e) {
@@ -156,6 +161,9 @@ public class DashboardController implements Initializable {
         colGoalSaved.setCellValueFactory(c -> c.getValue().currentSavingProperty());
         colGoalPct.setCellValueFactory(c ->
                 new javafx.beans.property.SimpleDoubleProperty(c.getValue().getProgressPercent()));
+        if (colGoalStorage != null)
+            colGoalStorage.setCellValueFactory(c -> new SimpleStringProperty(
+                c.getValue().getStorageType() + " — " + c.getValue().getStorageLocation()));
         formatCurrencyCol(colGoalTarget);
         formatCurrencyCol(colGoalSaved);
         colGoalPct.setCellFactory(c -> new TableCell<>() {
@@ -215,9 +223,14 @@ public class DashboardController implements Initializable {
 
         double efTarget = p.recommendedEmergencyFund();
         double efSaved = 0;
+        double pensionSaved = 0, pensionTarget = 0;
         for (Goal g : ds.getGoals()) {
-            if (g.getCategory() != null && g.getCategory().name().equals("DARURAT")) {
-                efSaved += g.getCurrentSaving();
+            if (g.getCategory() != null) {
+                if (g.getCategory().name().equals("DARURAT")) efSaved += g.getCurrentSaving();
+                if (g.getCategory().name().equals("PENSIUN")) {
+                    pensionSaved  += g.getCurrentSaving();
+                    pensionTarget += g.getTargetAmount();
+                }
             }
         }
         emergencyLabel.setText(CurrencyFormatter.format(efSaved) + " / " + CurrencyFormatter.format(efTarget));
@@ -233,6 +246,18 @@ public class DashboardController implements Initializable {
             runwayLabel.setText(String.format("≈ %.1f bulan runway", efSaved / monthlyExpense));
         else
             runwayLabel.setText("Isi pengeluaran di profil.");
+
+        // Pension progress
+        if (pensionProgress != null) {
+            double pPct = pensionTarget == 0 ? 0 : Math.min(1, pensionSaved / pensionTarget);
+            pensionProgress.setProgress(pensionTarget == 0 ? 0 : pPct);
+            if (pensionPctLabel != null)
+                pensionPctLabel.setText(pensionTarget == 0 ? "Belum ada goal pensiun" : String.format("%.1f%%", pPct * 100));
+            if (pensionSavedLabel != null)
+                pensionSavedLabel.setText("Terkumpul: " + CurrencyFormatter.format(pensionSaved));
+            if (pensionTargetLabel != null)
+                pensionTargetLabel.setText("Target: " + (pensionTarget == 0 ? "-" : CurrencyFormatter.format(pensionTarget)));
+        }
 
         allocationChart.getData().clear();
         for (Goal g : ds.getGoals()) {
@@ -266,6 +291,7 @@ public class DashboardController implements Initializable {
             alertsBox.getChildren().add(chip("ok", "✓ Semua sehat. Lanjutkan disiplin menabung bulan ini!"));
 
         recentGoalsTable.setItems(ds.getGoals());
+        recentGoalsTable.refresh(); // force re-render agar % progress selalu terbaru
     }
 
     private LocalDate lastContributionDate(String goalId) {

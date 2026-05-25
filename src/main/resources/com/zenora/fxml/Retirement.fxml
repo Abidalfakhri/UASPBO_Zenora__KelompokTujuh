@@ -3,56 +3,149 @@
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.zenora.controller.RetirementController"
-            prefWidth="1020" prefHeight="680"
+            prefWidth="1280" prefHeight="820"
             styleClass="zn-root">
     <top>
         <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
-                <Label text="Retirement Planning" styleClass="zn-page-title"/>
-                <Label text="MODUL 01 — ESTIMASI DANA PENSIUN" styleClass="zn-page-badge"/>
+                <Label text="Dana Pensiun" styleClass="zn-page-title"/>
+                <Label text="MODUL 01 — KALKULATOR + GOAL TRACKER DANA PENSIUN" styleClass="zn-page-badge"/>
             </VBox>
         </HBox>
     </top>
     <center>
-        <HBox spacing="16" styleClass="zn-body">
-            <!-- INPUT -->
-            <VBox spacing="0" styleClass="zn-panel" prefWidth="400">
-                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
-                    <Label text="●" styleClass="zn-dot-indigo"/>
-                    <Label text="Parameter Pensiun" styleClass="zn-panel-title"/>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <HBox spacing="16" styleClass="zn-body" fillHeight="true">
+
+                    <!-- KIRI: KALKULATOR -->
+                    <VBox spacing="0" styleClass="zn-panel" minWidth="420" prefWidth="440">
+                        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                            <Label text="●" styleClass="zn-dot-indigo"/>
+                            <Label text="Kalkulator Estimasi Pensiun" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <Label text="USIA SAAT INI" styleClass="zn-field-label"/>
+                        <TextField fx:id="currentAgeField" styleClass="zn-field" promptText="contoh: 28" maxWidth="Infinity"/>
+                        <Label text="USIA PENSIUN TARGET" styleClass="zn-field-label"/>
+                        <TextField fx:id="retirementAgeField" styleClass="zn-field" promptText="contoh: 55" maxWidth="Infinity"/>
+                        <Label text="LAMA PENSIUN (TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="yearsInRetirementField" styleClass="zn-field" promptText="contoh: 25" maxWidth="Infinity"/>
+                        <Region minHeight="8"/>
+                        <Region styleClass="zn-divider" minHeight="1" maxHeight="1"/>
+                        <Region minHeight="8"/>
+                        <Label text="KEBUTUHAN BULANAN SAAT PENSIUN (RP)" styleClass="zn-field-label"/>
+                        <TextField fx:id="monthlyNeedField" styleClass="zn-field" promptText="contoh: 5000000" maxWidth="Infinity"/>
+                        <Label text="Dalam nilai uang saat ini, akan disesuaikan inflasi." styleClass="zn-hint"/>
+                        <Label text="INFLASI (% / TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="inflationField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
+                        <Label text="RETURN INVESTASI PRA-PENSIUN (% / TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="returnPreField" styleClass="zn-field" promptText="contoh: 8.0" maxWidth="Infinity"/>
+                        <Label text="RETURN INVESTASI PASCA-PENSIUN (% / TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="returnPostField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
+                        <Region minHeight="12"/>
+                        <Button text="🔢  Hitung Estimasi" styleClass="zn-btn-primary" maxWidth="Infinity" onAction="#calculate"/>
+                        <Region minHeight="12"/>
+                        <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                                  wrapText="true" editable="false" prefHeight="260" minHeight="220"
+                                  promptText="Isi semua parameter dan klik Hitung..."/>
+                    </VBox>
+
+                    <!-- KANAN: GOAL TRACKER -->
+                    <VBox spacing="16" HBox.hgrow="ALWAYS">
+
+                        <!-- Card Progress -->
+                        <VBox styleClass="zn-panel" spacing="10">
+                            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                                <Label text="●" styleClass="zn-dot-indigo"/>
+                                <Label text="Status Dana Pensiun" styleClass="zn-panel-title"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="goalPctLabel" text="0%" styleClass="zn-badge"/>
+                            </HBox>
+                            <Label fx:id="goalNameLabel" text="Belum ada goal Dana Pensiun." styleClass="zn-stat-value-sm"/>
+                            <ProgressBar fx:id="goalProgress" prefWidth="99999" prefHeight="14" styleClass="zn-progress"/>
+                            <HBox spacing="24" alignment="CENTER_LEFT">
+                                <VBox spacing="2">
+                                    <Label text="TERKUMPUL" styleClass="zn-stat-label"/>
+                                    <Label fx:id="goalSavedLabel" text="-" styleClass="zn-stat-value zn-stat-green"/>
+                                </VBox>
+                                <VBox spacing="2">
+                                    <Label text="TARGET" styleClass="zn-stat-label"/>
+                                    <Label fx:id="goalTargetLabel" text="-" styleClass="zn-stat-value"/>
+                                </VBox>
+                                <VBox spacing="2">
+                                    <Label text="DISIMPAN DI" styleClass="zn-stat-label"/>
+                                    <Label fx:id="goalStorageLabel" text="-" styleClass="zn-stat-label"/>
+                                </VBox>
+                            </HBox>
+                            <Label fx:id="goalStatusLabel" text="-" styleClass="zn-stat-label" wrapText="true"/>
+                            <Label fx:id="goalMonthlyNeededLabel" text="" styleClass="zn-hint" wrapText="true"/>
+                        </VBox>
+
+                        <!-- Buat Goal -->
+                        <VBox styleClass="zn-panel" spacing="8">
+                            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                                <Label text="●" styleClass="zn-dot-amber"/>
+                                <Label text="Buat / Atur Goal Dana Pensiun" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <Label text="TARGET DANA PENSIUN (RP)" styleClass="zn-field-label"/>
+                            <TextField fx:id="goalTargetInputField" styleClass="zn-field"
+                                       promptText="Otomatis terisi dari kalkulasi" maxWidth="Infinity"/>
+                            <Label text="JENIS PENYIMPANAN / INVESTASI" styleClass="zn-field-label"/>
+                            <ChoiceBox fx:id="storageTypeChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                            <Label text="NAMA BANK / E-WALLET / SEKURITAS" styleClass="zn-field-label"/>
+                            <TextField fx:id="storageLocationField" styleClass="zn-field"
+                                       promptText="contoh: Bibit, BPJS TK, BCA Deposito" maxWidth="Infinity"/>
+                            <Region minHeight="6"/>
+                            <Button fx:id="createGoalButton" text="📈  Buat Goal Dana Pensiun"
+                                    styleClass="zn-btn-secondary" maxWidth="Infinity" onAction="#createGoal"/>
+                        </VBox>
+
+                        <!-- Form Setoran -->
+                        <VBox styleClass="zn-panel" spacing="8">
+                            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                                <Label text="●" styleClass="zn-dot-cyan"/>
+                                <Label text="Catat Setoran Dana Pensiun" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <GridPane hgap="12" vgap="0">
+                                <columnConstraints>
+                                    <ColumnConstraints percentWidth="33"/>
+                                    <ColumnConstraints percentWidth="33"/>
+                                    <ColumnConstraints percentWidth="34"/>
+                                </columnConstraints>
+                                <Label text="TANGGAL" styleClass="zn-field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                <Label text="NOMINAL (RP)" styleClass="zn-field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                                <Label text="CATATAN (opsional)" styleClass="zn-field-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                                <DatePicker fx:id="depositDatePicker" maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <TextField fx:id="depositAmountField" styleClass="zn-field" promptText="500000"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <TextField fx:id="depositNoteField" styleClass="zn-field" promptText="opsional"
+                                           GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                            </GridPane>
+                            <Region minHeight="8"/>
+                            <Button fx:id="depositButton" text="+ Setor Dana Pensiun"
+                                    styleClass="zn-btn-primary" onAction="#deposit"/>
+                        </VBox>
+
+                        <!-- Riwayat Setoran -->
+                        <VBox styleClass="zn-panel" spacing="10" VBox.vgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                                <Label text="●" styleClass="zn-dot-violet"/>
+                                <Label text="Riwayat Setoran Dana Pensiun" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <TableView fx:id="historyTable" prefHeight="220" styleClass="zn-table">
+                                <placeholder><Label text="Belum ada setoran."/></placeholder>
+                                <columns>
+                                    <TableColumn fx:id="colDate" text="TANGGAL" prefWidth="150"/>
+                                    <TableColumn fx:id="colAmount" text="NOMINAL" prefWidth="180"/>
+                                    <TableColumn fx:id="colNote" text="CATATAN" prefWidth="300"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                    </VBox>
                 </HBox>
-                <Label text="USIA SAAT INI" styleClass="zn-field-label"/>
-                <TextField fx:id="currentAgeField" styleClass="zn-field" promptText="contoh: 28" maxWidth="Infinity"/>
-                <Label text="USIA PENSIUN TARGET" styleClass="zn-field-label"/>
-                <TextField fx:id="retirementAgeField" styleClass="zn-field" promptText="contoh: 55" maxWidth="Infinity"/>
-                <Label text="LAMA PENSIUN (TAHUN)" styleClass="zn-field-label"/>
-                <TextField fx:id="yearsInRetirementField" styleClass="zn-field" promptText="contoh: 25" maxWidth="Infinity"/>
-                <Region minHeight="8"/>
-                <Region styleClass="zn-divider" minHeight="1" maxHeight="1"/>
-                <Region minHeight="8"/>
-                <Label text="KEBUTUHAN BULANAN SAAT PENSIUN (RP)" styleClass="zn-field-label"/>
-                <TextField fx:id="monthlyNeedField" styleClass="zn-field" promptText="contoh: 5000000" maxWidth="Infinity"/>
-                <Label text="Dalam nilai uang saat ini, akan disesuaikan inflasi." styleClass="zn-hint"/>
-                <Label text="INFLASI (% / TAHUN)" styleClass="zn-field-label"/>
-                <TextField fx:id="inflationField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
-                <Label text="RETURN INVESTASI PRA-PENSIUN (% / TAHUN)" styleClass="zn-field-label"/>
-                <TextField fx:id="returnPreField" styleClass="zn-field" promptText="contoh: 8.0" maxWidth="Infinity"/>
-                <Label text="RETURN INVESTASI PASCA-PENSIUN (% / TAHUN)" styleClass="zn-field-label"/>
-                <TextField fx:id="returnPostField" styleClass="zn-field" promptText="contoh: 5.0" maxWidth="Infinity"/>
-                <Region minHeight="16"/>
-                <Button text="🔢  Hitung" styleClass="zn-btn-primary" maxWidth="Infinity" onAction="#calculate"/>
-            </VBox>
-            <!-- RESULT -->
-            <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
-                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
-                    <Label text="●" styleClass="zn-dot-indigo"/>
-                    <Label text="Estimasi Dana Pensiun" styleClass="zn-panel-title"/>
-                </HBox>
-                <TextArea fx:id="resultArea" styleClass="zn-result-area"
-                          wrapText="true" editable="false"
-                          VBox.vgrow="ALWAYS" promptText="Isi semua parameter dan klik Hitung..."/>
-            </VBox>
-        </HBox>
+            </content>
+        </ScrollPane>
     </center>
 </BorderPane>

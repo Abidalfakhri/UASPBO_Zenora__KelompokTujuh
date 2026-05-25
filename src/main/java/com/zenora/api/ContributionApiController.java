@@ -37,20 +37,24 @@ public class ContributionApiController {
     // ── GET /api/contributions ─────────────────────────────────────────────
     @GetMapping
     public ResponseEntity<List<ContributionEntity>> getAll() {
-        return ResponseEntity.ok(contributionRepository.findAll());
+        return ResponseEntity.ok(contributionRepository.findByOwnerUsernameOrderByDateDesc(currentUser()));
     }
 
     // ── GET /api/contributions/goal/{goalId} ───────────────────────────────
     @GetMapping("/goal/{goalId}")
     public ResponseEntity<List<ContributionEntity>> getByGoal(@PathVariable String goalId) {
-        return ResponseEntity.ok(contributionRepository.findByGoalIdOrderByDateDesc(goalId));
+        return ResponseEntity.ok(contributionRepository.findByGoalIdAndOwnerUsernameOrderByDateDesc(goalId, currentUser()));
     }
 
     // ── POST /api/contributions ────────────────────────────────────────────
     @PostMapping
     public ResponseEntity<?> addContribution(@Valid @RequestBody ContributionRequestDto req) {
         // Validasi: goal harus ada
+        String me = currentUser();
         GoalEntity goal = goalRepository.findById(req.getGoalId()).orElse(null);
+        if (goal != null && goal.getOwnerUsername() != null && !goal.getOwnerUsername().equals(me)) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).body(java.util.Map.of("error","Goal bukan milik Anda"));
+        }
         if (goal == null) {
             return ResponseEntity.badRequest().body(
                 Map.of("error", "Goal dengan id '" + req.getGoalId() + "' tidak ditemukan"));
@@ -60,6 +64,7 @@ public class ContributionApiController {
         ContributionEntity contrib = new ContributionEntity(
             req.getGoalId(), req.getAmount(), req.getDate(), req.getNote()
         );
+        contrib.setOwnerUsername(me);
         ContributionEntity saved = contributionRepository.save(contrib);
 
         // Update currentSaving di Goal
@@ -73,9 +78,10 @@ public class ContributionApiController {
     // ── DELETE /api/contributions/{id} ─────────────────────────────────────
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteContribution(@PathVariable String id) {
+        String me = currentUser();
         ContributionEntity contrib = contributionRepository.findById(id).orElse(null);
         if (contrib == null) return ResponseEntity.notFound().build();
-
+        if (contrib.getOwnerUsername() != null && !contrib.getOwnerUsername().equals(me)) return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).build();
         contributionRepository.deleteById(id);
 
         // Recalculate currentSaving untuk goal terkait
@@ -86,5 +92,9 @@ public class ContributionApiController {
         });
 
         return ResponseEntity.noContent().build();
+    }
+    private static String currentUser() {
+        org.springframework.security.core.Authentication a = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        return (a == null || a.getName() == null) ? "anonymous" : a.getName();
     }
 }

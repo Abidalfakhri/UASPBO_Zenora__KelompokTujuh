@@ -114,7 +114,7 @@ public final class InputValidator {
     // ── Internal ─────────────────────────────────────────────────────────────
 
     private static double parseDouble(String raw) {
-        return Double.parseDouble(raw.trim().replace(",", "").replace("_", ""));
+        return Double.parseDouble(raw.trim().replace(".", "").replace(",", "").replace("_", ""));
     }
 
     // ── Nested exception ─────────────────────────────────────────────────────

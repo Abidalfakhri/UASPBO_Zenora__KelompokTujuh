@@ -34,8 +34,9 @@ public class GoalController extends BaseModuleController implements Initializabl
 
     @Override public String moduleTitle() { return "Goal Planning"; }
 
-    @FXML private TextField nameField, targetField, monthsField, rateField, capacityField;
+    @FXML private TextField nameField, targetField, monthsField, rateField, capacityField, storageLocationField;
     @FXML private ChoiceBox<Category> categoryChoice;
+    @FXML private ChoiceBox<String> storageTypeChoice;
     @FXML private DatePicker targetDatePicker;
     @FXML private TextArea resultArea;
     @FXML private Button saveButton;
@@ -48,7 +49,15 @@ public class GoalController extends BaseModuleController implements Initializabl
             categoryChoice.setItems(FXCollections.observableArrayList(Category.values()));
             categoryChoice.setValue(Category.UMUM);
         }
+        if (storageTypeChoice != null) {
+            storageTypeChoice.setItems(FXCollections.observableArrayList(
+                    "Bank", "E-Wallet", "Investasi", "Tunai", "Lainnya"));
+            storageTypeChoice.setValue("Bank");
+        }
         if (saveButton != null) saveButton.setDisable(true);
+
+        com.zenora.util.MoneyTextFormatter.attach(targetField);
+        com.zenora.util.MoneyTextFormatter.attach(capacityField);
 
         double cap = DataStore.getInstance().getProfile().effectiveCapacity();
         if (cap > 0 && capacityField != null) capacityField.setText(String.valueOf((long) cap));
@@ -66,6 +75,9 @@ public class GoalController extends BaseModuleController implements Initializabl
         if (v.hasErrors()) {
             alert(Alert.AlertType.WARNING, "Input tidak valid", v.errorMessage());
             if (saveButton != null) saveButton.setDisable(true);
+
+        com.zenora.util.MoneyTextFormatter.attach(targetField);
+        com.zenora.util.MoneyTextFormatter.attach(capacityField);
             return;
         }
 
@@ -74,6 +86,10 @@ public class GoalController extends BaseModuleController implements Initializabl
         Goal g = new Goal(name.isEmpty() ? "Goal" : name, target, months, rate, 2);
         if (categoryChoice != null && categoryChoice.getValue() != null)
             g.setCategory(categoryChoice.getValue());
+        if (storageTypeChoice != null && storageTypeChoice.getValue() != null)
+            g.setStorageType(storageTypeChoice.getValue());
+        if (storageLocationField != null)
+            g.setStorageLocation(storageLocationField.getText().trim());
 
         if (targetDatePicker != null && targetDatePicker.getValue() != null)
             g.setTargetDate(targetDatePicker.getValue());
@@ -132,6 +148,9 @@ public class GoalController extends BaseModuleController implements Initializabl
 
         if (saveButton != null) saveButton.setDisable(true);
 
+        com.zenora.util.MoneyTextFormatter.attach(targetField);
+        com.zenora.util.MoneyTextFormatter.attach(capacityField);
+
         final Goal toSave = pendingGoal;
         pendingGoal = null;
 
@@ -180,14 +199,18 @@ public class GoalController extends BaseModuleController implements Initializabl
         double interestRate;
         int priority;
         String category;
+        String storageType;
+        String storageLocation;
 
         GoalRequest(Goal g) {
-            this.name         = g.getName();
-            this.targetAmount = g.getTargetAmount();
-            this.months       = g.getMonths();
-            this.interestRate = g.getInterestRate();
-            this.priority     = g.getPriority();
-            this.category     = g.getCategory() != null ? g.getCategory().name() : "UMUM";
+            this.name            = g.getName();
+            this.targetAmount    = g.getTargetAmount();
+            this.months          = g.getMonths();
+            this.interestRate    = g.getInterestRate();
+            this.priority        = g.getPriority();
+            this.category        = g.getCategory() != null ? g.getCategory().name() : "UMUM";
+            this.storageType     = g.getStorageType();
+            this.storageLocation = g.getStorageLocation();
         }
     }
 }

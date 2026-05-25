@@ -44,4 +44,13 @@ public interface GoalRepository extends JpaRepository<GoalEntity, String> {
     /** Hitung total tabungan saat ini dari semua goal. */
     @Query("SELECT COALESCE(SUM(g.currentSaving), 0) FROM GoalEntity g")
     Double sumAllCurrentSavings();
+    java.util.List<com.zenora.entity.GoalEntity> findByOwnerUsernameOrderByPriorityAsc(String ownerUsername);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(g.targetAmount), 0) FROM GoalEntity g WHERE g.ownerUsername = :owner")
+    Double sumTargetAmountsByOwner(@org.springframework.data.repository.query.Param("owner") String owner);
+
+    @org.springframework.data.jpa.repository.Query("SELECT COALESCE(SUM(g.currentSaving), 0) FROM GoalEntity g WHERE g.ownerUsername = :owner")
+    Double sumCurrentSavingsByOwner(@org.springframework.data.repository.query.Param("owner") String owner);
+
+    long countByOwnerUsername(String ownerUsername);
 }
