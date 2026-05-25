@@ -1,10 +1,14 @@
 package com.zenora.controller;
 
+import com.google.gson.JsonObject;
+import com.zenora.app.AppSession;
 import com.zenora.model.DataStore;
 import com.zenora.model.UserProfile;
+import com.zenora.service.ApiClient;
 import com.zenora.service.StorageService;
 import com.zenora.util.CurrencyFormatter;
 import com.zenora.util.SceneNavigator;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,6 +17,14 @@ import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * ProfileController — diperbarui untuk menyimpan profil ke REST API backend.
+ *
+ * Perubahan:
+ *   - save() → POST /api/profile (jika belum ada) atau PUT /api/profile/{id}
+ *   - Data profil dari backend diload di DashboardController (saat sync)
+ *   - Local DataStore tetap diupdate untuk kompatibilitas modul lain
+ */
 public class ProfileController extends BaseModuleController implements Initializable {
 
     @Override public String moduleTitle() { return "Profile"; }
@@ -67,6 +79,7 @@ public class ProfileController extends BaseModuleController implements Initializ
     @FXML
     private void save() {
         try {
+            // Update local DataStore
             UserProfile p = DataStore.getInstance().getProfile();
             p.setName(nameField.getText().trim());
             p.setAge(Integer.parseInt(ageField.getText().trim().isEmpty() ? "0" : ageField.getText().trim()));
@@ -77,10 +90,69 @@ public class ProfileController extends BaseModuleController implements Initializ
             p.setHouseholdStatus(statusChoice.getValue());
             p.setEmergencyMonths(emergencyMonthsChoice.getValue() == null ? 6 : emergencyMonthsChoice.getValue());
             StorageService.save();
-            new Alert(Alert.AlertType.INFORMATION, "Profil tersimpan permanen di " + StorageService.dataFile()).showAndWait();
+
+            // Build JSON body untuk API
+            ProfileRequest req = new ProfileRequest(p);
+
+            // Simpan ke backend di background thread
+            Thread thread = new Thread(() -> {
+                ApiClient.ApiResponse resp;
+                String profileId = AppSession.getInstance().getProfileId();
+
+                if (profileId != null && !profileId.isBlank()) {
+                    // Update profil yang sudah ada
+                    resp = ApiClient.put("/api/profile/" + profileId, req);
+                } else {
+                    // Buat profil baru
+                    resp = ApiClient.post("/api/profile", req);
+                    if (resp.isSuccess()) {
+                        try {
+                            JsonObject obj = ApiClient.parseObject(resp.body);
+                            if (obj.has("id")) {
+                                AppSession.getInstance().setProfileId(obj.get("id").getAsString());
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                }
+
+                final boolean ok = resp.isSuccess();
+                final String msg = ok ? "Profil tersimpan ke database." : "Tersimpan lokal. Backend: " + resp.errorMessage();
+
+                Platform.runLater(() -> {
+                    new Alert(ok ? Alert.AlertType.INFORMATION : Alert.AlertType.WARNING, msg).showAndWait();
+                    if (ok) {
+                        // Setelah profil tersimpan, lanjut ke Dashboard.
+                        SceneNavigator.navigateTo("/com/zenora/fxml/Dashboard.fxml");
+                    }
+                });
+            });
+            thread.setDaemon(true);
+            thread.start();
+
         } catch (Exception e) {
             new Alert(Alert.AlertType.ERROR, "Input tidak valid: " + e.getMessage()).showAndWait();
         }
     }
 
+    // ── Inner DTO ─────────────────────────────────────────────────────────
+
+    private static class ProfileRequest {
+        String name;
+        int age;
+        double monthlyIncome;
+        double monthlyExpense;
+        int emergencyMonths;
+        String householdStatus;
+        double inflationPct;
+
+        ProfileRequest(UserProfile p) {
+            this.name            = p.getName();
+            this.age             = p.getAge();
+            this.monthlyIncome   = p.getMonthlyIncome();
+            this.monthlyExpense  = p.getMonthlyExpense();
+            this.emergencyMonths = p.getEmergencyMonths();
+            this.householdStatus = p.getHouseholdStatus();
+            this.inflationPct    = p.getInflationPct();
+        }
+    }
 }
