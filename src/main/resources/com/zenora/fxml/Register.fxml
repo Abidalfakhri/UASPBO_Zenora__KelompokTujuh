@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.zenora.controller.RegisterController"
+           styleClass="zn-root"
+           prefWidth="1100" prefHeight="700">
+
+    <VBox alignment="CENTER" spacing="0">
+
+        <!-- Top accent bar -->
+        <Region minHeight="3" maxHeight="3"
+                style="-fx-background-color: linear-gradient(to right, #7C3AED, #4F46E5, #22D3EE); -fx-min-width: 9999;"/>
+
+        <HBox alignment="CENTER" VBox.vgrow="ALWAYS" fillHeight="true">
+
+            <!-- LEFT — Branding -->
+            <VBox alignment="CENTER_LEFT" spacing="0" minWidth="480" maxWidth="480"
+                  style="-fx-background-color: #0F1117; -fx-padding: 80 64;">
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Z" styleClass="zn-logo-mark"/>
+                    <Label text="Zenora" style="-fx-font-size:22px; -fx-font-weight:800; -fx-text-fill:#F0F0F6;"/>
+                </HBox>
+
+                <Region minHeight="60"/>
+
+                <Label text="Mulai perjalananmu"
+                       style="-fx-font-size:11px; -fx-font-weight:700; -fx-text-fill:#7C3AED;
+                              -fx-font-family:'Consolas',monospace; -fx-padding:0 0 14 0;"/>
+                <Label text="Daftar &amp; mulai rencanakan&#10;keuanganmu hari ini."
+                       wrapText="true"
+                       style="-fx-font-size:30px; -fx-font-weight:800; -fx-text-fill:#F0F0F6;
+                              -fx-line-spacing:6;"/>
+
+                <Region minHeight="24"/>
+                <Label text="Gratis. Tidak ada langganan.&#10;Data tersimpan aman di database lokal."
+                       wrapText="true"
+                       style="-fx-font-size:14px; -fx-text-fill:#6B7280; -fx-line-spacing:4;"/>
+
+                <Region minHeight="48"/>
+
+                <!-- Feature list -->
+                <VBox spacing="14">
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="✓" style="-fx-text-fill:#34D399; -fx-font-weight:800;"/>
+                        <Label text="Rencanakan tujuan tabungan dengan simulasi bunga"
+                               style="-fx-font-size:13px; -fx-text-fill:#9CA3AF;"/>
+                    </HBox>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="✓" style="-fx-text-fill:#34D399; -fx-font-weight:800;"/>
+                        <Label text="Hitung dana darurat sesuai kebutuhan rumah tangga"
+                               style="-fx-font-size:13px; -fx-text-fill:#9CA3AF;"/>
+                    </HBox>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="✓" style="-fx-text-fill:#34D399; -fx-font-weight:800;"/>
+                        <Label text="Proyeksi pensiun dengan inflasi dan return investasi"
+                               style="-fx-font-size:13px; -fx-text-fill:#9CA3AF;"/>
+                    </HBox>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="✓" style="-fx-text-fill:#34D399; -fx-font-weight:800;"/>
+                        <Label text="Ekspor laporan CSV kapan saja"
+                               style="-fx-font-size:13px; -fx-text-fill:#9CA3AF;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+
+            <!-- Divider -->
+            <Region minWidth="1" maxWidth="1"
+                    style="-fx-background-color: rgba(255,255,255,0.06);"
+                    VBox.vgrow="ALWAYS"/>
+
+            <!-- RIGHT — Register Form -->
+            <VBox alignment="CENTER" spacing="0" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color: #0F1117; -fx-padding: 60 64;">
+
+                <VBox maxWidth="380" spacing="0">
+
+                    <Label text="Buat akun baru"
+                           style="-fx-font-size:22px; -fx-font-weight:800; -fx-text-fill:#F0F0F6;"/>
+                    <Region minHeight="6"/>
+                    <Label text="Username minimal 3 karakter · Password minimal 6 karakter."
+                           wrapText="true"
+                           style="-fx-font-size:12px; -fx-text-fill:#6B7280;"/>
+
+                    <Region minHeight="28"/>
+
+                    <VBox spacing="0" styleClass="zn-panel">
+                        <padding><Insets top="28" right="28" bottom="28" left="28"/></padding>
+
+                        <!-- Username -->
+                        <Label text="USERNAME" styleClass="zn-field-label"/>
+                        <TextField fx:id="usernameField" promptText="Pilih username unikmu"
+                                   styleClass="zn-field" maxWidth="9999"/>
+
+                        <Region minHeight="14"/>
+
+                        <!-- Password -->
+                        <Label text="PASSWORD" styleClass="zn-field-label"/>
+                        <PasswordField fx:id="passwordField" promptText="Buat password (min. 6 karakter)"
+                                       styleClass="zn-field" maxWidth="9999"/>
+
+                        <Region minHeight="14"/>
+
+                        <!-- Confirm Password -->
+                        <Label text="KONFIRMASI PASSWORD" styleClass="zn-field-label"/>
+                        <PasswordField fx:id="confirmPasswordField" promptText="Ulangi password"
+                                       styleClass="zn-field" maxWidth="9999"/>
+
+                        <Region minHeight="8"/>
+
+                        <!-- Error label -->
+                        <Label fx:id="errorLabel" text=""
+                               style="-fx-font-size:11px; -fx-text-fill:#F87171; -fx-font-weight:600;"
+                               wrapText="true"/>
+
+                        <!-- Success label -->
+                        <Label fx:id="successLabel" text=""
+                               style="-fx-font-size:11px; -fx-text-fill:#34D399; -fx-font-weight:600;"/>
+
+                        <!-- Loading label -->
+                        <Label fx:id="loadingLabel" text="⟳  Mendaftarkan akun..."
+                               style="-fx-font-size:11px; -fx-text-fill:#818CF8; -fx-font-weight:600;"/>
+
+                        <Region minHeight="20"/>
+
+                        <!-- Register Button -->
+                        <Button fx:id="registerButton" text="Daftar &amp; Masuk →"
+                                styleClass="zn-btn-primary"
+                                maxWidth="9999" minHeight="42"
+                                onAction="#handleRegister"
+                                style="-fx-font-size:14px; -fx-font-weight:700;
+                                       -fx-background-color:linear-gradient(135deg,#7C3AED,#4F46E5);"/>
+                    </VBox>
+
+                    <Region minHeight="20"/>
+
+                    <!-- Login link -->
+                    <HBox alignment="CENTER" spacing="6">
+                        <Label text="Sudah punya akun?"
+                               style="-fx-font-size:12px; -fx-text-fill:#6B7280;"/>
+                        <Button text="Masuk di sini"
+                                onAction="#goToLogin"
+                                style="-fx-font-size:12px; -fx-text-fill:#818CF8; -fx-font-weight:600;
+                                       -fx-background-color:transparent; -fx-cursor:hand; -fx-padding:0;
+                                       -fx-border-color:transparent;"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</StackPane>
