@@ -21,6 +21,10 @@ public class UserProfileEntity extends BaseEntity {
     private Double monthlyCapacityOverride = 0.0;
     private Integer emergencyMonths = 6;
     private String householdStatus = "Single";
+
+    /** Username pemilik data — auto-diisi oleh API controller. */
+    @Column(name = "owner_username")
+    private String ownerUsername;
     private Double inflationPct = 3.5;
 
     // ── Constructors ───────────────────────────────────────────────────────
@@ -76,4 +80,6 @@ public class UserProfileEntity extends BaseEntity {
 
     public Double getInflationPct() { return inflationPct; }
     public void setInflationPct(Double v) { this.inflationPct = v; }
+    public String getOwnerUsername() { return ownerUsername; }
+    public void setOwnerUsername(String ownerUsername) { this.ownerUsername = ownerUsername; }
 }

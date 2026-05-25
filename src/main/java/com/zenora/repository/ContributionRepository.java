@@ -37,4 +37,7 @@ public interface ContributionRepository extends JpaRepository<ContributionEntity
     /** Kontribusi bulan ini. */
     @Query("SELECT c FROM ContributionEntity c WHERE MONTH(c.date) = MONTH(CURRENT_DATE) AND YEAR(c.date) = YEAR(CURRENT_DATE)")
     List<ContributionEntity> findThisMonthContributions();
+    java.util.List<com.zenora.entity.ContributionEntity> findByOwnerUsernameOrderByDateDesc(String ownerUsername);
+
+    java.util.List<com.zenora.entity.ContributionEntity> findByGoalIdAndOwnerUsernameOrderByDateDesc(String goalId, String ownerUsername);
 }

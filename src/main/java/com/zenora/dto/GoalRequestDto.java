@@ -37,6 +37,8 @@ public class GoalRequestDto {
     private Integer priority = 3;
 
     private String category = "UMUM";
+    private String storageType = "Bank";
+    private String storageLocation = "";
 
     // ── Getters & Setters (Encapsulation) ─────────────────────────────────
 
@@ -57,4 +59,10 @@ public class GoalRequestDto {
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
+
+    public String getStorageType() { return storageType; }
+    public void setStorageType(String v) { this.storageType = v; }
+
+    public String getStorageLocation() { return storageLocation; }
+    public void setStorageLocation(String v) { this.storageLocation = v; }
 }

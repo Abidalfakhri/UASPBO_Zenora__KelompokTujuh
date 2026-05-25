@@ -13,10 +13,10 @@
     </parent>
 
     <groupId>com.zenora</groupId>
-    <artifactId>Zenora</artifactId>
-    <version>5.0.0</version>
+    <artifactId>zenora</artifactId>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>Zenora — Modern Personal Finance Suite with Spring Boot</name>
+    <name>Zenora</name>
     <description>JavaFX finance app dengan Spring Boot REST API, H2 Database, JPA/Hibernate,
         Spring Security, Spring Validation, dan penerapan 4 pilar PBO.</description>
 

@@ -8,14 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * ✅ PR-3: REST API Controller untuk UserProfile.
- *
- * ✅ KETENTUAN — Spring Boot REST API + Spring Validation:
- *   GET  /api/profile       — ambil profil aktif
- *   POST /api/profile       — buat profil baru (jika belum ada)
- *   PUT  /api/profile/{id}  — update profil
- */
+
 @RestController
 @RequestMapping("/api/profile")
 @CrossOrigin(origins = "*")
@@ -30,7 +23,7 @@ public class UserProfileApiController {
     // ── GET /api/profile ───────────────────────────────────────────────────
     @GetMapping
     public ResponseEntity<UserProfileEntity> getProfile() {
-        return userProfileRepository.findFirstByOrderByCreatedAtAsc()
+        return userProfileRepository.findFirstByOwnerUsernameOrderByCreatedAtAsc(currentUser())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
@@ -40,7 +33,10 @@ public class UserProfileApiController {
     public ResponseEntity<UserProfileEntity> createProfile(
             @Valid @RequestBody UserProfileRequestDto req) {
 
-        UserProfileEntity entity = new UserProfileEntity();
+        String me = currentUser();
+        // Cegah duplikasi: kalau sudah ada profil milik user ini, update saja.
+        UserProfileEntity entity = userProfileRepository.findFirstByOwnerUsernameOrderByCreatedAtAsc(me).orElseGet(UserProfileEntity::new);
+        entity.setOwnerUsername(me);
         applyRequest(entity, req);
         UserProfileEntity saved = userProfileRepository.save(entity);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
@@ -52,7 +48,12 @@ public class UserProfileApiController {
             @PathVariable String id,
             @Valid @RequestBody UserProfileRequestDto req) {
 
+        String me = currentUser();
         return userProfileRepository.findById(id).map(entity -> {
+            if (entity.getOwnerUsername() != null && !entity.getOwnerUsername().equals(me)) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).<UserProfileEntity>build();
+            }
+            entity.setOwnerUsername(me);
             applyRequest(entity, req);
             return ResponseEntity.ok(userProfileRepository.save(entity));
         }).orElse(ResponseEntity.notFound().build());
@@ -67,5 +68,9 @@ public class UserProfileApiController {
         entity.setEmergencyMonths(req.getEmergencyMonths());
         entity.setHouseholdStatus(req.getHouseholdStatus());
         entity.setInflationPct(req.getInflationPct());
+    }
+    private static String currentUser() {
+        org.springframework.security.core.Authentication a = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        return (a == null || a.getName() == null) ? "anonymous" : a.getName();
     }
 }

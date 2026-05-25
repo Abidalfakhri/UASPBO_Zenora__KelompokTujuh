@@ -50,6 +50,11 @@ public class ProfileController extends BaseModuleController implements Initializ
         statusChoice.setValue(p.getHouseholdStatus());
         emergencyMonthsChoice.setValue(p.getEmergencyMonths());
 
+        com.zenora.util.MoneyTextFormatter.attach(incomeField);
+        com.zenora.util.MoneyTextFormatter.attach(expenseField);
+        com.zenora.util.MoneyTextFormatter.attach(capacityOverrideField);
+        // Load dari backend agar field terisi data tersimpan, bukan cache lokal.
+        loadProfileFromBackend();
         recompute();
         nameField.textProperty().addListener((o,a,b) -> recompute());
         incomeField.textProperty().addListener((o,a,b) -> recompute());
@@ -72,7 +77,7 @@ public class ProfileController extends BaseModuleController implements Initializ
     }
 
     private double parse(String s) {
-        try { return Double.parseDouble(s.trim().replace(",", "")); }
+        try { return com.zenora.util.MoneyTextFormatter.parse(s); }
         catch (Exception e) { return 0; }
     }
 
@@ -134,7 +139,42 @@ public class ProfileController extends BaseModuleController implements Initializ
         }
     }
 
+    /** Ambil profil milik user yang sedang login dari backend dan isi ke form. */
+    private void loadProfileFromBackend() {
+        Thread t = new Thread(() -> {
+            ApiClient.ApiResponse resp = ApiClient.get("/api/profile");
+            if (!resp.isSuccess() || resp.status == 204 || resp.body == null || resp.body.isBlank()) return;
+            try {
+                JsonObject obj = ApiClient.parseObject(resp.body);
+                UserProfile p = DataStore.getInstance().getProfile();
+                if (obj.has("id"))              AppSession.getInstance().setProfileId(obj.get("id").getAsString());
+                if (obj.has("name"))            p.setName(obj.get("name").getAsString());
+                if (obj.has("age"))             p.setAge(obj.get("age").getAsInt());
+                if (obj.has("monthlyIncome"))   p.setMonthlyIncome(obj.get("monthlyIncome").getAsDouble());
+                if (obj.has("monthlyExpense"))  p.setMonthlyExpense(obj.get("monthlyExpense").getAsDouble());
+                if (obj.has("emergencyMonths")) p.setEmergencyMonths(obj.get("emergencyMonths").getAsInt());
+                if (obj.has("householdStatus")) p.setHouseholdStatus(obj.get("householdStatus").getAsString());
+                if (obj.has("inflationPct"))    p.setInflationPct(obj.get("inflationPct").getAsDouble());
+
+                Platform.runLater(() -> {
+                    nameField.setText(p.getName());
+                    ageField.setText(String.valueOf(p.getAge()));
+                    incomeField.setText(p.getMonthlyIncome() == 0 ? "" : String.valueOf((long) p.getMonthlyIncome()));
+                    expenseField.setText(p.getMonthlyExpense() == 0 ? "" : String.valueOf((long) p.getMonthlyExpense()));
+                    capacityOverrideField.setText(p.getMonthlyCapacityOverride() == 0 ? "" : String.valueOf((long) p.getMonthlyCapacityOverride()));
+                    inflationField.setText(String.valueOf(p.getInflationPct()));
+                    statusChoice.setValue(p.getHouseholdStatus());
+                    emergencyMonthsChoice.setValue(p.getEmergencyMonths());
+                    recompute();
+                });
+            } catch (Exception ignored) {}
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
     // ── Inner DTO ─────────────────────────────────────────────────────────
+
 
     private static class ProfileRequest {
         String name;

@@ -33,7 +33,7 @@
                         maxWidth="Infinity" onAction="#openMulti"/>
                 <Button text="🛡  Dana Darurat" styleClass="zn-nav-item"
                         maxWidth="Infinity" onAction="#openEmergency"/>
-                <Button text="📈  Pensiun" styleClass="zn-nav-item"
+                <Button text="📈  Dana Pensiun" styleClass="zn-nav-item"
                         maxWidth="Infinity" onAction="#openRetirement"/>
 
                 <Label text="ANALYTICS" styleClass="zn-nav-section-label"/>
@@ -142,6 +142,24 @@
                             </VBox>
                         </GridPane>
 
+                        <!-- PENSION PROGRESS ROW -->
+                        <HBox spacing="14">
+                            <VBox styleClass="zn-panel" HBox.hgrow="ALWAYS" spacing="8">
+                                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="zn-panel-title-row">
+                                    <Label text="●" styleClass="zn-dot-indigo"/>
+                                    <Label text="Dana Pensiun" styleClass="zn-panel-title"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="pensionPctLabel" text="-" styleClass="zn-badge"/>
+                                </HBox>
+                                <ProgressBar fx:id="pensionProgress" prefWidth="99999" prefHeight="10" styleClass="zn-progress"/>
+                                <HBox alignment="CENTER_LEFT" spacing="6">
+                                    <Label fx:id="pensionSavedLabel" text="Terkumpul: -" styleClass="zn-stat-label"/>
+                                    <Label text=" / " styleClass="zn-stat-label"/>
+                                    <Label fx:id="pensionTargetLabel" text="Target: -" styleClass="zn-stat-label"/>
+                                </HBox>
+                            </VBox>
+                        </HBox>
+
                         <!-- OVERALL PROGRESS -->
                         <VBox styleClass="zn-panel" spacing="10">
                             <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
@@ -194,6 +212,7 @@
                                     <TableColumn fx:id="colGoalTarget" text="TARGET" prefWidth="180"/>
                                     <TableColumn fx:id="colGoalSaved" text="TERKUMPUL" prefWidth="180"/>
                                     <TableColumn fx:id="colGoalPct" text="PROGRESS" prefWidth="120"/>
+                                    <TableColumn fx:id="colGoalStorage" text="DISIMPAN DI" prefWidth="180"/>
                                 </columns>
                             </TableView>
                         </VBox>

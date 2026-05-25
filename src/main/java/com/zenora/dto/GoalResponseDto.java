@@ -22,6 +22,8 @@ public class GoalResponseDto {
     private Double progressPercent;
     private Double monthlySaving;
     private String createdAt;
+    private String storageType;
+    private String storageLocation;
 
     /** Factory method — konversi dari Entity ke DTO. */
     public static GoalResponseDto fromEntity(GoalEntity e) {
@@ -36,6 +38,8 @@ public class GoalResponseDto {
         dto.category        = e.getCategory();
         dto.monthlySaving   = e.getMonthlySaving();
         dto.createdAt       = e.getCreatedAt() != null ? e.getCreatedAt().toString() : null;
+        dto.storageType     = e.getStorageType();
+        dto.storageLocation = e.getStorageLocation();
         // Hitung progress percent
         if (e.getTargetAmount() != null && e.getTargetAmount() > 0 && e.getCurrentSaving() != null) {
             dto.progressPercent = Math.min(100.0, (e.getCurrentSaving() / e.getTargetAmount()) * 100);
@@ -58,4 +62,6 @@ public class GoalResponseDto {
     public Double getProgressPercent() { return progressPercent; }
     public Double getMonthlySaving() { return monthlySaving; }
     public String getCreatedAt() { return createdAt; }
+    public String getStorageType() { return storageType; }
+    public String getStorageLocation() { return storageLocation; }
 }

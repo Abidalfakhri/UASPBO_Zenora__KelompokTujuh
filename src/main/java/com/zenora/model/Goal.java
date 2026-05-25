@@ -10,6 +10,8 @@ public class Goal {
     private LocalDate createdAt = LocalDate.now();
     private LocalDate targetDate;
     private Category category = Category.UMUM;
+    private String storageType = "Bank";
+    private String storageLocation = "";
 
     private final transient StringProperty name = new SimpleStringProperty("");
     private final transient DoubleProperty targetAmount = new SimpleDoubleProperty(0);
@@ -40,6 +42,12 @@ public class Goal {
 
     public Category getCategory() { return category == null ? Category.UMUM : category; }
     public void setCategory(Category v) { this.category = v; }
+
+    public String getStorageType() { return storageType == null ? "Bank" : storageType; }
+    public void setStorageType(String v) { this.storageType = v; }
+
+    public String getStorageLocation() { return storageLocation == null ? "" : storageLocation; }
+    public void setStorageLocation(String v) { this.storageLocation = v; }
 
     public String getName() { return name.get(); }
     public void setName(String v) { name.set(v == null ? "" : v); }
