@@ -8,19 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * ✅ PR-2: Repository untuk GoalEntity.
- *
- * ✅ KETENTUAN — Repository Pattern:
- *   Interface ini memisahkan logika akses database dari logika bisnis.
- *   Service layer hanya perlu memanggil method di sini tanpa tahu SQL-nya.
- *
- * ✅ OOP PILAR — ABSTRACTION:
- *   JpaRepository menyembunyikan seluruh implementasi CRUD dari developer.
- *   Kita hanya perlu mendefinisikan interface, implementasinya otomatis.
- *
- * ✅ JPA/Hibernate — Query otomatis dari nama method (method naming convention).
- */
+
 @Repository
 public interface GoalRepository extends JpaRepository<GoalEntity, String> {
 

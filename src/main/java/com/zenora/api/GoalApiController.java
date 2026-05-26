@@ -13,22 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * ✅ PR-3: REST API Controller untuk Goal.
- *
- * ✅ KETENTUAN — REST API dengan Spring Boot:
- *   @RestController  = otomatis serialisasi respons ke JSON
- *   @RequestMapping  = prefix URL untuk semua endpoint di class ini
- *   @Valid           = trigger Bean Validation sebelum masuk method
- *
- * ✅ KETENTUAN — MVC Architecture:
- *   Controller → hanya handle request/response HTTP
- *   Tidak ada logika bisnis di sini → logika di Service (PR-2 pakai Repository)
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   GoalRepository disuntik via constructor injection.
- *   Controller tidak perlu tahu implementasi SQL-nya.
- */
+
 @RestController
 @RequestMapping("/api/goals")
 @CrossOrigin(origins = "*") // untuk JavaFX client
@@ -85,7 +70,6 @@ public class GoalApiController {
     }
 
     // ── PUT /api/goals/{id} ────────────────────────────────────────────────
-    /** Update goal yang sudah ada. */
     @PutMapping("/{id}")
     public ResponseEntity<GoalResponseDto> updateGoal(
             @PathVariable String id,

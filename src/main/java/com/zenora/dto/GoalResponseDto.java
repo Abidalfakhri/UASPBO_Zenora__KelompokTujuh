@@ -2,13 +2,7 @@ package com.zenora.dto;
 
 import com.zenora.entity.GoalEntity;
 
-/**
- * ✅ PR-3: DTO untuk response Goal ke client (JavaFX / Postman).
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   Tidak mengekspos GoalEntity langsung, hanya data yang diperlukan.
- *   Method fromEntity() sebagai factory/converter.
- */
+
 public class GoalResponseDto {
 
     private String id;

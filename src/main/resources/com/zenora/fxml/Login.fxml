@@ -8,7 +8,7 @@
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.zenora.controller.LoginController"
            style="-fx-background-color: linear-gradient(to bottom right, #0B0F19, #111827);"
-           prefWidth="1200"
+           prefWidth="1100" minWidth="780"
            prefHeight="760">
 
     <!-- Main Container -->

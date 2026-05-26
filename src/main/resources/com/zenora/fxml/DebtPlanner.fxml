@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.zenora.controller.DebtPlannerController"
+            prefWidth="1100" prefHeight="760"
+            minWidth="780"
+            styleClass="zn-root">
+    <top>
+        <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
+            <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
+            <VBox spacing="2">
+                <Label text="Debt Payoff Planner" styleClass="zn-page-title"/>
+                <Label text="MODUL 05 — KELOLA &amp; LUNASI HUTANG (SNOWBALL / AVALANCHE)" styleClass="zn-page-badge"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🔢  Hitung Rencana" styleClass="zn-btn-secondary" onAction="#calculate"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
+            <content>
+                <VBox spacing="16" styleClass="zn-body">
+
+                    <!-- RINGKASAN -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-indigo"/>
+                            <Label text="Ringkasan Hutang" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <HBox spacing="20" alignment="CENTER_LEFT">
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="TOTAL SISA HUTANG" styleClass="zn-stat-label"/>
+                                <Label fx:id="sumTotalDebt" text="Rp 0" styleClass="zn-stat-value zn-stat-red"/>
+                            </VBox>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="TOTAL MIN. / BULAN" styleClass="zn-stat-label"/>
+                                <Label fx:id="sumTotalMin" text="Rp 0" styleClass="zn-stat-value"/>
+                            </VBox>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="BUNGA / BULAN" styleClass="zn-stat-label"/>
+                                <Label fx:id="sumTotalInterest" text="Rp 0" styleClass="zn-stat-value zn-stat-amber"/>
+                            </VBox>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="TOTAL TERBAYAR" styleClass="zn-stat-label"/>
+                                <Label fx:id="sumTotalPaid" text="Rp 0" styleClass="zn-stat-value zn-stat-green"/>
+                            </VBox>
+                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                <Label text="STATUS" styleClass="zn-stat-label"/>
+                                <Label fx:id="sumActiveCount" text="0 aktif / 0 total" styleClass="zn-stat-value"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Form tambah hutang -->
+                    <VBox styleClass="zn-panel" spacing="0">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-amber"/>
+                            <Label text="Tambah Hutang" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <GridPane hgap="14" vgap="0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="32"/>
+                                <ColumnConstraints percentWidth="22"/>
+                                <ColumnConstraints percentWidth="18"/>
+                                <ColumnConstraints percentWidth="28"/>
+                            </columnConstraints>
+                            <Label text="NAMA HUTANG"        styleClass="zn-field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="SALDO (RP)"         styleClass="zn-field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <Label text="BUNGA TAHUNAN (%)"  styleClass="zn-field-label" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+                            <Label text="MIN. BAYAR / BLN"   styleClass="zn-field-label" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+
+                            <TextField fx:id="nameField"       styleClass="zn-field" promptText="KTA BCA, Kartu Kredit, ..." maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <TextField fx:id="balanceField"    styleClass="zn-field" promptText="15.000.000" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <TextField fx:id="aprField"        styleClass="zn-field" promptText="18"          maxWidth="Infinity" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                            <TextField fx:id="minPaymentField" styleClass="zn-field" promptText="500.000"     maxWidth="Infinity" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                        </GridPane>
+                        <Region minHeight="12"/>
+                        <HBox spacing="10">
+                            <Button text="+ Tambah Hutang"   styleClass="zn-btn-primary" onAction="#addDebt"/>
+                            <Button text="🗑  Hapus Terpilih" styleClass="zn-btn-danger"  onAction="#removeSelected"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Bersihkan Semua"   styleClass="zn-btn-secondary" onAction="#clearAll"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Tabel hutang -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-amber"/>
+                            <Label text="Daftar Hutang" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <TableView fx:id="debtTable" prefHeight="260" styleClass="zn-table">
+                            <placeholder>
+                                <VBox styleClass="zn-empty-state" alignment="CENTER" spacing="8">
+                                    <Label text="💳" styleClass="zn-empty-icon"/>
+                                    <Label text="Belum ada hutang" styleClass="zn-empty-title"/>
+                                    <Label text="Tambahkan minimal satu hutang lewat form di atas." styleClass="zn-empty-sub"/>
+                                </VBox>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="colName"     text="NAMA"            prefWidth="180"/>
+                                <TableColumn fx:id="colBalance"  text="SISA SALDO"      prefWidth="140"/>
+                                <TableColumn fx:id="colApr"      text="APR"             prefWidth="80"/>
+                                <TableColumn fx:id="colMin"      text="MIN. BAYAR"      prefWidth="130"/>
+                                <TableColumn fx:id="colInterest" text="BUNGA / BULAN"   prefWidth="130"/>
+                                <TableColumn fx:id="colPaid"     text="TERBAYAR"        prefWidth="130"/>
+                                <TableColumn fx:id="colStatus"   text="STATUS"          prefWidth="120"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+
+                    <!-- Setor pembayaran -->
+                    <VBox styleClass="zn-panel" spacing="0">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-green"/>
+                            <Label text="Setor Pembayaran" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <Label text="Pilih hutang di tabel di atas, masukkan nominal setoran, lalu klik 'Bayar'. Saldo akan otomatis berkurang."
+                               styleClass="zn-hint" wrapText="true"/>
+                        <Region minHeight="10"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label text="NOMINAL SETORAN (RP)" styleClass="zn-field-label"/>
+                            <TextField fx:id="paymentField" styleClass="zn-field" promptText="1.000.000" prefWidth="220"/>
+                            <Button text="💸  Bayar Hutang Terpilih" styleClass="zn-btn-primary" onAction="#payDebt"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Strategi -->
+                    <VBox styleClass="zn-panel" spacing="0">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-violet"/>
+                            <Label text="Strategi Pelunasan" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <GridPane hgap="14" vgap="0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="55"/>
+                                <ColumnConstraints percentWidth="45"/>
+                            </columnConstraints>
+                            <Label text="METODE" styleClass="zn-field-label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                            <Label text="DANA EKSTRA / BULAN (RP)" styleClass="zn-field-label" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                            <ChoiceBox fx:id="strategyChoice" styleClass="zn-choicebox" maxWidth="Infinity"
+                                       GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                            <TextField fx:id="extraField" styleClass="zn-field" promptText="0 = hanya minimum payment"
+                                       maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        </GridPane>
+                        <Label text="Snowball = lunasi saldo terkecil dulu (motivasi cepat). Avalanche = lunasi bunga tertinggi dulu (paling hemat)."
+                               styleClass="zn-hint" wrapText="true"/>
+                    </VBox>
+
+                    <!-- Hasil -->
+                    <VBox styleClass="zn-panel" spacing="10">
+                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="●" styleClass="zn-dot-green"/>
+                            <Label text="Rencana &amp; Perbandingan" styleClass="zn-panel-title"/>
+                        </HBox>
+                        <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                                  wrapText="true" editable="false" prefHeight="260"
+                                  promptText="Tambahkan hutang lalu klik 'Hitung Rencana' untuk melihat strategi pelunasan..."/>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

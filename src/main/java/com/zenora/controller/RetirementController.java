@@ -214,11 +214,11 @@ public class RetirementController extends BaseModuleController implements Initia
         if (goalStorageLabel != null) goalStorageLabel.setText(
                 retirementGoal.getStorageType() + " — " + retirementGoal.getStorageLocation());
         if (goalStatusLabel  != null) {
-            if (pct >= 1)         goalStatusLabel.setText("✅ Dana pensiun TERPENUHI! Luar biasa!");
-            else if (pct >= 0.75) goalStatusLabel.setText("🎯 Hampir sampai, pertahankan konsistensi!");
-            else if (pct >= 0.5)  goalStatusLabel.setText("⚡ Sudah setengah jalan, terus lanjutkan!");
-            else if (pct >= 0.25) goalStatusLabel.setText("📈 Progres bagus, jangan berhenti!");
-            else                  goalStatusLabel.setText("🌱 Baru mulai — konsistensi adalah kuncinya.");
+            if (pct >= 1)         goalStatusLabel.setText("Dana pensiun TERPENUHI! Luar biasa!");
+            else if (pct >= 0.75) goalStatusLabel.setText("Hampir sampai, pertahankan konsistensi!");
+            else if (pct >= 0.5)  goalStatusLabel.setText("Sudah setengah jalan, terus lanjutkan!");
+            else if (pct >= 0.25) goalStatusLabel.setText("Progres bagus, jangan berhenti!");
+            else                  goalStatusLabel.setText("Baru mulai — konsistensi adalah kuncinya.");
         }
 
         if (historyTable != null) {

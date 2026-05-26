@@ -9,11 +9,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.logging.Logger;
 
-/**
- * Centralised scene-switch helper.
- * Preserves stage size and maximised state across navigation.
- * Shows a user-facing error dialog on FXML load failure.
- */
+
 public final class SceneNavigator {
 
     private static final Logger LOG = AppLogger.get(SceneNavigator.class);

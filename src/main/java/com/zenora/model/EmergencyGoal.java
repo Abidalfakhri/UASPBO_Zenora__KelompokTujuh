@@ -2,10 +2,7 @@ package com.zenora.model;
 
 import com.zenora.service.FinancialCalculator;
 
-/**
- * Goal dana darurat — rumus: pengeluaran × bulan cakupan.
- * POLYMORPHISM — implementasi Calculable paling sederhana.
- */
+
 public class EmergencyGoal extends Goal implements Calculable {
 
     private final double monthlyExpense;

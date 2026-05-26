@@ -2,12 +2,6 @@ package com.zenora.entity;
 
 import jakarta.persistence.*;
 
-/**
- * ✅ PR-1: JPA Entity untuk tabel USER_PROFILES di H2 Database.
- *
- * ✅ OOP PILAR — INHERITANCE: extends BaseEntity.
- * ✅ OOP PILAR — ENCAPSULATION: field private, akses via getter/setter.
- */
 @Entity
 @Table(name = "user_profiles")
 public class UserProfileEntity extends BaseEntity {

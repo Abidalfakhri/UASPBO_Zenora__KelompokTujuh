@@ -3,12 +3,7 @@ package com.zenora.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-/**
- * ✅ PR-1: JPA Entity untuk tabel CONTRIBUTIONS di H2 Database.
- *
- * ✅ OOP PILAR — INHERITANCE: extends BaseEntity (id, timestamps otomatis).
- * ✅ OOP PILAR — ENCAPSULATION: field private, akses via getter/setter.
- */
+
 @Entity
 @Table(name = "contributions")
 public class ContributionEntity extends BaseEntity {

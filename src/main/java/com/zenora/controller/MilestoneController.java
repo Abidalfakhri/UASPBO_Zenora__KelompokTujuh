@@ -9,11 +9,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-public class MilestoneController extends BaseModuleController {
+public class MilestoneController extends BaseModuleController implements javafx.fxml.Initializable {
 
     @Override public String moduleTitle() { return "Milestone Roadmap"; }
     @FXML private TextField targetField, totalMonthsField, periodField, rateField;
     @FXML private TextArea resultArea;
+
+    @Override
+    public void initialize(java.net.URL u, java.util.ResourceBundle rb) {
+        com.zenora.util.MoneyTextFormatter.attach(targetField);
+    }
 
     @FXML
     private void generate() {

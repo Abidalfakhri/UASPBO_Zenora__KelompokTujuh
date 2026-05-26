@@ -14,20 +14,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
-/**
- * ✅ HTTP Client untuk komunikasi dengan Spring Boot REST API.
- *
- * Semua request ke /api/** otomatis menggunakan HTTP Basic Auth
- * dari AppSession yang sedang aktif.
- *
- * OOP PILAR — ABSTRACTION:
- *   Controller tidak perlu tahu detail HTTP connection management.
- *   Cukup panggil get(), post(), put(), delete() dengan path + body.
- *
- * OOP PILAR — ENCAPSULATION:
- *   Header Authorization ditambahkan secara internal — controller
- *   tidak pernah memegang kredensial secara langsung.
- */
+
 public final class ApiClient {
 
     private static final Logger LOG = java.util.logging.Logger.getLogger(ApiClient.class.getName());

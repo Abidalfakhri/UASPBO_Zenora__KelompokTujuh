@@ -3,10 +3,7 @@ package com.zenora.dto;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
-/**
- * ✅ PR-3: DTO untuk request Contribution.
- * ✅ KETENTUAN — Validation: @NotNull, @Positive memastikan data valid.
- */
+
 public class ContributionRequestDto {
 
     @NotBlank(message = "goalId tidak boleh kosong")

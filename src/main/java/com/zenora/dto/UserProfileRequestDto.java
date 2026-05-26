@@ -2,10 +2,7 @@ package com.zenora.dto;
 
 import jakarta.validation.constraints.*;
 
-/**
- * ✅ PR-3: DTO untuk request UserProfile.
- * ✅ KETENTUAN — Validation: semua field kritis divalidasi.
- */
+
 public class UserProfileRequestDto {
 
     @NotBlank(message = "Nama tidak boleh kosong")

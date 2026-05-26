@@ -16,8 +16,8 @@ public class ZenoraApplication {
         // ── 1. Jalankan Spring Boot di background thread ──────────────────
         Thread springThread = new Thread(() -> {
             springContext = SpringApplication.run(ZenoraApplication.class, args);
-            System.out.println("[Zenora] ✅ Spring Boot started on http://localhost:8080");
-            System.out.println("[Zenora] ✅ H2 Console: http://localhost:8080/h2-console");
+            System.out.println("[Zenora]  Spring Boot started on http://localhost:8080");
+            System.out.println("[Zenora]  H2 Console: http://localhost:8080/h2-console");
         });
         springThread.setDaemon(true); // mati saat JavaFX ditutup
         springThread.start();

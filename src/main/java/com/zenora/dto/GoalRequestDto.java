@@ -2,17 +2,7 @@ package com.zenora.dto;
 
 import jakarta.validation.constraints.*;
 
-/**
- * ✅ PR-3: DTO untuk request pembuatan/update Goal.
- *
- * ✅ KETENTUAN — Validation:
- *   Anotasi dari jakarta.validation memastikan input valid
- *   SEBELUM sampai ke Service/Repository.
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   Field private, diakses via getter/setter.
- *   Data transfer object tidak mengekspos entity langsung.
- */
+
 public class GoalRequestDto {
 
     @NotBlank(message = "Nama goal tidak boleh kosong")

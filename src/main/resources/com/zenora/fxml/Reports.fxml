@@ -5,7 +5,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.zenora.controller.ReportsController"
-            prefWidth="1280" prefHeight="820"
+            prefWidth="1100" prefHeight="720" minWidth="780"
             styleClass="zn-root">
     <top>
         <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">

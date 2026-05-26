@@ -8,14 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * ✅ PR-3: REST API Controller untuk UserProfile.
- *
- * ✅ KETENTUAN — Spring Boot REST API + Spring Validation:
- *   GET  /api/profile       — ambil profil aktif
- *   POST /api/profile       — buat profil baru (jika belum ada)
- *   PUT  /api/profile/{id}  — update profil
- */
+
 @RestController
 @RequestMapping("/api/profile")
 @CrossOrigin(origins = "*")

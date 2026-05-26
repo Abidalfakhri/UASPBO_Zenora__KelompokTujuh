@@ -6,11 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.*;
 
-/**
- * Application-wide logger backed by java.util.logging.
- * Log files are written to ~/.zenora/logs/zenora-YYYY-MM-DD.log.
- * Console handler mirrors SEVERE+ to stderr for visibility in terminals.
- */
+
 public final class AppLogger {
 
     private static final Logger ROOT = Logger.getLogger("com.zenora");

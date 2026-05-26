@@ -30,15 +30,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 
-/**
- * DashboardController — diperbarui untuk sinkronisasi dengan REST API backend.
- *
- * Perubahan:
- *   - initialize → load data dari /api/goals, /api/profile, /api/contributions
- *   - Data dimasukkan ke DataStore lokal agar modul lain tetap berjalan
- *   - Greeting menggunakan username dari AppSession
- *   - logout() → hapus sesi dan kembali ke Login.fxml
- */
+
 public class DashboardController implements Initializable {
 
     @FXML private Label greetingLabel, capacityLabel, savedLabel, targetLabel,
@@ -327,7 +319,7 @@ public class DashboardController implements Initializable {
     @FXML private void openContributions() { SceneNavigator.navigateTo("/com/zenora/fxml/Contribution.fxml"); }
     @FXML private void openReports()       { SceneNavigator.navigateTo("/com/zenora/fxml/Reports.fxml"); }
     @FXML private void openGoal()          { SceneNavigator.navigateTo("/com/zenora/fxml/Goal.fxml"); }
-    @FXML private void openMulti()         { SceneNavigator.navigateTo("/com/zenora/fxml/MultiGoal.fxml"); }
+    @FXML private void openDebtPlanner()   { SceneNavigator.navigateTo("/com/zenora/fxml/DebtPlanner.fxml"); }
     @FXML private void openEmergency()     { SceneNavigator.navigateTo("/com/zenora/fxml/Emergency.fxml"); }
     @FXML private void openRetirement()    { SceneNavigator.navigateTo("/com/zenora/fxml/Retirement.fxml"); }
     @FXML private void openWhatIf()        { SceneNavigator.navigateTo("/com/zenora/fxml/WhatIf.fxml"); }

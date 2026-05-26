@@ -6,15 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * ✅ PR-4: Repository untuk AppUser (Spring Security).
- *
- * ✅ KETENTUAN — Repository Pattern:
- *   Akses data user untuk keperluan autentikasi terpusat di sini.
- *
- * ✅ OOP — ABSTRACTION:
- *   JpaRepository menyembunyikan SQL di balik interface sederhana.
- */
+
 @Repository
 public interface AppUserRepository extends JpaRepository<AppUser, String> {
 

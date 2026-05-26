@@ -2,16 +2,7 @@ package com.zenora.app;
 
 import java.util.Base64;
 
-/**
- * ✅ Singleton — menyimpan sesi pengguna yang sedang login.
- *
- * Menyimpan username dan password (encoded) untuk dipakai sebagai
- * HTTP Basic Auth header pada setiap request ke backend REST API.
- *
- * OOP PILAR — ENCAPSULATION:
- *   Kredensial tidak bisa diakses langsung; hanya tersedia
- *   melalui getBasicAuthHeader() yang mengembalikan header siap pakai.
- */
+
 public final class AppSession {
 
     private static final AppSession INSTANCE = new AppSession();

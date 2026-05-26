@@ -7,7 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.zenora.controller.MainMenuController"
-            prefWidth="1280" prefHeight="820"
+            prefWidth="1100" prefHeight="720" minWidth="780"
             styleClass="fp-root">
 
     <top>
@@ -123,16 +123,16 @@
                             <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-purple"/></HBox>
                         </VBox>
 
-                        <!-- 05 Multi-Goal -->
+                        <!-- 05 Debt Payoff -->
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card" onMouseClicked="#openMulti">
+                              styleClass="fp-card" onMouseClicked="#openDebtPlanner">
                             <HBox alignment="CENTER_LEFT"><Label text="05" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
                             <Region minHeight="14"/>
-                            <Label text="📋" styleClass="fp-icon fp-icon-orange"/>
+                            <Label text="💳" styleClass="fp-icon fp-icon-orange"/>
                             <Region minHeight="14"/>
-                            <Label text="Multi-Goal Planning" styleClass="fp-card-title"/>
+                            <Label text="Debt Payoff Planner" styleClass="fp-card-title"/>
                             <Region minHeight="8"/>
-                            <Label text="Kelola beberapa goal finansial sekaligus dengan alokasi dan prioritas yang lebih jelas." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Rencanakan pelunasan hutang dengan strategi Snowball atau Avalanche, lengkap dengan estimasi waktu dan bunga." wrapText="true" styleClass="fp-card-desc"/>
                             <Region VBox.vgrow="ALWAYS"/>
                             <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-orange"/></HBox>
                         </VBox>

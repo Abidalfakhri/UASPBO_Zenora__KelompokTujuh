@@ -15,17 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-/**
- * ✅ PR-4: REST Controller untuk autentikasi (register & login).
- *
- * ✅ KETENTUAN — Security:
- *   POST /auth/register — daftarkan user baru
- *   POST /auth/login    — login (verifikasi username/password)
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   Logika encoding password disembunyikan oleh PasswordEncoder.
- *   Controller tidak tahu apakah pakai BCrypt atau algoritma lain.
- */
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")

@@ -14,9 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * ✅ Security Configuration
- */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -27,23 +25,21 @@ public class SecurityConfig {
         this.userDetailsService = userDetailsService;
     }
 
-    /**
-     * ✅ Security Filter Chain
-     */
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
 
-            // ✅ Disable CSRF untuk REST API + H2 Console
+            // Disable CSRF untuk REST API + H2 Console
             .csrf(csrf -> csrf.disable())
 
-            // ✅ H2 Console iframe support
+            // H2 Console iframe support
             .headers(headers ->
                 headers.frameOptions(frame -> frame.sameOrigin())
             )
 
-            // ✅ Authorization Rules
+            // Authorization Rules
             .authorizeHttpRequests(auth -> auth
 
                 // Public endpoints
@@ -66,17 +62,17 @@ public class SecurityConfig {
                 .permitAll()
             )
 
-            // ✅ BASIC AUTH
+            // BASIC AUTH
             .httpBasic(Customizer.withDefaults());
 
-        // ❌ HAPUS formLogin()
+        // HAPUS formLogin()
         // karena bentrok dengan REST API /auth/login
 
         return http.build();
     }
 
     /**
-     * ✅ BCrypt Password Encoder
+     * BCrypt Password Encoder
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -84,7 +80,7 @@ public class SecurityConfig {
     }
 
     /**
-     * ✅ Authentication Manager
+     * Authentication Manager
      */
     @Bean
     public AuthenticationManager authenticationManager(
@@ -94,7 +90,7 @@ public class SecurityConfig {
     }
 
     /**
-     * ✅ Seed default users
+     * Seed default users
      */
     @Bean
     public CommandLineRunner seedDefaultUsers(
@@ -114,7 +110,7 @@ public class SecurityConfig {
                 );
 
                 System.out.println(
-                    "[Security] ✅ Default admin dibuat: admin / admin123"
+                    "[Security]  Default admin dibuat: admin / admin123"
                 );
             }
 
@@ -129,7 +125,7 @@ public class SecurityConfig {
                 );
 
                 System.out.println(
-                    "[Security] ✅ Default user dibuat: user / user123"
+                    "[Security]  Default user dibuat: user / user123"
                 );
             }
         };

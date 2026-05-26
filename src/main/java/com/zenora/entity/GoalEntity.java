@@ -3,18 +3,7 @@ package com.zenora.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-/**
- * ✅ PR-1: JPA Entity untuk tabel GOALS di H2 Database.
- *
- * ✅ OOP PILAR — INHERITANCE:
- *   Mewarisi id, createdAt, updatedAt dari BaseEntity.
- *   Tidak perlu menulis ulang field audit.
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   Semua field private, diakses via getter/setter.
- *
- * Tabel ini dikelola otomatis oleh JPA/Hibernate (ddl-auto=create-drop).
- */
+
 @Entity
 @Table(name = "goals")
 public class GoalEntity extends BaseEntity {

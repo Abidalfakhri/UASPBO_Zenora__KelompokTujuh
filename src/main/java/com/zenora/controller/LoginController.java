@@ -11,19 +11,7 @@ import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * ✅ Controller untuk halaman Login.
- *
- * Flow:
- *   1. User masukkan username + password
- *   2. POST /auth/login ke Spring Boot backend
- *   3. Jika berhasil → simpan sesi di AppSession → navigasi ke Dashboard
- *   4. Jika gagal → tampilkan pesan error
- *
- * OOP PILAR — ENCAPSULATION:
- *   Kredensial tidak disimpan di field public — langsung dikirim
- *   ke AppSession setelah login berhasil.
- */
+
 public class LoginController implements Initializable {
 
     @FXML private TextField usernameField;

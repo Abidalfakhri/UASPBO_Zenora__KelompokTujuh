@@ -9,8 +9,8 @@ import com.zenora.service.FinancialCalculator;
 import com.zenora.service.RecommendationEngine;
 import com.zenora.util.CurrencyFormatter;
 import com.zenora.util.InputValidator;
-import com.zenora.util.SceneNavigator;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,14 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/**
- * GoalController — diperbarui untuk menyimpan goal ke REST API backend.
- *
- * Perubahan:
- *   - saveToMulti() → POST /api/goals setelah konfirmasi
- *   - ID dari backend disimpan ke Goal lokal agar bisa di-update/delete nanti
- *   - Jika backend tidak tersedia, fallback ke DataStore lokal
- */
+
 public class GoalController extends BaseModuleController implements Initializable {
 
     @Override public String moduleTitle() { return "Goal Planning"; }
@@ -40,8 +33,19 @@ public class GoalController extends BaseModuleController implements Initializabl
     @FXML private DatePicker targetDatePicker;
     @FXML private TextArea resultArea;
     @FXML private Button saveButton;
+    @FXML private Label editingLabel;
+
+    // ── Daftar goal tersimpan (edit/delete) ───────────────────────────────
+    @FXML private TableView<Goal> goalsTable;
+    @FXML private TableColumn<Goal, String> colName;
+    @FXML private TableColumn<Goal, String> colCategory;
+    @FXML private TableColumn<Goal, Number> colTarget;
+    @FXML private TableColumn<Goal, Number> colMonths;
+    @FXML private TableColumn<Goal, Number> colMonthly;
 
     private Goal pendingGoal;
+    /** Jika != null, mode EDIT pada goal ini (PUT, bukan POST). */
+    private Goal editingGoal;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -55,29 +59,48 @@ public class GoalController extends BaseModuleController implements Initializabl
             storageTypeChoice.setValue("Bank");
         }
         if (saveButton != null) saveButton.setDisable(true);
+        if (editingLabel != null) editingLabel.setVisible(false);
 
         com.zenora.util.MoneyTextFormatter.attach(targetField);
         com.zenora.util.MoneyTextFormatter.attach(capacityField);
 
         double cap = DataStore.getInstance().getProfile().effectiveCapacity();
         if (cap > 0 && capacityField != null) capacityField.setText(String.valueOf((long) cap));
+
+        // ── Goals table ───────────────────────────────────────────────────
+        if (goalsTable != null) {
+            if (colName     != null) colName.setCellValueFactory(c -> c.getValue().nameProperty());
+            if (colCategory != null) colCategory.setCellValueFactory(c ->
+                    new SimpleStringProperty(c.getValue().getCategory().getLabel()));
+            if (colTarget   != null) { colTarget.setCellValueFactory(c -> c.getValue().targetAmountProperty()); formatCurrency(colTarget); }
+            if (colMonths   != null) colMonths.setCellValueFactory(c -> c.getValue().monthsProperty());
+            if (colMonthly  != null) { colMonthly.setCellValueFactory(c -> c.getValue().monthlySavingProperty()); formatCurrency(colMonthly); }
+            goalsTable.setItems(DataStore.getInstance().getGoals());
+        }
     }
 
+    private void formatCurrency(TableColumn<Goal, Number> col) {
+        col.setCellFactory(c -> new TableCell<>() {
+            @Override protected void updateItem(Number v, boolean empty) {
+                super.updateItem(v, empty);
+                setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
+            }
+        });
+    }
+
+    // ── Calculate (hitung saja, belum simpan) ─────────────────────────────
     @FXML
     private void calculate() {
         InputValidator v = InputValidator.create();
         String  name     = nameField.getText().trim();
-        double  target   = v.positiveDouble(targetField.getText(),   "Target dana");
-        int     months   = v.positiveInt(monthsField.getText(),      "Jangka waktu (bulan)");
+        double  target   = v.positiveDouble(targetField.getText(),    "Target dana");
+        int     months   = v.positiveInt(monthsField.getText(),       "Jangka waktu (bulan)");
         double  rate     = v.nonNegativeDouble(rateField.getText(),   "Return tahunan (%)");
         double  capacity = v.positiveDouble(capacityField.getText(),  "Kapasitas menabung");
 
         if (v.hasErrors()) {
             alert(Alert.AlertType.WARNING, "Input tidak valid", v.errorMessage());
             if (saveButton != null) saveButton.setDisable(true);
-
-        com.zenora.util.MoneyTextFormatter.attach(targetField);
-        com.zenora.util.MoneyTextFormatter.attach(capacityField);
             return;
         }
 
@@ -95,6 +118,9 @@ public class GoalController extends BaseModuleController implements Initializabl
             g.setTargetDate(targetDatePicker.getValue());
         else
             g.setTargetDate(LocalDate.now().plusMonths(months));
+
+        // Jika sedang edit, pertahankan ID lama agar bisa PUT.
+        if (editingGoal != null) g.setId(editingGoal.getId());
 
         pendingGoal = g;
 
@@ -129,11 +155,14 @@ public class GoalController extends BaseModuleController implements Initializabl
         if (last >= 0 && (last % step) != (step - 1))
             sb.append(String.format("Bulan %3d : %s%n", last + 1, CurrencyFormatter.format(projection.get(last))));
 
-        sb.append("\nTekan \"Simpan\" untuk menyimpan goal ini ke database.");
+        sb.append(editingGoal != null
+                ? "\nTekan \"Simpan\" untuk memperbarui goal ini di database."
+                : "\nTekan \"Simpan\" untuk menyimpan goal ini ke database.");
         resultArea.setText(sb.toString());
         if (saveButton != null) saveButton.setDisable(false);
     }
 
+    // ── Save (POST kalau baru, PUT kalau edit) ────────────────────────────
     @FXML
     private void saveToMulti() {
         if (pendingGoal == null) {
@@ -141,46 +170,149 @@ public class GoalController extends BaseModuleController implements Initializabl
             return;
         }
 
+        boolean isEdit = editingGoal != null;
         Optional<ButtonType> confirm = new Alert(Alert.AlertType.CONFIRMATION,
-                "Simpan goal \"" + pendingGoal.getName() + "\" ke database?",
+                (isEdit ? "Perbarui goal \"" : "Simpan goal \"")
+                        + pendingGoal.getName() + "\" "
+                        + (isEdit ? "di" : "ke") + " database?",
                 ButtonType.YES, ButtonType.NO).showAndWait();
         if (confirm.isEmpty() || confirm.get() != ButtonType.YES) return;
 
         if (saveButton != null) saveButton.setDisable(true);
 
-        com.zenora.util.MoneyTextFormatter.attach(targetField);
-        com.zenora.util.MoneyTextFormatter.attach(capacityField);
-
         final Goal toSave = pendingGoal;
+        final Goal previousEditingRef = editingGoal;
         pendingGoal = null;
+        editingGoal = null;
 
-        // POST ke backend di background thread
         Thread thread = new Thread(() -> {
             GoalRequest req = new GoalRequest(toSave);
-            ApiClient.ApiResponse resp = ApiClient.post("/api/goals", req);
+            ApiClient.ApiResponse resp = isEdit
+                    ? ApiClient.put("/api/goals/" + toSave.getId(), req)
+                    : ApiClient.post("/api/goals", req);
 
             Platform.runLater(() -> {
                 if (resp.isSuccess()) {
-                    // Ambil ID yang digenerate backend dan simpan ke Goal lokal
-                    try {
-                        JsonObject obj = ApiClient.parseObject(resp.body);
-                        if (obj.has("id")) toSave.setId(obj.get("id").getAsString());
-                    } catch (Exception ignored) {}
-
-                    DataStore.getInstance().getGoals().add(toSave);
-                    alert(Alert.AlertType.INFORMATION, "Goal Tersimpan",
-                            "Goal '" + toSave.getName() + "' berhasil disimpan ke database.\n"
-                            + "Gunakan modul Contribution Log untuk mencatat setoran.");
+                    if (!isEdit) {
+                        try {
+                            JsonObject obj = ApiClient.parseObject(resp.body);
+                            if (obj.has("id")) toSave.setId(obj.get("id").getAsString());
+                        } catch (Exception ignored) {}
+                        DataStore.getInstance().getGoals().add(toSave);
+                    } else {
+                        replaceInStore(previousEditingRef, toSave);
+                    }
+                    clearForm();
+                    alert(Alert.AlertType.INFORMATION,
+                            isEdit ? "Goal Diperbarui" : "Goal Tersimpan",
+                            (isEdit ? "Goal '" : "Goal '") + toSave.getName()
+                                    + (isEdit ? "' berhasil diperbarui." : "' berhasil disimpan ke database."));
                 } else {
-                    // Fallback: simpan ke DataStore lokal saja
-                    DataStore.getInstance().getGoals().add(toSave);
+                    // Fallback lokal
+                    if (!isEdit) DataStore.getInstance().getGoals().add(toSave);
+                    else        replaceInStore(previousEditingRef, toSave);
+                    clearForm();
                     alert(Alert.AlertType.WARNING, "Tersimpan Lokal",
-                            "Goal disimpan lokal. Backend: " + resp.errorMessage());
+                            "Perubahan disimpan lokal. Backend: " + resp.errorMessage());
                 }
             });
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void replaceInStore(Goal oldRef, Goal newRef) {
+        var list = DataStore.getInstance().getGoals();
+        int idx = list.indexOf(oldRef);
+        if (idx >= 0) list.set(idx, newRef);
+        else list.add(newRef);
+    }
+
+    // ── Edit selected ─────────────────────────────────────────────────────
+    @FXML
+    private void editSelected() {
+        Goal sel = goalsTable == null ? null : goalsTable.getSelectionModel().getSelectedItem();
+        if (sel == null) {
+            alert(Alert.AlertType.INFORMATION, "Pilih goal",
+                    "Pilih dulu baris goal yang ingin diedit dari tabel.");
+            return;
+        }
+        editingGoal = sel;
+
+        nameField.setText(sel.getName());
+        targetField.setText(String.valueOf((long) sel.getTargetAmount()));
+        monthsField.setText(String.valueOf(sel.getMonths()));
+        rateField.setText(String.valueOf(sel.getInterestRate()));
+        if (categoryChoice != null && sel.getCategory() != null)
+            categoryChoice.setValue(sel.getCategory());
+        if (storageTypeChoice != null && sel.getStorageType() != null)
+            storageTypeChoice.setValue(sel.getStorageType());
+        if (storageLocationField != null)
+            storageLocationField.setText(sel.getStorageLocation());
+        if (targetDatePicker != null)
+            targetDatePicker.setValue(sel.getTargetDate());
+
+        if (editingLabel != null) {
+            editingLabel.setText("✎  Mode Edit: " + sel.getName() + "  — tekan Hitung lalu Simpan untuk update");
+            editingLabel.setVisible(true);
+        }
+        if (saveButton != null) saveButton.setDisable(true);
+        resultArea.setText("Mode edit aktif. Ubah field yang perlu, lalu klik 'Hitung' diikuti 'Simpan'.");
+    }
+
+    @FXML
+    private void cancelEdit() {
+        editingGoal = null;
+        pendingGoal = null;
+        clearForm();
+        if (saveButton != null) saveButton.setDisable(true);
+        resultArea.clear();
+    }
+
+    // ── Delete selected ───────────────────────────────────────────────────
+    @FXML
+    private void deleteSelected() {
+        Goal sel = goalsTable == null ? null : goalsTable.getSelectionModel().getSelectedItem();
+        if (sel == null) {
+            alert(Alert.AlertType.INFORMATION, "Pilih goal",
+                    "Pilih dulu baris goal yang ingin dihapus dari tabel.");
+            return;
+        }
+        Optional<ButtonType> confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Hapus goal \"" + sel.getName() + "\" dari database?\n"
+                        + "Tindakan ini tidak dapat dibatalkan.",
+                ButtonType.YES, ButtonType.NO).showAndWait();
+        if (confirm.isEmpty() || confirm.get() != ButtonType.YES) return;
+
+        final Goal toRemove = sel;
+        // Optimistically hapus dari UI, lalu sinkron ke backend
+        DataStore.getInstance().getGoals().remove(toRemove);
+        if (editingGoal == toRemove) cancelEdit();
+
+        Thread t = new Thread(() -> {
+            ApiClient.ApiResponse resp = ApiClient.delete("/api/goals/" + toRemove.getId());
+            Platform.runLater(() -> {
+                if (!resp.isSuccess()) {
+                    alert(Alert.AlertType.WARNING, "Hapus Lokal Saja",
+                            "Goal dihapus dari aplikasi, tapi backend gagal: "
+                                    + resp.errorMessage());
+                }
+            });
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void clearForm() {
+        if (nameField != null)            nameField.clear();
+        if (targetField != null)          targetField.clear();
+        if (monthsField != null)          monthsField.clear();
+        if (rateField != null)            rateField.clear();
+        if (storageLocationField != null) storageLocationField.clear();
+        if (categoryChoice != null)       categoryChoice.setValue(Category.UMUM);
+        if (storageTypeChoice != null)    storageTypeChoice.setValue("Bank");
+        if (targetDatePicker != null)     targetDatePicker.setValue(null);
+        if (editingLabel != null)         editingLabel.setVisible(false);
     }
 
     private void alert(Alert.AlertType type, String header, String content) {

@@ -4,20 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/**
- * ✅ PR-4: Entity untuk autentikasi pengguna (Spring Security).
- *
- * ✅ OOP PILAR — INHERITANCE:
- *   Extends BaseEntity (dari PR-1) → mewarisi id, createdAt, updatedAt.
- *   Tidak perlu menulis ulang field audit.
- *
- * ✅ OOP PILAR — ENCAPSULATION:
- *   Field password disimpan dalam bentuk encoded (BCrypt).
- *   Hanya bisa diakses via getter — tidak boleh di-set sembarangan.
- *
- * ✅ OOP PILAR — ABSTRACTION:
- *   Implementasi detail password encoding disembunyikan oleh SecurityConfig.
- */
+
 @Entity
 @Table(name = "app_users")
 public class AppUser extends BaseEntity {

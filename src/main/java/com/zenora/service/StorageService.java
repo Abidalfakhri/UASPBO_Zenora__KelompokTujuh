@@ -13,11 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Persists all DataStore state to {@code ~/.zenora/data.json}.
- * Writes a rolling backup ({@code data.bak.json}) before every save.
- * Uses type-safe ListChangeListeners and java.util.logging.
- */
+
 public class StorageService {
 
     private static final Logger LOG = AppLogger.get(StorageService.class);

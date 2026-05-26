@@ -7,14 +7,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-/**
- * Formatter ribuan untuk input uang ala Indonesia (1.000.000).
- *
- *   MoneyTextFormatter.attach(incomeField);
- *
- * - Saat user mengetik, titik ribuan otomatis muncul.
- * - {@link #parse(String)} dipakai oleh controller untuk membaca angka.
- */
+
 public final class MoneyTextFormatter {
 
     private static final DecimalFormatSymbols SYMS = new DecimalFormatSymbols(new Locale("id", "ID"));
@@ -30,7 +23,7 @@ public final class MoneyTextFormatter {
             String newText = change.getControlNewText();
             if (newText.isEmpty()) return change;
 
-            // Hanya digit (boleh ada titik dari formatter sebelumnya — diabaikan)
+           
             String digits = newText.replaceAll("[^0-9]", "");
             if (digits.isEmpty()) {
                 change.setText("");

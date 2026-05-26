@@ -17,7 +17,7 @@ public class MainMenuController {
     @FXML private void openGoal()         { SceneNavigator.navigateTo(BASE + "Goal.fxml"); }
     @FXML private void openEmergency()    { SceneNavigator.navigateTo(BASE + "Emergency.fxml"); }
     @FXML private void openWhatIf()       { SceneNavigator.navigateTo(BASE + "WhatIf.fxml"); }
-    @FXML private void openMulti()        { SceneNavigator.navigateTo(BASE + "MultiGoal.fxml"); }
+    @FXML private void openDebtPlanner()  { SceneNavigator.navigateTo(BASE + "DebtPlanner.fxml"); }
     @FXML private void openProgress()     { SceneNavigator.navigateTo(BASE + "Progress.fxml"); }
     @FXML private void openMilestone()    { SceneNavigator.navigateTo(BASE + "Milestone.fxml"); }
 

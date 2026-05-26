@@ -3,7 +3,7 @@ package com.zenora.model;
 /** Personal financial profile — single source of truth for income, expenses, capacity. */
 public class UserProfile {
     private String name = "";
-    private int age = 25;
+    private int age = 0;
     private double monthlyIncome = 0;
     private double monthlyExpense = 0;
     /** Override capacity; if 0 we derive it from income - expense. */

@@ -6,7 +6,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.zenora.controller.DashboardController"
-            prefWidth="1280" prefHeight="820"
+            prefWidth="1100" prefHeight="720" minWidth="780"
             styleClass="zn-root">
 
     <!-- SIDEBAR -->
@@ -29,8 +29,8 @@
                         maxWidth="Infinity" onAction="#stayDashboard"/>
                 <Button text="🎯  Goal Planning" styleClass="zn-nav-item"
                         maxWidth="Infinity" onAction="#openGoal"/>
-                <Button text="📋  Multi-Goal" styleClass="zn-nav-item"
-                        maxWidth="Infinity" onAction="#openMulti"/>
+                <Button text="💳  Debt Payoff" styleClass="zn-nav-item"
+                        maxWidth="Infinity" onAction="#openDebtPlanner"/>
                 <Button text="🛡  Dana Darurat" styleClass="zn-nav-item"
                         maxWidth="Infinity" onAction="#openEmergency"/>
                 <Button text="📈  Dana Pensiun" styleClass="zn-nav-item"

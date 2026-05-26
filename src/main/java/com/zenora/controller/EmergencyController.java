@@ -24,13 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * EmergencyController — kalkulator + goal tracker dana darurat.
- *
- * Optimasi: pengeluaran, status rumah tangga, kapasitas, dan target bulan
- * cakupan diambil OTOMATIS dari Profil (UserProfile) sehingga tidak ada
- * input ganda. User hanya dapat meng-override cakupan bulan jika perlu.
- */
+
 public class EmergencyController extends BaseModuleController implements Initializable {
 
     @Override public String moduleTitle() { return "Dana Darurat"; }
@@ -187,8 +181,8 @@ public class EmergencyController extends BaseModuleController implements Initial
         if (goalStorageLabel!= null) goalStorageLabel.setText(
                 emergencyGoal.getStorageType() + " — " + emergencyGoal.getStorageLocation());
         if (goalStatusLabel != null) {
-            if (pct >= 1) goalStatusLabel.setText("✅ Dana darurat TERPENUHI!");
-            else if (pct >= 0.5) goalStatusLabel.setText("⚡ Lebih dari setengah jalan, teruskan!");
+            if (pct >= 1) goalStatusLabel.setText(" Dana darurat TERPENUHI!");
+            else if (pct >= 0.5) goalStatusLabel.setText(" Lebih dari setengah jalan, teruskan!");
             else goalStatusLabel.setText("⚠ Dana darurat belum mencukupi, prioritaskan ini.");
         }
 

@@ -3,17 +3,7 @@ package com.zenora.util;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Centralised input-validation helper.
- * Collects multiple errors so the user sees all problems at once.
- *
- * <pre>
- *   var v = InputValidator.create();
- *   double amt = v.positiveDouble(amountField.getText(), "Nominal");
- *   int months  = v.positiveInt(monthsField.getText(), "Jangka waktu");
- *   v.throwIfInvalid();                 // throws if any error was collected
- * </pre>
- */
+
 public final class InputValidator {
 
     private final List<String> errors = new ArrayList<>();

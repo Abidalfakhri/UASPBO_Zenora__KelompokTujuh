@@ -9,11 +9,17 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
-public class WhatIfController extends BaseModuleController {
+public class WhatIfController extends BaseModuleController implements javafx.fxml.Initializable {
 
     @Override public String moduleTitle() { return "What-If Simulator"; }
     @FXML private TextField targetField, monthlyField, rateField;
     @FXML private TextArea resultArea;
+
+    @Override
+    public void initialize(java.net.URL u, java.util.ResourceBundle rb) {
+        com.zenora.util.MoneyTextFormatter.attach(targetField);
+        com.zenora.util.MoneyTextFormatter.attach(monthlyField);
+    }
 
     @FXML
     private void simulate() {

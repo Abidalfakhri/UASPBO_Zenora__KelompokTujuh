@@ -9,14 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * ✅ PR-2: Repository untuk ContributionEntity.
- *
- * ✅ KETENTUAN — Repository Pattern:
- *   Memisahkan akses data kontribusi dari logika bisnis di Service.
- *
- * ✅ JPA/Hibernate — Query dengan JPQL dan method naming.
- */
+
 @Repository
 public interface ContributionRepository extends JpaRepository<ContributionEntity, String> {
 

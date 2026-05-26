@@ -11,6 +11,7 @@ public enum Category {
     PENSIUN("Pensiun"),
     INVESTASI("Investasi"),
     GADGET("Gadget / Elektronik"),
+    HUTANG("Hutang / Pinjaman"),
     LAINNYA("Lainnya");
 
     private final String label;

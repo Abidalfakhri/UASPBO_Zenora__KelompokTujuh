@@ -13,13 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ✅ PR-3: REST API Controller untuk Contribution.
- *
- * ✅ KETENTUAN — Spring Boot REST API + Validation:
- *   Setiap POST wajib lolos @Valid sebelum diproses.
- *   Saat kontribusi ditambah, currentSaving di GoalEntity otomatis diperbarui.
- */
 @RestController
 @RequestMapping("/api/contributions")
 @CrossOrigin(origins = "*")

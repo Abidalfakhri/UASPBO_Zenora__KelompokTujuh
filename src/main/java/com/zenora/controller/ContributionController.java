@@ -20,14 +20,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/**
- * ContributionController — diperbarui untuk menyimpan/hapus kontribusi ke backend.
- *
- * Perubahan:
- *   - addContribution() → POST /api/contributions
- *   - removeSelected()  → DELETE /api/contributions/{id}
- *   - Jika backend tidak tersedia, fallback ke DataStore lokal
- */
+
 public class ContributionController extends BaseModuleController implements Initializable {
 
     @Override public String moduleTitle() { return "Contribution Log"; }

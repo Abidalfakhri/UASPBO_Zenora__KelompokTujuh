@@ -17,14 +17,7 @@ import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * ProfileController — diperbarui untuk menyimpan profil ke REST API backend.
- *
- * Perubahan:
- *   - save() → POST /api/profile (jika belum ada) atau PUT /api/profile/{id}
- *   - Data profil dari backend diload di DashboardController (saat sync)
- *   - Local DataStore tetap diupdate untuk kompatibilitas modul lain
- */
+
 public class ProfileController extends BaseModuleController implements Initializable {
 
     @Override public String moduleTitle() { return "Profile"; }

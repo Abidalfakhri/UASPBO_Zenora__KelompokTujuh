@@ -5,6 +5,7 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.zenora.controller.GoalController"
             prefWidth="1080" prefHeight="760"
+            minWidth="780"
             styleClass="zn-root">
     <top>
         <HBox styleClass="zn-topbar" alignment="CENTER_LEFT" spacing="14">
@@ -18,51 +19,90 @@
     <center>
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
             <content>
-                <HBox spacing="16" styleClass="zn-body" fillHeight="true" maxWidth="Infinity">
-                    <!-- INPUT -->
-                    <VBox spacing="0" styleClass="zn-panel" prefWidth="400" HBox.hgrow="ALWAYS">
+                <VBox spacing="16" styleClass="zn-body">
+
+                    <Label fx:id="editingLabel" styleClass="zn-hint"
+                           style="-fx-text-fill:#FBBF24; -fx-font-weight:700;"
+                           managed="true" visible="false"/>
+
+                    <HBox spacing="16" fillHeight="true" maxWidth="Infinity">
+                        <!-- INPUT -->
+                        <VBox spacing="0" styleClass="zn-panel" prefWidth="400" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-violet"/>
+                                <Label text="Input Goal" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <Label text="NAMA TUJUAN" styleClass="zn-field-label"/>
+                            <TextField fx:id="nameField" styleClass="zn-field" promptText="contoh: Beli laptop" maxWidth="Infinity"/>
+                            <Label text="KATEGORI" styleClass="zn-field-label"/>
+                            <ChoiceBox fx:id="categoryChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                            <Label text="TARGET DANA (RP)" styleClass="zn-field-label"/>
+                            <TextField fx:id="targetField" styleClass="zn-field" promptText="contoh: 20000000" maxWidth="Infinity"/>
+                            <Label text="JANGKA WAKTU (BULAN)" styleClass="zn-field-label"/>
+                            <TextField fx:id="monthsField" styleClass="zn-field" promptText="contoh: 12" maxWidth="Infinity"/>
+                            <Label text="TARGET SELESAI (opsional)" styleClass="zn-field-label"/>
+                            <DatePicker fx:id="targetDatePicker" maxWidth="Infinity"/>
+                            <Label text="Jika diisi, jangka waktu dihitung dari tanggal ini." styleClass="zn-hint"/>
+                            <Label text="RETURN INVESTASI (% / TAHUN)" styleClass="zn-field-label"/>
+                            <TextField fx:id="rateField" styleClass="zn-field" promptText="0 = tabungan biasa" maxWidth="Infinity"/>
+                            <Label text="JENIS PENYIMPANAN" styleClass="zn-field-label"/>
+                            <ChoiceBox fx:id="storageTypeChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
+                            <Label text="Pilih jenis tempat menyimpan dana goal ini." styleClass="zn-hint"/>
+                            <Label text="NAMA BANK / E-WALLET / INSTITUSI" styleClass="zn-field-label"/>
+                            <TextField fx:id="storageLocationField" styleClass="zn-field" promptText="contoh: BCA, GoPay, Bibit, dll." maxWidth="Infinity"/>
+                            <Region minHeight="8"/>
+                            <Label text="KAPASITAS MENABUNG / BULAN (RP)" styleClass="zn-field-label"/>
+                            <TextField fx:id="capacityField" styleClass="zn-field" promptText="dari profil Anda" maxWidth="Infinity"/>
+                            <Region minHeight="16"/>
+                            <HBox spacing="10">
+                                <Button text="🔢  Hitung" styleClass="zn-btn-secondary" onAction="#calculate" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                <Button fx:id="saveButton" text="💾  Simpan" styleClass="zn-btn-primary" onAction="#saveToMulti" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            </HBox>
+                            <Region minHeight="6"/>
+                            <Button text="✕  Batal Edit" styleClass="zn-btn-secondary" onAction="#cancelEdit" maxWidth="Infinity"/>
+                        </VBox>
+                        <!-- RESULT -->
+                        <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
+                                <Label text="●" styleClass="zn-dot-violet"/>
+                                <Label text="Hasil &amp; Rekomendasi" styleClass="zn-panel-title"/>
+                            </HBox>
+                            <TextArea fx:id="resultArea" styleClass="zn-result-area"
+                                      wrapText="true" editable="false"
+                                      VBox.vgrow="ALWAYS" promptText="Isi form dan klik Hitung..."/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- DAFTAR GOAL: edit / delete -->
+                    <VBox styleClass="zn-panel" spacing="10">
                         <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
-                            <Label text="●" styleClass="zn-dot-violet"/>
-                            <Label text="Input Goal Baru" styleClass="zn-panel-title"/>
+                            <Label text="●" styleClass="zn-dot-amber"/>
+                            <Label text="Goal Tersimpan" styleClass="zn-panel-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="✎  Edit Terpilih"   styleClass="zn-btn-secondary" onAction="#editSelected"/>
+                            <Button text="🗑  Hapus Terpilih" styleClass="zn-btn-danger"    onAction="#deleteSelected"/>
                         </HBox>
-                        <Label text="NAMA TUJUAN" styleClass="zn-field-label"/>
-                        <TextField fx:id="nameField" styleClass="zn-field" promptText="contoh: Beli laptop" maxWidth="Infinity"/>
-                        <Label text="KATEGORI" styleClass="zn-field-label"/>
-                        <ChoiceBox fx:id="categoryChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
-                        <Label text="TARGET DANA (RP)" styleClass="zn-field-label"/>
-                        <TextField fx:id="targetField" styleClass="zn-field" promptText="contoh: 20000000" maxWidth="Infinity"/>
-                        <Label text="JANGKA WAKTU (BULAN)" styleClass="zn-field-label"/>
-                        <TextField fx:id="monthsField" styleClass="zn-field" promptText="contoh: 12" maxWidth="Infinity"/>
-                        <Label text="TARGET SELESAI (opsional)" styleClass="zn-field-label"/>
-                        <DatePicker fx:id="targetDatePicker" maxWidth="Infinity"/>
-                        <Label text="Jika diisi, jangka waktu dihitung dari tanggal ini." styleClass="zn-hint"/>
-                        <Label text="RETURN INVESTASI (% / TAHUN)" styleClass="zn-field-label"/>
-                        <TextField fx:id="rateField" styleClass="zn-field" promptText="0 = tabungan biasa" maxWidth="Infinity"/>
-                        <Label text="JENIS PENYIMPANAN" styleClass="zn-field-label"/>
-                        <ChoiceBox fx:id="storageTypeChoice" styleClass="zn-choicebox" maxWidth="Infinity"/>
-                        <Label text="Pilih jenis tempat menyimpan dana goal ini." styleClass="zn-hint"/>
-                        <Label text="NAMA BANK / E-WALLET / INSTITUSI" styleClass="zn-field-label"/>
-                        <TextField fx:id="storageLocationField" styleClass="zn-field" promptText="contoh: BCA, GoPay, Bibit, dll." maxWidth="Infinity"/>
-                        <Region minHeight="8"/>
-                        <Label text="KAPASITAS MENABUNG / BULAN (RP)" styleClass="zn-field-label"/>
-                        <TextField fx:id="capacityField" styleClass="zn-field" promptText="dari profil Anda" maxWidth="Infinity"/>
-                        <Region minHeight="16"/>
-                        <HBox spacing="10">
-                            <Button text="🔢  Hitung" styleClass="zn-btn-secondary" onAction="#calculate" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                            <Button fx:id="saveButton" text="💾  Simpan" styleClass="zn-btn-primary" onAction="#saveToMulti" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-                        </HBox>
+                        <TableView fx:id="goalsTable" prefHeight="240" styleClass="zn-table">
+                            <placeholder>
+                                <VBox styleClass="zn-empty-state" alignment="CENTER" spacing="8">
+                                    <Label text="🎯" styleClass="zn-empty-icon"/>
+                                    <Label text="Belum ada goal tersimpan" styleClass="zn-empty-title"/>
+                                    <Label text="Hitung &amp; Simpan goal pertamamu menggunakan form di atas." styleClass="zn-empty-sub"/>
+                                </VBox>
+                            </placeholder>
+                            <columns>
+                                <TableColumn fx:id="colName"     text="NAMA"     prefWidth="220"/>
+                                <TableColumn fx:id="colCategory" text="KATEGORI" prefWidth="140"/>
+                                <TableColumn fx:id="colTarget"   text="TARGET"   prefWidth="170"/>
+                                <TableColumn fx:id="colMonths"   text="BULAN"    prefWidth="80"/>
+                                <TableColumn fx:id="colMonthly"  text="BULANAN"  prefWidth="170"/>
+                            </columns>
+                        </TableView>
+                        <Label text="Pilih satu baris lalu klik Edit untuk mengubah, atau Hapus untuk menghilangkannya."
+                               styleClass="zn-hint"/>
                     </VBox>
-                    <!-- RESULT -->
-                    <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
-                        <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
-                            <Label text="●" styleClass="zn-dot-violet"/>
-                            <Label text="Hasil &amp; Rekomendasi" styleClass="zn-panel-title"/>
-                        </HBox>
-                        <TextArea fx:id="resultArea" styleClass="zn-result-area"
-                                  wrapText="true" editable="false"
-                                  VBox.vgrow="ALWAYS" promptText="Isi form dan klik Hitung..."/>
-                    </VBox>
-                </HBox>
+
+                </VBox>
             </content>
         </ScrollPane>
     </center>

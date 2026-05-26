@@ -11,16 +11,7 @@ import javafx.scene.control.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-/**
- * ✅ Controller untuk halaman Register.
- *
- * Flow:
- *   1. User masukkan username + password + konfirmasi password
- *   2. Validasi lokal (password match, panjang minimum)
- *   3. POST /auth/register ke Spring Boot backend
- *   4. Jika berhasil → simpan sesi → navigasi ke Dashboard
- *   5. Jika gagal (username sudah dipakai) → tampilkan pesan error
- */
+
 public class RegisterController implements Initializable {
 
     @FXML private TextField usernameField;
