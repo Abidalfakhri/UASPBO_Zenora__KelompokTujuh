@@ -33,4 +33,8 @@ public interface ContributionRepository extends JpaRepository<ContributionEntity
     java.util.List<com.zenora.entity.ContributionEntity> findByOwnerUsernameOrderByDateDesc(String ownerUsername);
 
     java.util.List<com.zenora.entity.ContributionEntity> findByGoalIdAndOwnerUsernameOrderByDateDesc(String goalId, String ownerUsername);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByOwnerUsername(String ownerUsername);
 }

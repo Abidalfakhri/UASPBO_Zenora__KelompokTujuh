@@ -15,6 +15,7 @@
                 <Label text="DATA KEUANGAN PRIBADI" styleClass="zn-page-badge"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
+            <Button text="🗑  Hapus Akun" styleClass="zn-btn-danger" onAction="#deleteAccount"/>
             <Button text="💾  Simpan Profil" styleClass="zn-btn-primary" onAction="#save"/>
         </HBox>
     </top>

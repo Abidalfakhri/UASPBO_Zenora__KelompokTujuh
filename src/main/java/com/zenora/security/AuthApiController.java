@@ -2,15 +2,22 @@ package com.zenora.security;
 
 import com.zenora.entity.AppUser;
 import com.zenora.repository.AppUserRepository;
+import com.zenora.repository.ContributionRepository;
+import com.zenora.repository.DebtRepository;
+import com.zenora.repository.GoalRepository;
+import com.zenora.repository.UserProfileRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -23,13 +30,25 @@ public class AuthApiController {
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final UserProfileRepository userProfileRepository;
+    private final GoalRepository goalRepository;
+    private final DebtRepository debtRepository;
+    private final ContributionRepository contributionRepository;
 
     public AuthApiController(AppUserRepository userRepository,
                              PasswordEncoder passwordEncoder,
-                             AuthenticationManager authenticationManager) {
-        this.userRepository        = userRepository;
-        this.passwordEncoder       = passwordEncoder;
-        this.authenticationManager = authenticationManager;
+                             AuthenticationManager authenticationManager,
+                             UserProfileRepository userProfileRepository,
+                             GoalRepository goalRepository,
+                             DebtRepository debtRepository,
+                             ContributionRepository contributionRepository) {
+        this.userRepository         = userRepository;
+        this.passwordEncoder        = passwordEncoder;
+        this.authenticationManager  = authenticationManager;
+        this.userProfileRepository  = userProfileRepository;
+        this.goalRepository         = goalRepository;
+        this.debtRepository         = debtRepository;
+        this.contributionRepository = contributionRepository;
     }
 
     // ── POST /auth/register ────────────────────────────────────────────────
@@ -67,6 +86,49 @@ public class AuthApiController {
         }
     }
 
+    // ── DELETE /auth/account ───────────────────────────────────────────────
+    /** Hapus akun user yang sedang login + semua datanya (profil, goal, debt, contribution). */
+    @DeleteMapping("/account")
+    @PreAuthorize("isAuthenticated()")
+    @Transactional
+    public ResponseEntity<?> deleteAccount(@RequestBody(required = false) DeleteAccountRequest req) {
+        String me = currentUsername();
+        if (me == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Tidak ada sesi aktif"));
+        }
+
+        AppUser user = userRepository.findByUsername(me).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "User tidak ditemukan"));
+        }
+
+        // Konfirmasi password (kalau dikirim) — direkomendasikan untuk keamanan.
+        if (req != null && req.getPassword() != null && !req.getPassword().isBlank()) {
+            if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Password salah"));
+            }
+        }
+
+        // Hapus data terkait dulu (FK-safe order).
+        contributionRepository.deleteByOwnerUsername(me);
+        debtRepository.deleteByOwnerUsername(me);
+        goalRepository.deleteByOwnerUsername(me);
+        userProfileRepository.deleteByOwnerUsername(me);
+        userRepository.delete(user);
+
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(Map.of("message", "Akun berhasil dihapus"));
+    }
+
+    private static String currentUsername() {
+        org.springframework.security.core.Authentication a = SecurityContextHolder.getContext().getAuthentication();
+        if (a == null || !a.isAuthenticated() || "anonymousUser".equals(a.getName())) return null;
+        return a.getName();
+    }
+
     // ── Inner DTOs ─────────────────────────────────────────────────────────
 
     public static class RegisterRequest {
@@ -83,6 +145,12 @@ public class AuthApiController {
         @NotBlank private String password;
         public String getUsername() { return username; }
         public void setUsername(String v) { this.username = v; }
+        public String getPassword() { return password; }
+        public void setPassword(String v) { this.password = v; }
+    }
+
+    public static class DeleteAccountRequest {
+        private String password;
         public String getPassword() { return password; }
         public void setPassword(String v) { this.password = v; }
     }

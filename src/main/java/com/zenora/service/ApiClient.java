@@ -50,6 +50,11 @@ public final class ApiClient {
         return request("DELETE", path, null, false);
     }
 
+    /** Generic request dengan body (mis. DELETE /auth/account dengan password). */
+    public static ApiResponse requestWithBody(String method, String path, Object body) {
+        return request(method, path, body == null ? null : GSON.toJson(body), false);
+    }
+
     // ── Internal ──────────────────────────────────────────────────────────
 
     private static ApiResponse request(String method, String path,

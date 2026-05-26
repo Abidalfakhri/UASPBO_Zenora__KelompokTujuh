@@ -10,13 +10,16 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final AppUserDetailsService userDetailsService;
@@ -39,15 +42,22 @@ public class SecurityConfig {
                 headers.frameOptions(frame -> frame.sameOrigin())
             )
 
+            // Stateless API — Basic Auth, jangan buat HTTP session
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
             // Authorization Rules
             .authorizeHttpRequests(auth -> auth
 
-                // Public endpoints
+                // Endpoint publik (register & login saja)
                 .requestMatchers(
-                    "/auth/**",
+                    "/auth/register",
+                    "/auth/login",
                     "/h2-console/**",
                     "/api/public/**"
                 ).permitAll()
+
+                // Endpoint /auth/account (hapus akun, dll) wajib login
+                .requestMatchers("/auth/account").authenticated()
 
                 // Admin only
                 .requestMatchers("/api/admin/**")

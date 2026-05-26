@@ -19,6 +19,9 @@ public class UserProfileRequestDto {
     @Min(value = 0, message = "Pengeluaran tidak boleh negatif")
     private Double monthlyExpense;
 
+    @Min(value = 0, message = "Override kapasitas tidak boleh negatif")
+    private Double monthlyCapacityOverride = 0.0;
+
     private Integer emergencyMonths = 6;
     private String householdStatus  = "Single";
 
@@ -39,6 +42,9 @@ public class UserProfileRequestDto {
 
     public Double getMonthlyExpense() { return monthlyExpense; }
     public void setMonthlyExpense(Double v) { this.monthlyExpense = v; }
+
+    public Double getMonthlyCapacityOverride() { return monthlyCapacityOverride; }
+    public void setMonthlyCapacityOverride(Double v) { this.monthlyCapacityOverride = v; }
 
     public Integer getEmergencyMonths() { return emergencyMonths; }
     public void setEmergencyMonths(Integer v) { this.emergencyMonths = v; }

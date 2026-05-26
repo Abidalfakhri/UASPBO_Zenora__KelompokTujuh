@@ -195,8 +195,15 @@ public class DashboardController implements Initializable {
         capacityLabel.setText(capStr);
         if (sidebarCapLabel != null) sidebarCapLabel.setText("Kapasitas: " + capStr);
 
+        // Progress agregat HANYA goal reguler (di luar DARURAT & PENSIUN — keduanya
+        // sudah punya panel sendiri dan nominalnya cenderung sangat besar sehingga
+        // membuat persentase total selalu kelihatan kecil/menyesatkan).
         double totalSaved = 0, totalTarget = 0;
         for (Goal g : ds.getGoals()) {
+            if (g.getCategory() != null) {
+                String catName = g.getCategory().name();
+                if (catName.equals("DARURAT") || catName.equals("PENSIUN")) continue;
+            }
             totalSaved += g.getCurrentSaving();
             totalTarget += g.getTargetAmount();
         }
@@ -207,7 +214,6 @@ public class DashboardController implements Initializable {
         progressLabel.setText(String.format("%.1f%%", pct * 100));
 
         // PENTING: jangan hapus "progress-bar" — itu class default skin JavaFX.
-        // Tanpa class itu, selector .progress-bar > .bar tidak match → bar isi tidak tergambar.
         if (pct >= 0.8) overallProgress.getStyleClass().setAll("progress-bar", "zn-progress", "zn-progress-green");
         else if (pct >= 0.4) overallProgress.getStyleClass().setAll("progress-bar", "zn-progress");
         else overallProgress.getStyleClass().setAll("progress-bar", "zn-progress", "zn-progress-amber");
@@ -253,10 +259,15 @@ public class DashboardController implements Initializable {
                 pensionTargetLabel.setText("Target: " + (pensionTarget == 0 ? "-" : CurrencyFormatter.format(pensionTarget)));
         }
 
+        // Pie alokasi: keluarkan DARURAT & PENSIUN (kategori besar yang punya panel sendiri)
         allocationChart.getData().clear();
         for (Goal g : ds.getGoals()) {
-            if (g.getTargetAmount() > 0)
-                allocationChart.getData().add(new PieChart.Data(g.getName(), g.getTargetAmount()));
+            if (g.getTargetAmount() <= 0) continue;
+            if (g.getCategory() != null) {
+                String catName = g.getCategory().name();
+                if (catName.equals("DARURAT") || catName.equals("PENSIUN")) continue;
+            }
+            allocationChart.getData().add(new PieChart.Data(g.getName(), g.getTargetAmount()));
         }
 
         alertsBox.getChildren().clear();

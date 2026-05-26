@@ -35,7 +35,9 @@ public class UserProfileApiController {
 
         String me = currentUser();
         // Cegah duplikasi: kalau sudah ada profil milik user ini, update saja.
-        UserProfileEntity entity = userProfileRepository.findFirstByOwnerUsernameOrderByCreatedAtAsc(me).orElseGet(UserProfileEntity::new);
+        UserProfileEntity entity = userProfileRepository
+                .findFirstByOwnerUsernameOrderByCreatedAtAsc(me)
+                .orElseGet(UserProfileEntity::new);
         entity.setOwnerUsername(me);
         applyRequest(entity, req);
         UserProfileEntity saved = userProfileRepository.save(entity);
@@ -51,11 +53,24 @@ public class UserProfileApiController {
         String me = currentUser();
         return userProfileRepository.findById(id).map(entity -> {
             if (entity.getOwnerUsername() != null && !entity.getOwnerUsername().equals(me)) {
-                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).<UserProfileEntity>build();
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).<UserProfileEntity>build();
             }
             entity.setOwnerUsername(me);
             applyRequest(entity, req);
             return ResponseEntity.ok(userProfileRepository.save(entity));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    // ── DELETE /api/profile/{id} ───────────────────────────────────────────
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProfile(@PathVariable String id) {
+        String me = currentUser();
+        return userProfileRepository.findById(id).map(entity -> {
+            if (entity.getOwnerUsername() != null && !entity.getOwnerUsername().equals(me)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).<Void>build();
+            }
+            userProfileRepository.delete(entity);
+            return ResponseEntity.noContent().<Void>build();
         }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -65,12 +80,16 @@ public class UserProfileApiController {
         entity.setAge(req.getAge());
         entity.setMonthlyIncome(req.getMonthlyIncome());
         entity.setMonthlyExpense(req.getMonthlyExpense());
+        entity.setMonthlyCapacityOverride(
+                req.getMonthlyCapacityOverride() == null ? 0.0 : req.getMonthlyCapacityOverride());
         entity.setEmergencyMonths(req.getEmergencyMonths());
         entity.setHouseholdStatus(req.getHouseholdStatus());
         entity.setInflationPct(req.getInflationPct());
     }
+
     private static String currentUser() {
-        org.springframework.security.core.Authentication a = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        org.springframework.security.core.Authentication a =
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
         return (a == null || a.getName() == null) ? "anonymous" : a.getName();
     }
 }

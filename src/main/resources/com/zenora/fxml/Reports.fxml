@@ -39,9 +39,10 @@
                             <Label text="●" styleClass="zn-dot-violet"/>
                             <Label text="Proyeksi vs Aktual" styleClass="zn-panel-title"/>
                         </HBox>
-                        <LineChart fx:id="projectionChart" prefHeight="280" styleClass="zn-chart">
-                            <xAxis><NumberAxis fx:id="xAxis" label="Bulan ke-"/></xAxis>
-                            <yAxis><NumberAxis fx:id="yAxis" label="Tabungan (Rp)"/></yAxis>
+                        <LineChart fx:id="projectionChart" prefHeight="360" styleClass="zn-chart"
+                                   createSymbols="true" animated="false">
+                            <xAxis><NumberAxis fx:id="xAxis" label="Bulan ke-" forceZeroInRange="false"/></xAxis>
+                            <yAxis><NumberAxis fx:id="yAxis" label="Tabungan"/></yAxis>
                         </LineChart>
                     </VBox>
 
@@ -50,11 +51,12 @@
                         <VBox styleClass="zn-panel" spacing="10" HBox.hgrow="ALWAYS">
                             <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
                                 <Label text="●" styleClass="zn-dot-cyan"/>
-                                <Label text="Setoran per Bulan" styleClass="zn-panel-title"/>
+                                <Label text="Setoran per Bulan (12 bln terakhir)" styleClass="zn-panel-title"/>
                             </HBox>
-                            <BarChart fx:id="monthlyChart" prefHeight="240" styleClass="zn-chart">
-                                <xAxis><CategoryAxis label="Bulan"/></xAxis>
-                                <yAxis><NumberAxis label="Total (Rp)"/></yAxis>
+                            <BarChart fx:id="monthlyChart" prefHeight="320" styleClass="zn-chart"
+                                      animated="false" legendVisible="false" categoryGap="8">
+                                <xAxis><CategoryAxis label="Bulan" tickLabelRotation="-30"/></xAxis>
+                                <yAxis><NumberAxis label="Total"/></yAxis>
                             </BarChart>
                         </VBox>
                         <VBox styleClass="zn-panel" spacing="10" HBox.hgrow="ALWAYS">
@@ -62,7 +64,8 @@
                                 <Label text="●" styleClass="zn-dot-amber"/>
                                 <Label text="Distribusi per Kategori" styleClass="zn-panel-title"/>
                             </HBox>
-                            <PieChart fx:id="categoryChart" prefHeight="240" legendVisible="true"/>
+                            <PieChart fx:id="categoryChart" prefHeight="320" legendVisible="true"
+                                      labelsVisible="true" labelLineLength="14"/>
                         </VBox>
                     </HBox>
 
