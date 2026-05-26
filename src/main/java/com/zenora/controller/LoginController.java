@@ -1,6 +1,7 @@
 package com.zenora.controller;
 
 import com.zenora.app.AppSession;
+import com.zenora.model.DataStore;
 import com.zenora.service.ApiClient;
 import com.zenora.util.SceneNavigator;
 import javafx.application.Platform;
@@ -56,6 +57,9 @@ public class LoginController implements Initializable {
             Platform.runLater(() -> {
                 setLoading(false);
                 if (resp.isSuccess()) {
+                    // Bersihkan data sesi sebelumnya agar tidak bocor ke user ini
+                    DataStore.getInstance().reset();
+                    AppSession.getInstance().setProfileId(null);
                     // Cek apakah user sudah pernah mengisi profil.
                     // GET /api/profile → 200 = sudah, 204 = belum.
                     Thread checkProfile = new Thread(() -> {

@@ -33,20 +33,17 @@ public class ProfileController extends BaseModuleController implements Initializ
                 "Single", "Menikah tanpa anak", "Menikah + anak", "Freelancer / Self-employed"));
         emergencyMonthsChoice.setItems(FXCollections.observableArrayList(3, 6, 9, 12));
 
-        UserProfile p = DataStore.getInstance().getProfile();
-        nameField.setText(p.getName());
-        ageField.setText(String.valueOf(p.getAge()));
-        incomeField.setText(p.getMonthlyIncome() == 0 ? "" : String.valueOf((long) p.getMonthlyIncome()));
-        expenseField.setText(p.getMonthlyExpense() == 0 ? "" : String.valueOf((long) p.getMonthlyExpense()));
-        capacityOverrideField.setText(p.getMonthlyCapacityOverride() == 0 ? "" : String.valueOf((long) p.getMonthlyCapacityOverride()));
-        inflationField.setText(String.valueOf(p.getInflationPct()));
-        statusChoice.setValue(p.getHouseholdStatus());
-        emergencyMonthsChoice.setValue(p.getEmergencyMonths());
+        // Set default awal (kosong/default) — jangan ambil dari DataStore
+        // karena bisa saja masih berisi data sesi sebelumnya.
+        // Data yang benar akan diisi oleh loadProfileFromBackend().
+        statusChoice.setValue("Single");
+        emergencyMonthsChoice.setValue(6);
 
         com.zenora.util.MoneyTextFormatter.attach(incomeField);
         com.zenora.util.MoneyTextFormatter.attach(expenseField);
         com.zenora.util.MoneyTextFormatter.attach(capacityOverrideField);
-        // Load dari backend agar field terisi data tersimpan, bukan cache lokal.
+
+        // Load dari backend — field diisi setelah respons diterima.
         loadProfileFromBackend();
         recompute();
         nameField.textProperty().addListener((o,a,b) -> recompute());
