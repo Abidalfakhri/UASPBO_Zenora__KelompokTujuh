@@ -1,8 +1,13 @@
 package com.zenora.controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.zenora.model.Debt;
+import com.zenora.service.ApiClient;
 import com.zenora.util.CurrencyFormatter;
 import com.zenora.util.InputValidator;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,7 +57,11 @@ public class DebtPlannerController extends BaseModuleController implements Initi
     // ── Hasil simulasi ────────────────────────────────────────────────────
     @FXML private TextArea resultArea;
 
+    // ObservableList untuk tabel — Debt juga menyimpan id backend-nya
     private final ObservableList<Debt> debts = FXCollections.observableArrayList();
+
+    // Map: Debt object → backend UUID (untuk PUT/DELETE)
+    private final Map<Debt, String> backendIds = new HashMap<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -93,9 +102,52 @@ public class DebtPlannerController extends BaseModuleController implements Initi
 
         debtTable.setItems(debts);
         debts.addListener((javafx.collections.ListChangeListener<Debt>) c -> refreshSummary());
-        // Refresh summary saat saldo/totalPaid berubah karena setoran
         refreshSummary();
+
+        // Load data dari backend saat layar dibuka
+        loadDebtsFromBackend();
     }
+
+    // ── Load dari backend ─────────────────────────────────────────────────
+
+    private void loadDebtsFromBackend() {
+        Thread t = new Thread(() -> {
+            ApiClient.ApiResponse resp = ApiClient.get("/api/debts");
+            if (!resp.isSuccess() || resp.body == null || resp.body.isBlank()) return;
+            try {
+                JsonArray arr = ApiClient.parseArray(resp.body);
+                List<Debt> loaded = new ArrayList<>();
+                Map<Debt, String> ids = new HashMap<>();
+                for (JsonElement el : arr) {
+                    JsonObject obj = el.getAsJsonObject();
+                    String id      = obj.has("id")              ? obj.get("id").getAsString()              : null;
+                    String name    = obj.has("name")            ? obj.get("name").getAsString()            : "";
+                    double bal     = obj.has("balance")         ? obj.get("balance").getAsDouble()         : 0;
+                    double orig    = obj.has("originalBalance") ? obj.get("originalBalance").getAsDouble() : bal;
+                    double apr     = obj.has("aprPercent")      ? obj.get("aprPercent").getAsDouble()      : 0;
+                    double minPay  = obj.has("minimumPayment")  ? obj.get("minimumPayment").getAsDouble()  : 0;
+                    double paid    = obj.has("totalPaid")       ? obj.get("totalPaid").getAsDouble()       : 0;
+
+                    Debt d = new Debt(name, orig, apr, minPay);
+                    d.setBalance(bal);
+                    d.setTotalPaid(paid);
+                    loaded.add(d);
+                    if (id != null) ids.put(d, id);
+                }
+                Platform.runLater(() -> {
+                    debts.setAll(loaded);
+                    backendIds.clear();
+                    backendIds.putAll(ids);
+                    debtTable.refresh();
+                    refreshSummary();
+                });
+            } catch (Exception ignored) {}
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    // ── Ringkasan ─────────────────────────────────────────────────────────
 
     private void refreshSummary() {
         if (sumTotalDebt == null) return;
@@ -130,9 +182,9 @@ public class DebtPlannerController extends BaseModuleController implements Initi
     private void addDebt() {
         InputValidator v = InputValidator.create();
         String name  = nameField.getText() == null ? "" : nameField.getText().trim();
-        double bal   = v.positiveDouble(balanceField.getText(),  "Saldo hutang");
-        double apr   = v.nonNegativeDouble(aprField.getText(),   "Bunga tahunan (APR %)");
-        double min   = v.nonNegativeDouble(minPaymentField.getText(), "Minimum payment");
+        double bal   = v.positiveDouble(balanceField.getText(),      "Saldo hutang");
+        double apr   = v.nonNegativeDouble(aprField.getText(),       "Bunga tahunan (APR %)");
+        double min   = v.nonNegativeDouble(minPaymentField.getText(),"Minimum payment");
 
         if (v.hasErrors()) {
             new Alert(Alert.AlertType.WARNING, v.errorMessage()).showAndWait();
@@ -144,10 +196,30 @@ public class DebtPlannerController extends BaseModuleController implements Initi
             return;
         }
 
-        debts.add(new Debt(name.isEmpty() ? "Hutang " + (debts.size() + 1) : name,
-                bal, apr, min));
-        nameField.clear(); balanceField.clear(); aprField.clear(); minPaymentField.clear();
-        debtTable.refresh();
+        String debtName = name.isEmpty() ? "Hutang " + (debts.size() + 1) : name;
+        Debt d = new Debt(debtName, bal, apr, min);
+
+        // Simpan ke backend
+        Thread t = new Thread(() -> {
+            DebtRequest req = new DebtRequest(debtName, bal, bal, apr, min, 0.0);
+            ApiClient.ApiResponse resp = ApiClient.post("/api/debts", req);
+            Platform.runLater(() -> {
+                if (resp.isSuccess()) {
+                    try {
+                        JsonObject obj = ApiClient.parseObject(resp.body);
+                        if (obj.has("id")) backendIds.put(d, obj.get("id").getAsString());
+                    } catch (Exception ignored) {}
+                    debts.add(d);
+                    nameField.clear(); balanceField.clear(); aprField.clear(); minPaymentField.clear();
+                    debtTable.refresh();
+                } else {
+                    new Alert(Alert.AlertType.ERROR,
+                            "Gagal menyimpan ke database: " + resp.errorMessage()).showAndWait();
+                }
+            });
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     @FXML
@@ -160,7 +232,27 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         Optional<ButtonType> res = new Alert(Alert.AlertType.CONFIRMATION,
                 "Hapus hutang \"" + sel.getName() + "\"?",
                 ButtonType.YES, ButtonType.NO).showAndWait();
-        if (res.isPresent() && res.get() == ButtonType.YES) debts.remove(sel);
+        if (res.isEmpty() || res.get() != ButtonType.YES) return;
+
+        String id = backendIds.get(sel);
+        if (id != null) {
+            Thread t = new Thread(() -> {
+                ApiClient.ApiResponse resp = ApiClient.delete("/api/debts/" + id);
+                Platform.runLater(() -> {
+                    if (resp.isSuccess() || resp.status == 404) {
+                        debts.remove(sel);
+                        backendIds.remove(sel);
+                    } else {
+                        new Alert(Alert.AlertType.ERROR,
+                                "Gagal menghapus dari database: " + resp.errorMessage()).showAndWait();
+                    }
+                });
+            });
+            t.setDaemon(true);
+            t.start();
+        } else {
+            debts.remove(sel);
+        }
     }
 
     @FXML
@@ -169,15 +261,28 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         Optional<ButtonType> res = new Alert(Alert.AlertType.CONFIRMATION,
                 "Hapus SEMUA hutang dari daftar?",
                 ButtonType.YES, ButtonType.NO).showAndWait();
-        if (res.isPresent() && res.get() == ButtonType.YES) {
-            debts.clear();
-            resultArea.clear();
-        }
+        if (res.isEmpty() || res.get() != ButtonType.YES) return;
+
+        Thread t = new Thread(() -> {
+            ApiClient.ApiResponse resp = ApiClient.delete("/api/debts");
+            Platform.runLater(() -> {
+                if (resp.isSuccess() || resp.status == 204) {
+                    debts.clear();
+                    backendIds.clear();
+                    resultArea.clear();
+                } else {
+                    new Alert(Alert.AlertType.ERROR,
+                            "Gagal menghapus dari database: " + resp.errorMessage()).showAndWait();
+                }
+            });
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     /**
      * Catat setoran pembayaran ke hutang yang dipilih.
-     * Saldo berkurang, totalPaid bertambah, ringkasan & tabel refresh.
+     * Saldo berkurang, totalPaid bertambah, lalu disinkronkan ke backend.
      */
     @FXML
     private void payDebt() {
@@ -202,11 +307,32 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         paymentField.clear();
         debtTable.refresh();
         refreshSummary();
-        String msg = String.format("Setoran %s tercatat ke \"%s\".%nSisa saldo: %s%s",
+
+        String msg = String.format("Setoran %s tercatat ke \"%s\".\nSisa saldo: %s%s",
                 CurrencyFormatter.format(paid), sel.getName(),
                 CurrencyFormatter.format(sel.getBalance()),
                 sel.isPaidOff() ? "\n\n🎉 Hutang ini LUNAS!" : "");
         new Alert(Alert.AlertType.INFORMATION, msg).showAndWait();
+
+        // Sinkronkan ke backend
+        String id = backendIds.get(sel);
+        if (id != null) {
+            final Debt finalSel = sel;
+            Thread t = new Thread(() -> {
+                DebtRequest req = new DebtRequest(
+                        finalSel.getName(),
+                        finalSel.getBalance(),
+                        finalSel.getOriginalBalance(),
+                        finalSel.getAprPercent(),
+                        finalSel.getMinimumPayment(),
+                        finalSel.getTotalPaid());
+                ApiClient.put("/api/debts/" + id, req);
+                // Tidak perlu alert; gagal sync tidak kritis di sini,
+                // data lokal sudah tercatat.
+            });
+            t.setDaemon(true);
+            t.start();
+        }
     }
 
     @FXML
@@ -230,7 +356,6 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         boolean avalanche = strategyChoice.getValue() != null
                 && strategyChoice.getValue().toLowerCase().startsWith("avalanche");
 
-        // Salin daftar agar simulasi tidak mengubah data asli
         List<Debt> sim = new ArrayList<>();
         double totalMin = 0;
         for (Debt d : debts) {
@@ -249,36 +374,26 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         int month = 0;
         double totalInterest = 0;
         double totalPaid = 0;
-        final int MAX_MONTHS = 12 * 60; // safety: 60 tahun
+        final int MAX_MONTHS = 12 * 60;
 
         List<String> payoffOrder = new ArrayList<>();
 
         while (anyOutstanding(sim) && month < MAX_MONTHS) {
             month++;
-
-            // 1. Bunga bulanan
             for (Debt d : sim) {
                 if (d.getBalance() <= 0) continue;
                 double interest = d.monthlyInterest();
                 d.setBalance(d.getBalance() + interest);
                 totalInterest += interest;
             }
-
-            // 2. Bayar minimum dulu
             double extraPool = extra;
             for (Debt d : sim) {
                 if (d.getBalance() <= 0) continue;
                 double pay = Math.min(d.getMinimumPayment(), d.getBalance());
                 d.setBalance(d.getBalance() - pay);
                 totalPaid += pay;
-                // Jika hutang ini lunas dari minimum saja, sisa minimumnya
-                // ikut menambah extra pool (efek snowball).
-                if (d.getBalance() <= 0.01) {
-                    extraPool += d.getMinimumPayment() - pay;
-                }
+                if (d.getBalance() <= 0.01) extraPool += d.getMinimumPayment() - pay;
             }
-
-            // 3. Alokasikan extra pool ke target sesuai strategi
             while (extraPool > 0.01) {
                 Debt target = pickTarget(sim, avalanche);
                 if (target == null) break;
@@ -287,14 +402,11 @@ public class DebtPlannerController extends BaseModuleController implements Initi
                 totalPaid += pay;
                 extraPool -= pay;
                 if (target.getBalance() <= 0.01) {
-                    // hutang lunas — minimum-nya kini ikut snowball
                     extraPool += target.getMinimumPayment();
                     payoffOrder.add(String.format("Bulan %3d : ✓ \"%s\" LUNAS",
                             month, target.getName()));
                 }
             }
-
-            // Catat juga hutang yang lunas hanya dari minimum payment
             for (Debt d : sim) {
                 if (d.getBalance() <= 0.01) {
                     String tag = String.format("Bulan %3d : ✓ \"%s\" LUNAS", month, d.getName());
@@ -322,13 +434,14 @@ public class DebtPlannerController extends BaseModuleController implements Initi
             for (String s : payoffOrder) sb.append(s).append("\n");
         }
 
-        // Bandingkan dengan strategi lawan (cepat-cepat)
         sb.append("\n=== PERBANDINGAN STRATEGI ===\n");
         compare(sb, debts, extra, true,  "Avalanche");
         compare(sb, debts, extra, false, "Snowball ");
 
         resultArea.setText(sb.toString());
     }
+
+    // ── Simulation helpers ────────────────────────────────────────────────
 
     private boolean anyOutstanding(List<Debt> list) {
         for (Debt d : list) if (d.getBalance() > 0.01) return true;
@@ -387,6 +500,27 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         } else {
             sb.append(String.format("%s : %d bulan, bunga %s%n",
                     label, month, CurrencyFormatter.format(totalInterest)));
+        }
+    }
+
+    // ── Inner DTO (untuk serialisasi ke JSON via ApiClient) ───────────────
+
+    private static class DebtRequest {
+        String name;
+        double balance;
+        double originalBalance;
+        double aprPercent;
+        double minimumPayment;
+        double totalPaid;
+
+        DebtRequest(String name, double balance, double originalBalance,
+                    double aprPercent, double minimumPayment, double totalPaid) {
+            this.name            = name;
+            this.balance         = balance;
+            this.originalBalance = originalBalance;
+            this.aprPercent      = aprPercent;
+            this.minimumPayment  = minimumPayment;
+            this.totalPaid       = totalPaid;
         }
     }
 }

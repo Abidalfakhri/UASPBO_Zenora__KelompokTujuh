@@ -33,9 +33,7 @@ public class ProfileController extends BaseModuleController implements Initializ
                 "Single", "Menikah tanpa anak", "Menikah + anak", "Freelancer / Self-employed"));
         emergencyMonthsChoice.setItems(FXCollections.observableArrayList(3, 6, 9, 12));
 
-        // Set default awal (kosong/default) — jangan ambil dari DataStore
-        // karena bisa saja masih berisi data sesi sebelumnya.
-        // Data yang benar akan diisi oleh loadProfileFromBackend().
+
         statusChoice.setValue("Single");
         emergencyMonthsChoice.setValue(6);
 
