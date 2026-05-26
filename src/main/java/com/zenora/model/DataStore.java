@@ -17,6 +17,16 @@ public class DataStore {
     private DataStore() {}
     public static DataStore getInstance() { return INSTANCE; }
 
+    /**
+     * Bersihkan semua data in-memory (goals, contributions, profile).
+     * Dipanggil saat login/register agar data user sebelumnya tidak bocor.
+     */
+    public void reset() {
+        goals.clear();
+        contributions.clear();
+        profile = new UserProfile();
+    }
+
     public ObservableList<Goal> getGoals() { return goals; }
     public ObservableList<Contribution> getContributions() { return contributions; }
     public UserProfile getProfile() { return profile; }

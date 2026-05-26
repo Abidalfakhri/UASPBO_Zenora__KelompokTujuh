@@ -1,6 +1,7 @@
 package com.zenora.controller;
 
 import com.zenora.app.AppSession;
+import com.zenora.model.DataStore;
 import com.zenora.service.ApiClient;
 import com.zenora.util.SceneNavigator;
 import javafx.application.Platform;
@@ -65,7 +66,9 @@ public class RegisterController implements Initializable {
             Platform.runLater(() -> {
                 setLoading(false);
                 if (resp.isSuccess()) {
-                    // Registrasi berhasil — langsung simpan sesi & login otomatis
+                    // Registrasi berhasil — bersihkan data lama & simpan sesi baru
+                    DataStore.getInstance().reset();
+                    AppSession.getInstance().setProfileId(null);
                     AppSession.getInstance().setCredentials(username, password);
 
                     successLabel.setText("✓  Registrasi berhasil! Silakan lengkapi data profil Anda...");
