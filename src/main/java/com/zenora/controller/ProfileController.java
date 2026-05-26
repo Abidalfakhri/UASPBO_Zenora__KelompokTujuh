@@ -69,18 +69,51 @@ public class ProfileController extends BaseModuleController implements Initializ
         catch (Exception e) { return 0; }
     }
 
+    /** Parse angka desimal — toleran terhadap koma/titik (untuk inflasi, usia desimal, dll). */
+    private double parseDecimal(String s) {
+        if (s == null) return 0;
+        String t = s.trim().replace(",", ".").replaceAll("[^0-9.\\-]", "");
+        if (t.isEmpty() || t.equals("-") || t.equals(".")) return 0;
+        try { return Double.parseDouble(t); }
+        catch (NumberFormatException e) { return 0; }
+    }
+
     @FXML
     private void save() {
         try {
+            // Validasi minimum sebelum kirim ke backend
+            String name = nameField.getText() == null ? "" : nameField.getText().trim();
+            if (name.length() < 2) {
+                new Alert(Alert.AlertType.WARNING, "Nama minimal 2 karakter.").showAndWait();
+                return;
+            }
+            int age;
+            try {
+                age = Integer.parseInt(ageField.getText() == null ? "" : ageField.getText().trim());
+            } catch (NumberFormatException nfe) {
+                new Alert(Alert.AlertType.WARNING, "Usia harus berupa angka (17–100).").showAndWait();
+                return;
+            }
+            if (age < 17 || age > 100) {
+                new Alert(Alert.AlertType.WARNING, "Usia harus antara 17 dan 100 tahun.").showAndWait();
+                return;
+            }
+
+            double inflation = parseDecimal(inflationField.getText());
+            if (inflation < 0 || inflation > 50) {
+                new Alert(Alert.AlertType.WARNING, "Inflasi harus antara 0% dan 50%.").showAndWait();
+                return;
+            }
+
             // Update local DataStore
             UserProfile p = DataStore.getInstance().getProfile();
-            p.setName(nameField.getText().trim());
-            p.setAge(Integer.parseInt(ageField.getText().trim().isEmpty() ? "0" : ageField.getText().trim()));
+            p.setName(name);
+            p.setAge(age);
             p.setMonthlyIncome(parse(incomeField.getText()));
             p.setMonthlyExpense(parse(expenseField.getText()));
             p.setMonthlyCapacityOverride(parse(capacityOverrideField.getText()));
-            p.setInflationPct(parse(inflationField.getText()));
-            p.setHouseholdStatus(statusChoice.getValue());
+            p.setInflationPct(inflation);
+            p.setHouseholdStatus(statusChoice.getValue() == null ? "Single" : statusChoice.getValue());
             p.setEmergencyMonths(emergencyMonthsChoice.getValue() == null ? 6 : emergencyMonthsChoice.getValue());
             StorageService.save();
 
@@ -140,19 +173,21 @@ public class ProfileController extends BaseModuleController implements Initializ
                 if (obj.has("age"))             p.setAge(obj.get("age").getAsInt());
                 if (obj.has("monthlyIncome"))   p.setMonthlyIncome(obj.get("monthlyIncome").getAsDouble());
                 if (obj.has("monthlyExpense"))  p.setMonthlyExpense(obj.get("monthlyExpense").getAsDouble());
+                if (obj.has("monthlyCapacityOverride")) p.setMonthlyCapacityOverride(obj.get("monthlyCapacityOverride").getAsDouble());
                 if (obj.has("emergencyMonths")) p.setEmergencyMonths(obj.get("emergencyMonths").getAsInt());
-                if (obj.has("householdStatus")) p.setHouseholdStatus(obj.get("householdStatus").getAsString());
+                if (obj.has("householdStatus") && !obj.get("householdStatus").isJsonNull())
+                                                p.setHouseholdStatus(obj.get("householdStatus").getAsString());
                 if (obj.has("inflationPct"))    p.setInflationPct(obj.get("inflationPct").getAsDouble());
 
                 Platform.runLater(() -> {
-                    nameField.setText(p.getName());
-                    ageField.setText(String.valueOf(p.getAge()));
+                    nameField.setText(p.getName() == null ? "" : p.getName());
+                    ageField.setText(p.getAge() <= 0 ? "" : String.valueOf(p.getAge()));
                     incomeField.setText(p.getMonthlyIncome() == 0 ? "" : String.valueOf((long) p.getMonthlyIncome()));
                     expenseField.setText(p.getMonthlyExpense() == 0 ? "" : String.valueOf((long) p.getMonthlyExpense()));
                     capacityOverrideField.setText(p.getMonthlyCapacityOverride() == 0 ? "" : String.valueOf((long) p.getMonthlyCapacityOverride()));
                     inflationField.setText(String.valueOf(p.getInflationPct()));
-                    statusChoice.setValue(p.getHouseholdStatus());
-                    emergencyMonthsChoice.setValue(p.getEmergencyMonths());
+                    statusChoice.setValue(p.getHouseholdStatus() == null ? "Single" : p.getHouseholdStatus());
+                    emergencyMonthsChoice.setValue(p.getEmergencyMonths() <= 0 ? 6 : p.getEmergencyMonths());
                     recompute();
                 });
             } catch (Exception ignored) {}
@@ -161,26 +196,66 @@ public class ProfileController extends BaseModuleController implements Initializ
         t.start();
     }
 
-    // ── Inner DTO ─────────────────────────────────────────────────────────
+    // ── DELETE AKUN ───────────────────────────────────────────────────────
 
+    @FXML
+    private void deleteAccount() {
+        // 1. Konfirmasi
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Akun dan SEMUA data (profil, goal, debt, kontribusi) akan dihapus permanen.\n\nLanjutkan?",
+                ButtonType.YES, ButtonType.NO);
+        confirm.setHeaderText("Hapus akun " + AppSession.getInstance().getUsername() + "?");
+        java.util.Optional<ButtonType> res = confirm.showAndWait();
+        if (res.isEmpty() || res.get() != ButtonType.YES) return;
+
+        // 2. Minta password sebagai konfirmasi
+        TextInputDialog pwdDlg = new TextInputDialog();
+        pwdDlg.setHeaderText("Konfirmasi password Anda");
+        pwdDlg.setContentText("Password:");
+        java.util.Optional<String> pwd = pwdDlg.showAndWait();
+        if (pwd.isEmpty() || pwd.get().isBlank()) return;
+
+        // 3. Kirim DELETE /auth/account dengan body { "password": "..." }
+        Thread t = new Thread(() -> {
+            java.util.Map<String, String> body = java.util.Map.of("password", pwd.get());
+            ApiClient.ApiResponse resp = ApiClient.requestWithBody("DELETE", "/auth/account", body);
+            Platform.runLater(() -> {
+                if (resp.isSuccess()) {
+                    AppSession.getInstance().clearSession();
+                    DataStore.getInstance().reset();
+                    new Alert(Alert.AlertType.INFORMATION, "Akun berhasil dihapus.").showAndWait();
+                    SceneNavigator.navigateTo("/com/zenora/fxml/Login.fxml");
+                } else {
+                    new Alert(Alert.AlertType.ERROR,
+                            "Gagal menghapus akun: " + resp.errorMessage()).showAndWait();
+                }
+            });
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    // ── Inner DTO ─────────────────────────────────────────────────────────
 
     private static class ProfileRequest {
         String name;
         int age;
         double monthlyIncome;
         double monthlyExpense;
+        double monthlyCapacityOverride;
         int emergencyMonths;
         String householdStatus;
         double inflationPct;
 
         ProfileRequest(UserProfile p) {
-            this.name            = p.getName();
-            this.age             = p.getAge();
-            this.monthlyIncome   = p.getMonthlyIncome();
-            this.monthlyExpense  = p.getMonthlyExpense();
-            this.emergencyMonths = p.getEmergencyMonths();
-            this.householdStatus = p.getHouseholdStatus();
-            this.inflationPct    = p.getInflationPct();
+            this.name                    = p.getName();
+            this.age                     = p.getAge();
+            this.monthlyIncome           = p.getMonthlyIncome();
+            this.monthlyExpense          = p.getMonthlyExpense();
+            this.monthlyCapacityOverride = p.getMonthlyCapacityOverride();
+            this.emergencyMonths         = p.getEmergencyMonths();
+            this.householdStatus         = p.getHouseholdStatus();
+            this.inflationPct            = p.getInflationPct();
         }
     }
 }

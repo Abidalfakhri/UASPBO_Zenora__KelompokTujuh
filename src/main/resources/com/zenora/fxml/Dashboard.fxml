@@ -164,7 +164,7 @@
                         <VBox styleClass="zn-panel" spacing="10">
                             <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
                                 <Label text="●" styleClass="zn-dot-indigo"/>
-                                <Label text="Progress Agregat Semua Goal" styleClass="zn-panel-title"/>
+                                <Label text="Progress Goal Reguler (di luar Darurat &amp; Pensiun)" styleClass="zn-panel-title"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="progressLabel" text="-" styleClass="zn-badge"/>
                             </HBox>
@@ -184,7 +184,7 @@
                             <VBox styleClass="zn-panel" spacing="8" HBox.hgrow="ALWAYS">
                                 <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
                                     <Label text="●" styleClass="zn-dot-violet"/>
-                                    <Label text="Distribusi Target Goal" styleClass="zn-panel-title"/>
+                                <Label text="Distribusi Target Goal Reguler" styleClass="zn-panel-title"/>
                                 </HBox>
                                 <PieChart fx:id="allocationChart" prefHeight="260" legendVisible="true"/>
                             </VBox>

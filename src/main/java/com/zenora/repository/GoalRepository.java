@@ -41,4 +41,8 @@ public interface GoalRepository extends JpaRepository<GoalEntity, String> {
     Double sumCurrentSavingsByOwner(@org.springframework.data.repository.query.Param("owner") String owner);
 
     long countByOwnerUsername(String ownerUsername);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByOwnerUsername(String ownerUsername);
 }
