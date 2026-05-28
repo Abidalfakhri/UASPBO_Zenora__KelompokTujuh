@@ -317,9 +317,7 @@
 .zn-stat-value.zn-stat-gold { -fx-text-fill: #818CF8; }
 
 
-/* ══════════════════════════════════════════════════════════════════════════
-   OPTIMIZATION PATCH — progress visibility, dropdown contrast, date picker
-   ══════════════════════════════════════════════════════════════════════════ */
+
 
 /* ── PROGRESS BAR FIX: hilangkan padding bawaan agar bar terlihat walau kecil ── */
 .progress-bar { -fx-indeterminate-bar-length: 60; }

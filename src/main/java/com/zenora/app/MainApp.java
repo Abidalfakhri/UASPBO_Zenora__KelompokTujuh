@@ -42,6 +42,12 @@ public class MainApp extends Application {
             StorageService.save();
             AppSession.getInstance().clearSession();
             LOG.info("Application closed. Session cleared.");
+            try {
+                var ctx = com.zenora.ZenoraApplication.getContext();
+                if (ctx != null && ctx.isActive()) ctx.close();
+            } catch (Exception ignored) {}
+            javafx.application.Platform.exit();
+            System.exit(0);
         });
         primaryStage.show();
     }

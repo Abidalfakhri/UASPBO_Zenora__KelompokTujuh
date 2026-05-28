@@ -50,8 +50,6 @@ public class ProgressController extends BaseModuleController implements Initiali
         progressBar.setProgress(percent / 100.0);
         progressLabel.setText(String.format("%.1f%% dari target tercapai", percent));
 
-        // BUGFIX: getMonthlySaving() may be 0 when goal was never run through
-        // the allocation engine. Fall back to computing it from plan parameters.
         double monthly = g.getMonthlySaving();
         if (monthly <= 0 && target > 0 && g.getMonths() > 0) {
             monthly = FinancialCalculator.requiredMonthlyContribution(

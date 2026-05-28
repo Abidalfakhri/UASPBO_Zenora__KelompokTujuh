@@ -10,14 +10,14 @@ import com.zenora.app.AppSession;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 
 public final class ApiClient {
 
-    private static final Logger LOG = java.util.logging.Logger.getLogger(ApiClient.class.getName());
+    private static final Logger LOG = com.zenora.util.AppLogger.get(ApiClient.class);
     /**
      * Bisa di-override saat runtime:
      *   java -Dzenora.api.base=https://api.zenora.app -jar zenora.jar
@@ -73,7 +73,7 @@ public final class ApiClient {
     private static ApiResponse request(String method, String path,
                                         String jsonBody, boolean skipAuth) {
         try {
-            URL url = new URL(BASE_URL + path);
+            java.net.URL url = URI.create(BASE_URL + path).toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod(method);
             conn.setRequestProperty("Content-Type", "application/json");

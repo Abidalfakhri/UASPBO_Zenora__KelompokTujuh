@@ -40,7 +40,7 @@ public class ContributionController extends BaseModuleController implements Init
         goalChoice.setItems(DataStore.getInstance().getGoals());
         if (!goalChoice.getItems().isEmpty()) goalChoice.getSelectionModel().selectFirst();
         datePicker.setValue(LocalDate.now());
-        // FIX: pastikan tanggal terbaca walau JavaFX skin override warna teks
+
         datePicker.setDayCellFactory(dp -> new DateCell() {
             @Override public void updateItem(LocalDate item, boolean empty) {
                 super.updateItem(item, empty);
@@ -84,9 +84,7 @@ public class ContributionController extends BaseModuleController implements Init
         DataStore.getInstance().getContributions().addListener(
                 (javafx.collections.ListChangeListener<Contribution>) c -> refreshTotals());
 
-        // FIX UTAMA: selalu tarik ulang dari backend saat layar dibuka,
-        // supaya item yang sudah dihapus tidak "muncul lagi" dari cache lokal,
-        // dan id selalu sesuai dengan id di server.
+
         reloadFromBackend();
         refreshTotals();
     }
@@ -177,9 +175,7 @@ public class ContributionController extends BaseModuleController implements Init
                             .showAndWait();
                     return;
                 }
-                // FIX: hanya tambahkan ke DataStore kalau backend benar-benar
-                // mengembalikan id. Tanpa id, delete nantinya akan miss-target
-                // dan data akan "muncul lagi" setelah reload.
+    
                 JsonObject obj = ApiClient.parseObject(resp.body);
                 if (!obj.has("id") || obj.get("id").isJsonNull()) {
                     new Alert(Alert.AlertType.WARNING,
@@ -231,8 +227,7 @@ public class ContributionController extends BaseModuleController implements Init
                     // 404 = sudah tidak ada di server → konsisten dengan UI
                     return;
                 }
-                // FIX: kalau backend gagal hapus, kembalikan ke UI supaya
-                // user tahu datanya masih ada di server.
+    
                 int restoreAt = Math.max(0, Math.min(idx, DataStore.getInstance().getContributions().size()));
                 DataStore.getInstance().getContributions().add(restoreAt, sel);
                 DataStore.getInstance().recomputeAllProgress();
