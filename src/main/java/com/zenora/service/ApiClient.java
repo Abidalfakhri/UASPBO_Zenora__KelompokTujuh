@@ -18,7 +18,20 @@ import java.util.logging.Logger;
 public final class ApiClient {
 
     private static final Logger LOG = java.util.logging.Logger.getLogger(ApiClient.class.getName());
-    private static final String BASE_URL = "http://localhost:8080";
+    /**
+     * Bisa di-override saat runtime:
+     *   java -Dzenora.api.base=https://api.zenora.app -jar zenora.jar
+     * atau via env: ZENORA_API_BASE=https://api.zenora.app
+     */
+    private static final String BASE_URL = resolveBaseUrl();
+
+    private static String resolveBaseUrl() {
+        String sys = System.getProperty("zenora.api.base");
+        if (sys != null && !sys.isBlank()) return sys.replaceAll("/+$", "");
+        String env = System.getenv("ZENORA_API_BASE");
+        if (env != null && !env.isBlank()) return env.replaceAll("/+$", "");
+        return "http://localhost:8080";
+    }
     private static final Gson GSON = new GsonBuilder().create();
 
     private ApiClient() {}

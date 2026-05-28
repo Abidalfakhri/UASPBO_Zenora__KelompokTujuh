@@ -1,16 +1,17 @@
 package com.zenora.controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.zenora.model.Contribution;
 import com.zenora.model.DataStore;
 import com.zenora.model.Goal;
 import com.zenora.service.ApiClient;
 import com.zenora.util.CurrencyFormatter;
 import com.zenora.util.InputValidator;
-import com.zenora.util.SceneNavigator;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -39,6 +40,24 @@ public class ContributionController extends BaseModuleController implements Init
         goalChoice.setItems(DataStore.getInstance().getGoals());
         if (!goalChoice.getItems().isEmpty()) goalChoice.getSelectionModel().selectFirst();
         datePicker.setValue(LocalDate.now());
+        // FIX: pastikan tanggal terbaca walau JavaFX skin override warna teks
+        datePicker.setDayCellFactory(dp -> new DateCell() {
+            @Override public void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText("");
+                    setStyle("");
+                } else {
+                    setText(String.valueOf(item.getDayOfMonth()));
+                    // Paksa warna teks kontras agar tidak "putih hilang" di tema gelap
+                    setStyle("-fx-text-fill: #E5E7EB;");
+                    if (item.isAfter(LocalDate.now())) {
+                        setDisable(true);
+                        setStyle("-fx-text-fill: #4B5563;");
+                    }
+                }
+            }
+        });
         com.zenora.util.MoneyTextFormatter.attach(amountField);
 
         colDate.setCellValueFactory(c ->
@@ -59,12 +78,54 @@ public class ContributionController extends BaseModuleController implements Init
                 new SimpleStringProperty(c.getValue().getNote()));
 
         table.setItems(DataStore.getInstance().getContributions());
-        table.setPlaceholder(new Label("Belum ada setoran tercatat."));
+        table.setPlaceholder(new Label("Memuat setoran dari server…"));
 
         goalChoice.valueProperty().addListener((o, a, b) -> refreshTotals());
         DataStore.getInstance().getContributions().addListener(
                 (javafx.collections.ListChangeListener<Contribution>) c -> refreshTotals());
+
+        // FIX UTAMA: selalu tarik ulang dari backend saat layar dibuka,
+        // supaya item yang sudah dihapus tidak "muncul lagi" dari cache lokal,
+        // dan id selalu sesuai dengan id di server.
+        reloadFromBackend();
         refreshTotals();
+    }
+
+    private void reloadFromBackend() {
+        Thread t = new Thread(() -> {
+            ApiClient.ApiResponse resp = ApiClient.get("/api/contributions");
+            Platform.runLater(() -> {
+                if (!resp.isSuccess()) {
+                    table.setPlaceholder(new Label("Gagal memuat data dari server: " + resp.errorMessage()));
+                    return;
+                }
+                try {
+                    JsonArray arr = ApiClient.parseArray(resp.body);
+                    DataStore.getInstance().getContributions().clear();
+                    for (JsonElement el : arr) {
+                        JsonObject obj = el.getAsJsonObject();
+                        Contribution c = new Contribution();
+                        if (obj.has("id"))     c.setId(obj.get("id").getAsString());
+                        if (obj.has("goalId")) c.setGoalId(obj.get("goalId").getAsString());
+                        if (obj.has("amount")) c.setAmount(obj.get("amount").getAsDouble());
+                        if (obj.has("note") && !obj.get("note").isJsonNull())
+                            c.setNote(obj.get("note").getAsString());
+                        if (obj.has("date") && !obj.get("date").isJsonNull()) {
+                            try { c.setDate(LocalDate.parse(obj.get("date").getAsString())); }
+                            catch (Exception ex) { c.setDate(LocalDate.now()); }
+                        }
+                        DataStore.getInstance().getContributions().add(c);
+                    }
+                    DataStore.getInstance().recomputeAllProgress();
+                    table.setPlaceholder(new Label("Belum ada setoran tercatat."));
+                    refreshTotals();
+                } catch (Exception e) {
+                    table.setPlaceholder(new Label("Format data tidak terbaca."));
+                }
+            });
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     private void refreshTotals() {
@@ -105,29 +166,30 @@ public class ContributionController extends BaseModuleController implements Init
         amountField.clear();
         noteField.clear();
 
-        // POST ke backend
         Thread thread = new Thread(() -> {
             ContribRequest req = new ContribRequest(g.getId(), amt, date.toString(), note);
             ApiClient.ApiResponse resp = ApiClient.post("/api/contributions", req);
 
             Platform.runLater(() -> {
-                Contribution c;
-                if (resp.isSuccess()) {
-                    // Ambil contribution dari backend (sudah ada ID)
-                    try {
-                        com.google.gson.JsonObject obj = ApiClient.parseObject(resp.body);
-                        String id = obj.has("id") ? obj.get("id").getAsString() : null;
-                        c = new Contribution(g.getId(), date, amt, note);
-                        if (id != null) c.setId(id);
-                    } catch (Exception ex) {
-                        c = new Contribution(g.getId(), date, amt, note);
-                    }
-                } else {
-                    // Fallback lokal
-                    c = new Contribution(g.getId(), date, amt, note);
-                    System.err.println("[Contribution] Backend error: " + resp.errorMessage());
+                if (!resp.isSuccess()) {
+                    new Alert(Alert.AlertType.ERROR,
+                            "Setoran gagal disimpan ke server:\n" + resp.errorMessage())
+                            .showAndWait();
+                    return;
                 }
-                DataStore.getInstance().getContributions().add(c);
+                // FIX: hanya tambahkan ke DataStore kalau backend benar-benar
+                // mengembalikan id. Tanpa id, delete nantinya akan miss-target
+                // dan data akan "muncul lagi" setelah reload.
+                JsonObject obj = ApiClient.parseObject(resp.body);
+                if (!obj.has("id") || obj.get("id").isJsonNull()) {
+                    new Alert(Alert.AlertType.WARNING,
+                            "Server tidak mengembalikan ID. Memuat ulang…").showAndWait();
+                    reloadFromBackend();
+                    return;
+                }
+                Contribution c = new Contribution(g.getId(), date, amt, note);
+                c.setId(obj.get("id").getAsString());
+                DataStore.getInstance().getContributions().add(0, c);
                 DataStore.getInstance().recomputeAllProgress();
                 refreshTotals();
             });
@@ -149,32 +211,46 @@ public class ContributionController extends BaseModuleController implements Init
                 ButtonType.YES, ButtonType.NO).showAndWait();
         if (res.isEmpty() || res.get() != ButtonType.YES) return;
 
-        // Hapus dari DataStore lokal dulu (UI responsif)
+        if (sel.getId() == null || sel.getId().isBlank()) {
+            new Alert(Alert.AlertType.ERROR,
+                    "Setoran ini tidak punya ID backend. Memuat ulang…").showAndWait();
+            reloadFromBackend();
+            return;
+        }
+
+        // Optimistic remove
+        int idx = DataStore.getInstance().getContributions().indexOf(sel);
         DataStore.getInstance().getContributions().remove(sel);
         DataStore.getInstance().recomputeAllProgress();
         refreshTotals();
 
-        // DELETE dari backend
-        if (sel.getId() != null && !sel.getId().isBlank()) {
-            Thread thread = new Thread(() -> {
-                ApiClient.ApiResponse resp = ApiClient.delete("/api/contributions/" + sel.getId());
-                if (!resp.isSuccess()) {
-                    System.err.println("[Contribution] Delete backend error: " + resp.errorMessage());
+        Thread thread = new Thread(() -> {
+            ApiClient.ApiResponse resp = ApiClient.delete("/api/contributions/" + sel.getId());
+            Platform.runLater(() -> {
+                if (resp.isSuccess() || resp.status == 404) {
+                    // 404 = sudah tidak ada di server → konsisten dengan UI
+                    return;
                 }
+                // FIX: kalau backend gagal hapus, kembalikan ke UI supaya
+                // user tahu datanya masih ada di server.
+                int restoreAt = Math.max(0, Math.min(idx, DataStore.getInstance().getContributions().size()));
+                DataStore.getInstance().getContributions().add(restoreAt, sel);
+                DataStore.getInstance().recomputeAllProgress();
+                refreshTotals();
+                new Alert(Alert.AlertType.ERROR,
+                        "Gagal menghapus dari server (" + resp.errorMessage()
+                        + "). Setoran dikembalikan ke daftar.").showAndWait();
             });
-            thread.setDaemon(true);
-            thread.start();
-        }
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
-
-    // ── Inner DTO ─────────────────────────────────────────────────────────
 
     private static class ContribRequest {
         String goalId;
         double amount;
         String date;
         String note;
-
         ContribRequest(String goalId, double amount, String date, String note) {
             this.goalId = goalId;
             this.amount = amount;

@@ -656,5 +656,61 @@
     -fx-font-size: 52px;
 }
 
-/* Pie chart slice strokes — give breathing room */
 .chart-pie { -fx-border-color: #1A1D27; -fx-border-width: 2; }
+
+
+
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #D1D5DB;
+    -fx-opacity: 1;
+}
+
+.date-picker-popup .day-cell .text {
+    -fx-fill: #D1D5DB;
+    -fx-opacity: 1;
+}
+
+/* Hover */
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: rgba(79,70,229,0.22);
+}
+
+.date-picker-popup .day-cell:hover .text {
+    -fx-fill: white;
+}
+
+/* Selected */
+.date-picker-popup .day-cell:selected,
+.date-picker-popup .selected {
+    -fx-background-color: #4F46E5;
+}
+
+.date-picker-popup .day-cell:selected .text,
+.date-picker-popup .selected .text {
+    -fx-fill: white;
+}
+
+/* Today */
+.date-picker-popup .today {
+    -fx-background-color: rgba(79,70,229,0.28);
+    -fx-border-color: #818CF8;
+    -fx-border-width: 1;
+}
+
+.date-picker-popup .today .text {
+    -fx-fill: white;
+}
+
+/* Previous / next month */
+.date-picker-popup .previous-month .text,
+.date-picker-popup .next-month .text {
+    -fx-fill: #9CA3AF;
+    -fx-opacity: 1;
+}
+
+/* Disabled */
+.date-picker-popup .day-cell:disabled .text {
+    -fx-fill: #6B7280;
+    -fx-opacity: 0.6;
+}
