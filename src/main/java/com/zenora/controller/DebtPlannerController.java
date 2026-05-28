@@ -280,10 +280,7 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         t.start();
     }
 
-    /**
-     * Catat setoran pembayaran ke hutang yang dipilih.
-     * Saldo berkurang, totalPaid bertambah, lalu disinkronkan ke backend.
-     */
+   
     @FXML
     private void payDebt() {
         Debt sel = debtTable.getSelectionModel().getSelectedItem();
