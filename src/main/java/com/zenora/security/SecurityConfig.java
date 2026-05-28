@@ -103,6 +103,7 @@ public class SecurityConfig {
      * Seed default users
      */
     @Bean
+    @org.springframework.context.annotation.Profile("!prod")
     public CommandLineRunner seedDefaultUsers(
             AppUserRepository userRepository,
             PasswordEncoder encoder) {

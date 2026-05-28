@@ -41,7 +41,6 @@ public class StorageService {
 
         DataStore ds = DataStore.getInstance();
 
-        // BUGFIX: use properly typed ListChangeListeners (not raw <Object>)
         ds.getGoals().addListener(
                 (javafx.collections.ListChangeListener<Goal>) c -> save());
         ds.getContributions().addListener(
