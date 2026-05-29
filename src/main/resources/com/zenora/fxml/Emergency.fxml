@@ -10,7 +10,7 @@
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
                 <Label text="Dana Darurat" styleClass="zn-page-title"/>
-                <Label text="MODUL 03 — KALKULATOR + GOAL TRACKER DANA DARURAT" styleClass="zn-page-badge"/>
+                <Label text="KALKULATOR + GOAL TRACKER DANA DARURAT" styleClass="zn-page-badge"/>
             </VBox>
         </HBox>
     </top>

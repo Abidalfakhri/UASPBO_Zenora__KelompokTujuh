@@ -101,10 +101,40 @@ public final class InputValidator {
         if (!errors.isEmpty()) throw new ValidationException(errorMessage());
     }
 
-    // ── Internal ─────────────────────────────────────────────────────────────
+ 
+    static double parseDouble(String raw) {
+        if (raw == null) throw new NumberFormatException("null");
+        String s = raw.trim().replace("_", "").replace(" ", "");
+        if (s.isEmpty()) throw new NumberFormatException("empty");
 
-    private static double parseDouble(String raw) {
-        return Double.parseDouble(raw.trim().replace(".", "").replace(",", "").replace("_", ""));
+        boolean negative = s.startsWith("-");
+        if (negative) s = s.substring(1);
+
+        if (s.contains(",")) {
+            // Konvensi Indonesia: titik = ribuan, koma = desimal
+            s = s.replace(".", "").replace(",", ".");
+        } else {
+            int firstDot = s.indexOf('.');
+            int lastDot  = s.lastIndexOf('.');
+            if (firstDot >= 0) {
+                if (firstDot != lastDot) {
+                    // banyak titik → semua ribuan
+                    s = s.replace(".", "");
+                } else {
+                    // tepat satu titik
+                    String after = s.substring(lastDot + 1);
+                    boolean afterAllDigits = !after.isEmpty()
+                            && after.chars().allMatch(Character::isDigit);
+                    if (afterAllDigits && after.length() == 3) {
+                        // ambigu — perlakukan sebagai ribuan ("1.000" → 1000)
+                        s = s.replace(".", "");
+                    }
+                    // selain itu biarkan sebagai desimal ("4.8", "12.5")
+                }
+            }
+        }
+        double v = Double.parseDouble(s);
+        return negative ? -v : v;
     }
 
     // ── Nested exception ─────────────────────────────────────────────────────

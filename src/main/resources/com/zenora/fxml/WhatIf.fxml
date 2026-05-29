@@ -11,7 +11,7 @@
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
                 <Label text="What-If Simulation" styleClass="zn-page-title"/>
-                <Label text="MODUL 04 — EKSPLORASI SKENARIO KEUANGAN" styleClass="zn-page-badge"/>
+                <Label text="EKSPLORASI SKENARIO KEUANGAN" styleClass="zn-page-badge"/>
             </VBox>
         </HBox>
     </top>
@@ -19,22 +19,38 @@
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="zn-scroll">
             <content>
                 <HBox spacing="16" styleClass="zn-body">
-                    <VBox spacing="0" styleClass="zn-panel" prefWidth="390" HBox.hgrow="ALWAYS">
+                    <VBox spacing="0" styleClass="zn-panel" prefWidth="420" HBox.hgrow="ALWAYS">
                         <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
                             <Label text="●" styleClass="zn-dot-violet"/>
                             <Label text="Skenario" styleClass="zn-panel-title"/>
                         </HBox>
                         <Region minHeight="14"/>
+
                         <Label text="TARGET DANA (RP)" styleClass="zn-field-label"/>
-                        <TextField fx:id="targetField" styleClass="zn-field" promptText="contoh: 50000000" maxWidth="Infinity"/>
+                        <TextField fx:id="targetField" styleClass="zn-field" promptText="contoh: 50.000.000" maxWidth="Infinity"/>
+
+                        <Label text="TOP-UP AWAL / DANA YG SUDAH ADA (RP)" styleClass="zn-field-label"/>
+                        <TextField fx:id="lumpSumField" styleClass="zn-field" promptText="opsional, contoh: 5.000.000" maxWidth="Infinity"/>
+
                         <Label text="TABUNGAN BULANAN (RP)" styleClass="zn-field-label"/>
-                        <TextField fx:id="monthlyField" styleClass="zn-field" promptText="contoh: 1000000" maxWidth="Infinity"/>
+                        <TextField fx:id="monthlyField" styleClass="zn-field" promptText="contoh: 1.000.000" maxWidth="Infinity"/>
+
                         <Label text="RETURN INVESTASI (% / TAHUN)" styleClass="zn-field-label"/>
                         <TextField fx:id="rateField" styleClass="zn-field" promptText="contoh: 6" maxWidth="Infinity"/>
-                        <Label text="Ubah salah satu nilai lalu simulasikan." styleClass="zn-hint"/>
+
+                        <Label text="INFLASI (% / TAHUN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="inflationField" styleClass="zn-field" promptText="opsional, contoh: 3.5" maxWidth="Infinity"/>
+
+                        <Label text="TARGET WAKTU TERCAPAI (BULAN)" styleClass="zn-field-label"/>
+                        <TextField fx:id="targetMonthsField" styleClass="zn-field" promptText="opsional, contoh: 36" maxWidth="Infinity"/>
+
+                        <Label text="Field opsional bisa dikosongkan. Klik Simulasikan untuk melihat dampak setiap perubahan."
+                               styleClass="zn-hint" wrapText="true"/>
+
                         <Region VBox.vgrow="ALWAYS" minHeight="20"/>
                         <Button text="⚡  Simulasikan" styleClass="zn-btn-primary" onAction="#simulate" maxWidth="Infinity"/>
                     </VBox>
+
                     <VBox spacing="0" styleClass="zn-panel" HBox.hgrow="ALWAYS">
                         <HBox styleClass="zn-panel-title-row" alignment="CENTER_LEFT" spacing="8">
                             <Label text="●" styleClass="zn-dot-violet"/>
@@ -43,7 +59,7 @@
                         <Region minHeight="14"/>
                         <TextArea fx:id="resultArea" wrapText="true" editable="false"
                                   styleClass="zn-result-area" maxWidth="Infinity" VBox.vgrow="ALWAYS"
-                                  promptText="Isi form dan klik Simulasikan..."/>
+                                  promptText="Isi form dan klik Simulasikan untuk melihat skenario dasar, dampak inflasi, top-up tambahan, dan proyeksi saldo."/>
                     </VBox>
                 </HBox>
             </content>

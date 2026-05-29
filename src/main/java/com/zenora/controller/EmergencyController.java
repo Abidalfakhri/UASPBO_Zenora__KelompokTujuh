@@ -287,6 +287,7 @@ public class EmergencyController extends BaseModuleController implements Initial
         colAmount.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
             }
         });

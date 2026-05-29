@@ -52,12 +52,12 @@ public class MultiGoalController extends BaseModuleController implements Initial
             colPct.setCellFactory(col -> new TableCell<>() {
                 @Override protected void updateItem(String v, boolean empty) {
                     super.updateItem(v, empty);
-                    if (empty || v == null) { setText(""); setStyle(""); return; }
+                    if (empty || v == null) { setText(""); setStyle("-fx-background-color: transparent;"); return; }
                     setText(v);
                     double pct = Double.parseDouble(v.replace("%", ""));
-                    if (pct >= 100) setStyle("-fx-text-fill:#34D399; -fx-font-weight:700;");
-                    else if (pct >= 50) setStyle("-fx-text-fill:#FBBF24;");
-                    else setStyle("-fx-text-fill:#F87171;");
+                    if (pct >= 100) setStyle("-fx-background-color: transparent; -fx-text-fill:#34D399; -fx-font-weight:700;");
+                    else if (pct >= 50) setStyle("-fx-background-color: transparent; -fx-text-fill:#FBBF24;");
+                    else setStyle("-fx-background-color: transparent; -fx-text-fill:#F87171;");
                 }
             });
         }
@@ -73,6 +73,7 @@ public class MultiGoalController extends BaseModuleController implements Initial
         col.setCellFactory(c -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
             }
         });

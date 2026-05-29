@@ -3,277 +3,352 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
 <StackPane xmlns="http://javafx.com/javafx/17"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.zenora.controller.LoginController"
-           style="-fx-background-color: linear-gradient(to bottom right, #0B0F19, #111827);"
-           prefWidth="1100" minWidth="780"
-           prefHeight="760">
+           prefWidth="1200" prefHeight="760"
+           style="-fx-background-color: #060810;">
 
-    <!-- Main Container -->
-    <HBox alignment="CENTER">
+    <HBox fillHeight="true">
 
-        <!-- LEFT SIDE -->
-        <VBox alignment="CENTER_LEFT"
-              spacing="0"
-              minWidth="520"
-              maxWidth="520"
-              style="-fx-background-color:
-                     linear-gradient(to bottom right, #0F172A, #111827);
-                     -fx-padding: 80 70;">
+        <StackPane prefWidth="560" minWidth="560" maxWidth="560"
+                   style="-fx-background-color: #0B0E1C;">
 
-            <!-- Logo -->
-            <HBox alignment="CENTER_LEFT" spacing="14">
+            <!-- Decorative grid overlay -->
+            <Region style="-fx-background-color: transparent;
+                           -fx-border-color: rgba(79,70,229,0.06);
+                           -fx-border-width: 0;
+                           -fx-padding: 0;"/>
 
-                <StackPane prefWidth="52" prefHeight="52"
-                           style="-fx-background-color:
-                                  linear-gradient(to bottom right, #6366F1, #8B5CF6);
-                                  -fx-background-radius: 16;">
+            <!-- Gradient accent strip at top -->
+            <Region VBox.vgrow="NEVER"
+                    style="-fx-background-color: linear-gradient(to bottom, rgba(79,70,229,0.18), transparent);
+                           -fx-min-height: 300;
+                           -fx-max-height: 300;
+                           -fx-min-width: 560;
+                           -fx-max-width: 560;"
+                    StackPane.alignment="TOP_LEFT"/>
 
-                    <Label text="Z"
-                           style="-fx-text-fill:white;
-                                  -fx-font-size:24px;
-                                  -fx-font-weight:900;"/>
-                </StackPane>
+            <!-- Content -->
+            <VBox alignment="TOP_LEFT" spacing="0"
+                  style="-fx-padding: 56 52 56 52;">
 
-                <VBox spacing="2">
-                    <Label text="Zenora"
-                           style="-fx-text-fill:#F8FAFC;
-                                  -fx-font-size:24px;
-                                  -fx-font-weight:900;"/>
+                <!-- Logo -->
+                <HBox alignment="CENTER_LEFT" spacing="14">
+                    <StackPane prefWidth="44" prefHeight="44"
+                               style="-fx-background-color: #4F46E5;
+                                      -fx-background-radius: 12;">
+                        <Label text="Z"
+                               style="-fx-text-fill: white;
+                                      -fx-font-size: 20px;
+                                      -fx-font-weight: 900;"/>
+                    </StackPane>
+                    <VBox spacing="1">
+                        <Label text="Zenora"
+                               style="-fx-text-fill: #F0F4FF;
+                                      -fx-font-size: 18px;
+                                      -fx-font-weight: 800;"/>
+                        <Label text="PERSONAL FINANCE"
+                               style="-fx-text-fill: #4F46E5;
+                                      -fx-font-size: 9px;
+                                      -fx-font-weight: 700;
+                                      -fx-font-family: 'Consolas', monospace;
+                                      -fx-letter-spacing: 0.12em;"/>
+                    </VBox>
+                </HBox>
 
-                    <Label text="Personal Finance Platform"
-                           style="-fx-text-fill:#818CF8;
-                                  -fx-font-size:11px;
-                                  -fx-font-weight:700;
-                                  -fx-font-family:'Consolas';"/>
-                </VBox>
-            </HBox>
+                <Region prefHeight="72"/>
 
-            <Region minHeight="80"/>
-
-            <!-- Hero Text -->
-            <Label text="Atur Keuangan&#10;Dengan Lebih Modern"
-                   wrapText="true"
-                   style="-fx-text-fill:#F8FAFC;
-                          -fx-font-size:38px;
-                          -fx-font-weight:900;
-                          -fx-line-spacing:8;"/>
-
-            <Region minHeight="24"/>
-
-            <Label text="Pantau tabungan, dana darurat, target finansial, dan seluruh perencanaan keuangan dalam satu dashboard yang elegan."
-                   wrapText="true"
-                   maxWidth="360"
-                   style="-fx-text-fill:#94A3B8;
-                          -fx-font-size:14px;
-                          -fx-line-spacing:5;"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <!-- Bottom Feature Cards -->
-            <HBox spacing="18">
-
-                <VBox spacing="6"
-                      prefWidth="120"
-                      style="-fx-background-color: rgba(255,255,255,0.04);
-                             -fx-background-radius: 18;
-                             -fx-border-radius: 18;
-                             -fx-border-color: rgba(255,255,255,0.05);
-                             -fx-padding:18;">
-
-                    <Label text="6+"
-                           style="-fx-text-fill:#818CF8;
-                                  -fx-font-size:24px;
-                                  -fx-font-weight:900;"/>
-
-                    <Label text="Financial Modules"
-                           wrapText="true"
-                           style="-fx-text-fill:#94A3B8;
-                                  -fx-font-size:11px;"/>
+                <!-- Hero headline -->
+                <VBox spacing="4">
+                    <Label text="Kendali Penuh"
+                           style="-fx-text-fill: #E8EEFF;
+                                  -fx-font-size: 40px;
+                                  -fx-font-weight: 800;"/>
+                    <Label text="Atas Finansialmu"
+                           style="-fx-text-fill: #6366F1;
+                                  -fx-font-size: 40px;
+                                  -fx-font-weight: 800;"/>
                 </VBox>
 
-                <VBox spacing="6"
-                      prefWidth="120"
-                      style="-fx-background-color: rgba(255,255,255,0.04);
-                             -fx-background-radius: 18;
-                             -fx-border-radius: 18;
-                             -fx-border-color: rgba(255,255,255,0.05);
-                             -fx-padding:18;">
+                <Region prefHeight="24"/>
 
-                    <Label text="∞"
-                           style="-fx-text-fill:#22D3EE;
-                                  -fx-font-size:24px;
-                                  -fx-font-weight:900;"/>
-
-                    <Label text="Scenario Planning"
-                           wrapText="true"
-                           style="-fx-text-fill:#94A3B8;
-                                  -fx-font-size:11px;"/>
-                </VBox>
-
-                <VBox spacing="6"
-                      prefWidth="120"
-                      style="-fx-background-color: rgba(255,255,255,0.04);
-                             -fx-background-radius: 18;
-                             -fx-border-radius: 18;
-                             -fx-border-color: rgba(255,255,255,0.05);
-                             -fx-padding:18;">
-
-                    <Label text="Secure"
-                           style="-fx-text-fill:#34D399;
-                                  -fx-font-size:20px;
-                                  -fx-font-weight:900;"/>
-
-                    <Label text="Encrypted Storage"
-                           wrapText="true"
-                           style="-fx-text-fill:#94A3B8;
-                                  -fx-font-size:11px;"/>
-                </VBox>
-            </HBox>
-        </VBox>
-
-        <!-- RIGHT SIDE -->
-        <StackPane prefWidth="620"
-                   style="-fx-background-color:#0B1220;">
-
-            <VBox alignment="CENTER"
-                  maxWidth="390"
-                  spacing="0">
-
-                <!-- Header -->
-                <Label text="Welcome Back"
-                       style="-fx-text-fill:#F8FAFC;
-                              -fx-font-size:28px;
-                              -fx-font-weight:900;"/>
-
-                <Region minHeight="8"/>
-
-                <Label text="Masuk untuk melanjutkan ke dashboard Zenora."
+                <Label text="Platform manajemen keuangan pribadi yang cerdas,&#10;intuitif, dan dirancang untuk masa depanmu."
                        wrapText="true"
-                       style="-fx-text-fill:#94A3B8;
-                              -fx-font-size:13px;"/>
+                       style="-fx-text-fill: #64748B;
+                              -fx-font-size: 14px;
+                              -fx-line-spacing: 4;
+                              -fx-max-width: 380;"/>
 
-                <Region minHeight="34"/>
+                <Region prefHeight="56"/>
 
-                <!-- Login Card -->
-                <VBox spacing="0"
-                      style="-fx-background-color: rgba(17,24,39,0.95);
-                             -fx-background-radius: 26;
-                             -fx-border-radius: 26;
+                <!-- Stats row -->
+                <HBox spacing="0"
+                      style="-fx-background-color: rgba(255,255,255,0.03);
+                             -fx-background-radius: 16;
                              -fx-border-color: rgba(255,255,255,0.06);
-                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 40, 0.2, 0, 10);">
+                             -fx-border-radius: 16;
+                             -fx-border-width: 1;">
+                    <VBox alignment="CENTER" spacing="4"
+                          style="-fx-padding: 20 32; -fx-min-width: 140;">
+                        <Label text="6+"
+                               style="-fx-text-fill: #818CF8;
+                                      -fx-font-size: 28px;
+                                      -fx-font-weight: 800;"/>
+                        <Label text="MODULES"
+                               style="-fx-text-fill: #475569;
+                                      -fx-font-size: 9px;
+                                      -fx-font-weight: 700;
+                                      -fx-font-family: 'Consolas', monospace;
+                                      -fx-letter-spacing: 0.1em;"/>
+                    </VBox>
+                    <Region style="-fx-background-color: rgba(255,255,255,0.05);
+                                   -fx-min-width: 1; -fx-max-width: 1;
+                                   -fx-min-height: 60; -fx-max-height: 60;"
+                            VBox.vgrow="NEVER"/>
+                    <VBox alignment="CENTER" spacing="4"
+                          style="-fx-padding: 20 32; -fx-min-width: 140;">
+                        <Label text="100%"
+                               style="-fx-text-fill: #22D3EE;
+                                      -fx-font-size: 28px;
+                                      -fx-font-weight: 800;"/>
+                        <Label text="LOKAL"
+                               style="-fx-text-fill: #475569;
+                                      -fx-font-size: 9px;
+                                      -fx-font-weight: 700;
+                                      -fx-font-family: 'Consolas', monospace;
+                                      -fx-letter-spacing: 0.1em;"/>
+                    </VBox>
+                    <Region style="-fx-background-color: rgba(255,255,255,0.05);
+                                   -fx-min-width: 1; -fx-max-width: 1;
+                                   -fx-min-height: 60; -fx-max-height: 60;"
+                            VBox.vgrow="NEVER"/>
+                    <VBox alignment="CENTER" spacing="4"
+                          style="-fx-padding: 20 32; -fx-min-width: 140;">
+                        <Label text="Aman"
+                               style="-fx-text-fill: #34D399;
+                                      -fx-font-size: 28px;
+                                      -fx-font-weight: 800;"/>
+                        <Label text="DATA PRIVASI"
+                               style="-fx-text-fill: #475569;
+                                      -fx-font-size: 9px;
+                                      -fx-font-weight: 700;
+                                      -fx-font-family: 'Consolas', monospace;
+                                      -fx-letter-spacing: 0.1em;"/>
+                    </VBox>
+                </HBox>
 
-                    <padding>
-                        <Insets top="34" right="34" bottom="34" left="34"/>
-                    </padding>
+                <Region VBox.vgrow="ALWAYS"/>
 
-                    <!-- Username -->
-                    <Label text="USERNAME"
-                           style="-fx-text-fill:#64748B;
-                                  -fx-font-size:10px;
-                                  -fx-font-weight:800;
-                                  -fx-letter-spacing:1.5;"/>
+                <!-- Feature pills -->
+                <HBox spacing="8">
+                    <Label text="⬡  AI Analytics"
+                           style="-fx-background-color: rgba(79,70,229,0.12);
+                                  -fx-text-fill: #818CF8;
+                                  -fx-font-size: 11px;
+                                  -fx-font-weight: 700;
+                                  -fx-background-radius: 20;
+                                  -fx-border-color: rgba(99,102,241,0.22);
+                                  -fx-border-radius: 20;
+                                  -fx-border-width: 1;
+                                  -fx-padding: 6 14;"/>
+                    <Label text="⬡  Goal Tracking"
+                           style="-fx-background-color: rgba(34,211,238,0.08);
+                                  -fx-text-fill: #22D3EE;
+                                  -fx-font-size: 11px;
+                                  -fx-font-weight: 700;
+                                  -fx-background-radius: 20;
+                                  -fx-border-color: rgba(34,211,238,0.18);
+                                  -fx-border-radius: 20;
+                                  -fx-border-width: 1;
+                                  -fx-padding: 6 14;"/>
+                    <Label text="⬡  Laporan Real-time"
+                           style="-fx-background-color: rgba(52,211,153,0.08);
+                                  -fx-text-fill: #34D399;
+                                  -fx-font-size: 11px;
+                                  -fx-font-weight: 700;
+                                  -fx-background-radius: 20;
+                                  -fx-border-color: rgba(52,211,153,0.18);
+                                  -fx-border-radius: 20;
+                                  -fx-border-width: 1;
+                                  -fx-padding: 6 14;"/>
+                </HBox>
+            </VBox>
+        </StackPane>
 
-                    <Region minHeight="10"/>
+        <!-- ═══════════════════════════════════════
+             RIGHT PANEL — Login Form
+        ════════════════════════════════════════ -->
+        <VBox alignment="CENTER"
+              HBox.hgrow="ALWAYS"
+              style="-fx-background-color: #060810;
+                     -fx-padding: 56 80;">
 
-                    <TextField fx:id="usernameField"
-                               promptText="Masukkan username"
-                               style="
-                                   -fx-background-color:#111827;
-                                   -fx-background-radius:14;
-                                   -fx-border-radius:14;
-                                   -fx-border-color:#1E293B;
-                                   -fx-border-width:1;
-                                   -fx-text-fill:white;
-                                   -fx-prompt-text-fill:#64748B;
-                                   -fx-font-size:13px;
-                                   -fx-padding:14 16;"
-                               minHeight="48"/>
+            <VBox maxWidth="400" minWidth="400">
 
-                    <Region minHeight="18"/>
+                <!-- Form header -->
+                <VBox spacing="6">
+                    <Label text="SIGN IN"
+                           style="-fx-text-fill: #4F46E5;
+                                  -fx-font-size: 10px;
+                                  -fx-font-weight: 800;
+                                  -fx-font-family: 'Consolas', monospace;
+                                  -fx-letter-spacing: 0.14em;"/>
+                    <Label text="Selamat kembali"
+                           style="-fx-text-fill: #E8EEFF;
+                                  -fx-font-size: 30px;
+                                  -fx-font-weight: 800;"/>
+                    <Label text="Masukkan kredensial Anda untuk melanjutkan"
+                           style="-fx-text-fill: #475569;
+                                  -fx-font-size: 13px;"/>
+                </VBox>
 
-                    <!-- Password -->
-                    <Label text="PASSWORD"
-                           style="-fx-text-fill:#64748B;
-                                  -fx-font-size:10px;
-                                  -fx-font-weight:800;
-                                  -fx-letter-spacing:1.5;"/>
+                <Region prefHeight="44"/>
 
-                    <Region minHeight="10"/>
+                <!-- Form card -->
+                <VBox spacing="0"
+                      style="-fx-background-color: #0D1022;
+                             -fx-background-radius: 20;
+                             -fx-border-color: rgba(255,255,255,0.07);
+                             -fx-border-radius: 20;
+                             -fx-border-width: 1;
+                             -fx-padding: 36 32 32 32;">
 
-                    <PasswordField fx:id="passwordField"
-                                   promptText="Masukkan password"
-                                   style="
-                                       -fx-background-color:#111827;
-                                       -fx-background-radius:14;
-                                       -fx-border-radius:14;
-                                       -fx-border-color:#1E293B;
-                                       -fx-border-width:1;
-                                       -fx-text-fill:white;
-                                       -fx-prompt-text-fill:#64748B;
-                                       -fx-font-size:13px;
-                                       -fx-padding:14 16;"
-                                   minHeight="48"/>
+                    <!-- Username field -->
+                    <VBox spacing="8">
+                        <Label text="USERNAME"
+                               style="-fx-text-fill: #6366F1;
+                                      -fx-font-size: 10px;
+                                      -fx-font-weight: 700;
+                                      -fx-font-family: 'Consolas', monospace;
+                                      -fx-letter-spacing: 0.1em;"/>
+                        <TextField fx:id="usernameField"
+                                   promptText="Masukkan username Anda"
+                                   minHeight="46"
+                                   style="-fx-background-color: #060810;
+                                          -fx-background-radius: 11;
+                                          -fx-border-color: rgba(255,255,255,0.08);
+                                          -fx-border-radius: 11;
+                                          -fx-border-width: 1;
+                                          -fx-text-fill: #E2E8F0;
+                                          -fx-prompt-text-fill: #334155;
+                                          -fx-font-size: 13px;
+                                          -fx-padding: 0 16;"/>
+                    </VBox>
 
-                    <Region minHeight="12"/>
+                    <Region prefHeight="22"/>
 
-                    <!-- Error -->
-                    <Label fx:id="errorLabel"
-                           text=""
-                           style="-fx-text-fill:#F87171;
-                                  -fx-font-size:11px;
-                                  -fx-font-weight:700;"/>
+                    <!-- Password field -->
+                    <VBox spacing="8">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="PASSWORD"
+                                   style="-fx-text-fill: #6366F1;
+                                          -fx-font-size: 10px;
+                                          -fx-font-weight: 700;
+                                          -fx-font-family: 'Consolas', monospace;
+                                          -fx-letter-spacing: 0.1em;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="Lupa password?"
+                                    style="-fx-background-color: transparent;
+                                           -fx-text-fill: #475569;
+                                           -fx-font-size: 11px;
+                                           -fx-cursor: hand;
+                                           -fx-padding: 0;
+                                           -fx-border-color: transparent;"/>
+                        </HBox>
+                        <PasswordField fx:id="passwordField"
+                                       promptText="Masukkan password Anda"
+                                       minHeight="46"
+                                       style="-fx-background-color: #060810;
+                                              -fx-background-radius: 11;
+                                              -fx-border-color: rgba(255,255,255,0.08);
+                                              -fx-border-radius: 11;
+                                              -fx-border-width: 1;
+                                              -fx-text-fill: #E2E8F0;
+                                              -fx-prompt-text-fill: #334155;
+                                              -fx-font-size: 13px;
+                                              -fx-padding: 0 16;"/>
+                    </VBox>
 
-                    <!-- Loading -->
-                    <Label fx:id="loadingLabel"
-                           text="Memverifikasi akun..."
-                           visible="false"
-                           managed="false"
-                           style="-fx-text-fill:#818CF8;
-                                  -fx-font-size:11px;
-                                  -fx-font-weight:700;"/>
+                    <Region prefHeight="10"/>
 
-                    <Region minHeight="26"/>
+                    <!-- Error / loading states -->
+                    <Label fx:id="errorLabel" text=""
+                           wrapText="true"
+                           style="-fx-text-fill: #F87171;
+                                  -fx-font-size: 11px;
+                                  -fx-padding: 6 0 0 0;"/>
+                    <Label fx:id="loadingLabel" text="Memverifikasi akun…"
+                           visible="false" managed="false"
+                           style="-fx-text-fill: #6366F1;
+                                  -fx-font-size: 11px;
+                                  -fx-padding: 6 0 0 0;"/>
 
-                    <!-- Button -->
+                    <Region prefHeight="26"/>
+
+                    <!-- Login button -->
                     <Button fx:id="loginButton"
                             text="Masuk ke Dashboard"
                             onAction="#handleLogin"
                             maxWidth="999"
                             minHeight="50"
-                            style="
-                                -fx-background-color:
-                                linear-gradient(to right, #6366F1, #8B5CF6);
-                                -fx-background-radius:16;
-                                -fx-text-fill:white;
-                                -fx-font-size:14px;
-                                -fx-font-weight:800;
-                                -fx-cursor:hand;"/>
+                            style="-fx-background-color: #4F46E5;
+                                   -fx-background-radius: 12;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 14px;
+                                   -fx-font-weight: 800;
+                                   -fx-cursor: hand;
+                                   -fx-border-color: transparent;"/>
 
-                    <Region minHeight="24"/>
+                    <Region prefHeight="28"/>
 
-                    <!-- Register -->
+                    <!-- Divider -->
+                    <HBox alignment="CENTER" spacing="12">
+                        <Region HBox.hgrow="ALWAYS"
+                                style="-fx-background-color: rgba(255,255,255,0.06);
+                                       -fx-min-height: 1; -fx-max-height: 1;"/>
+                        <Label text="ATAU"
+                               style="-fx-text-fill: #334155;
+                                      -fx-font-size: 10px;
+                                      -fx-font-weight: 700;
+                                      -fx-font-family: 'Consolas', monospace;"/>
+                        <Region HBox.hgrow="ALWAYS"
+                                style="-fx-background-color: rgba(255,255,255,0.06);
+                                       -fx-min-height: 1; -fx-max-height: 1;"/>
+                    </HBox>
+
+                    <Region prefHeight="24"/>
+
+                    <!-- Register link -->
                     <HBox alignment="CENTER" spacing="6">
-
                         <Label text="Belum punya akun?"
-                               style="-fx-text-fill:#64748B;
-                                      -fx-font-size:12px;"/>
-
-                        <Button text="Daftar"
+                               style="-fx-text-fill: #475569;
+                                      -fx-font-size: 12px;"/>
+                        <Button text="Buat akun baru"
                                 onAction="#goToRegister"
-                                style="
-                                    -fx-background-color: transparent;
-                                    -fx-text-fill:#818CF8;
-                                    -fx-font-size:12px;
-                                    -fx-font-weight:700;
-                                    -fx-cursor:hand;
-                                    -fx-padding:0;
-                                    -fx-border-color:transparent;"/>
+                                style="-fx-background-color: transparent;
+                                       -fx-text-fill: #818CF8;
+                                       -fx-font-size: 12px;
+                                       -fx-font-weight: 700;
+                                       -fx-cursor: hand;
+                                       -fx-padding: 0;
+                                       -fx-border-color: transparent;"/>
                     </HBox>
                 </VBox>
+
+                <Region prefHeight="32"/>
+
+                <!-- Footer note -->
+                <HBox alignment="CENTER" spacing="6">
+                    <Label text="🔒"
+                           style="-fx-font-size: 11px; -fx-opacity: 0.4;"/>
+                    <Label text="Data Anda tersimpan secara lokal dan terenkripsi"
+                           style="-fx-text-fill: #334155;
+                                  -fx-font-size: 11px;"/>
+                </HBox>
             </VBox>
-        </StackPane>
+        </VBox>
     </HBox>
 </StackPane>

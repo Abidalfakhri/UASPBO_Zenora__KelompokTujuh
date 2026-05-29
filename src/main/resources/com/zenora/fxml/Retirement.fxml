@@ -10,7 +10,7 @@
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
                 <Label text="Dana Pensiun" styleClass="zn-page-title"/>
-                <Label text="MODUL 01 — KALKULATOR + GOAL TRACKER DANA PENSIUN" styleClass="zn-page-badge"/>
+                <Label text="KALKULATOR + GOAL TRACKER DANA PENSIUN" styleClass="zn-page-badge"/>
             </VBox>
         </HBox>
     </top>

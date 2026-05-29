@@ -3,164 +3,362 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.shape.Circle?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.zenora.controller.MainMenuController"
-            prefWidth="1100" prefHeight="720" minWidth="780"
-            styleClass="fp-root">
+            prefWidth="1200" prefHeight="800" minWidth="900"
+            style="-fx-background-color: #0A0C12;">
+
+    <!-- Background Blur Effects -->
+    <StackPane BorderPane.alignment="CENTER">
+        <Circle radius="300" fill="#4F46E5" opacity="0.04" translateX="-500" translateY="-300">
+            <effect><GaussianBlur radius="100"/></effect>
+        </Circle>
+        <Circle radius="250" fill="#8B5CF6" opacity="0.03" translateX="450" translateY="-200">
+            <effect><GaussianBlur radius="90"/></effect>
+        </Circle>
+        <Circle radius="200" fill="#06B6D4" opacity="0.03" translateX="0" translateY="350">
+            <effect><GaussianBlur radius="80"/></effect>
+        </Circle>
+    </StackPane>
 
     <top>
-        <HBox style="-fx-background-color:#13161F; -fx-padding:14 44; -fx-border-color:transparent transparent rgba(255,255,255,0.06) transparent; -fx-border-width:0 0 1 0;"
-              alignment="CENTER_LEFT" spacing="14">
-            <Label text="Z" styleClass="zn-logo-mark"/>
-            <Label text="Zenora" style="-fx-font-size:16px; -fx-font-weight:800; -fx-text-fill:#F0F0F6;"/>
+        <HBox alignment="CENTER_LEFT" spacing="16"
+              style="-fx-background-color: rgba(12,15,29,0.9);
+                     -fx-padding: 0 32;
+                     -fx-min-height: 70;
+                     -fx-border-color: transparent transparent rgba(255,255,255,0.05) transparent;
+                     -fx-border-width: 0 0 1 0;">
+            
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <StackPane prefWidth="40" prefHeight="40"
+                           style="-fx-background-color: linear-gradient(135deg, #4F46E5, #8B5CF6);
+                                  -fx-background-radius: 12;
+                                  -fx-effect: dropshadow(gaussian, rgba(79,70,229,0.4), 12, 0, 0, 3);">
+                    <Label text="Z" style="-fx-text-fill:white; -fx-font-size:18px; -fx-font-weight:900;"/>
+                </StackPane>
+                <Label text="Zenora" style="-fx-font-size:20px; -fx-font-weight:800; -fx-text-fill:#F8FAFC;"/>
+            </HBox>
+            
             <Region HBox.hgrow="ALWAYS"/>
-            <Button text="← Dashboard" styleClass="zn-btn-secondary" onAction="#openDashboard"/>
-            <Button text="👤  Profil" styleClass="zn-btn-secondary" onAction="#openProfile"/>
-            <Button text="⎋  Logout" styleClass="zn-btn-danger" onAction="#logout"
-                    style="-fx-font-size:11px; -fx-padding:7 14;"/>
+            
+            <HBox spacing="12">
+                <Button text="Dashboard" onAction="#openDashboard"
+                        style="-fx-background-color: rgba(255,255,255,0.05);
+                               -fx-text-fill: #A0B4DC;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: 600;
+                               -fx-padding: 8 20;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-border-color: rgba(255,255,255,0.08);
+                               -fx-border-width: 1;
+                               -fx-border-radius: 10;"/>
+                
+                <Button text="Profil" onAction="#openProfile"
+                        style="-fx-background-color: rgba(255,255,255,0.05);
+                               -fx-text-fill: #A0B4DC;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: 600;
+                               -fx-padding: 8 20;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-border-color: rgba(255,255,255,0.08);
+                               -fx-border-width: 1;
+                               -fx-border-radius: 10;"/>
+                
+                <Button text="Logout" onAction="#logout"
+                        style="-fx-background-color: rgba(239,68,68,0.12);
+                               -fx-text-fill: #F87171;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: 700;
+                               -fx-padding: 8 20;
+                               -fx-background-radius: 10;
+                               -fx-cursor: hand;
+                               -fx-border-color: rgba(239,68,68,0.2);
+                               -fx-border-width: 1;
+                               -fx-border-radius: 10;"/>
+            </HBox>
         </HBox>
     </top>
 
     <center>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="fp-scroll">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                    style="-fx-background-color: transparent; -fx-border-color: transparent;">
             <content>
-                <VBox spacing="0" styleClass="fp-page" fillWidth="true">
+                <VBox spacing="0" style="-fx-background-color: transparent; -fx-padding: 0;" fillWidth="true">
 
-                    <!-- HERO -->
-                    <HBox styleClass="fp-hero" alignment="BOTTOM_LEFT" spacing="40">
+                    <!-- Hero Section -->
+                    <HBox alignment="CENTER_LEFT" spacing="50"
+                          style="-fx-padding: 60 60 50 60; -fx-background-color: transparent;">
+                        
                         <VBox spacing="0" HBox.hgrow="ALWAYS">
-                            <Label text="PERSONAL FINANCIAL SUITE" styleClass="fp-hero-eyebrow"/>
-                            <Region minHeight="14"/>
-                            <Label text="Zenora" styleClass="fp-hero-title-gold"/>
-                            <Region minHeight="14"/>
-                            <Label text="A structured workspace to plan retirement, savings goals, emergency funds, and future financial scenarios with clarity."
-                                   wrapText="true" maxWidth="620" styleClass="fp-hero-sub"/>
-                        </VBox>
-                        <VBox spacing="0" alignment="TOP_RIGHT" minWidth="140">
-                            <VBox alignment="TOP_RIGHT">
-                                <Label text="6" style="-fx-font-size:36px; -fx-font-weight:800; -fx-text-fill:#818CF8;"/>
-                                <Label text="MODULES" styleClass="zn-stat-label"/>
-                            </VBox>
-                            <Region minHeight="18"/>
-                            <Region styleClass="zn-divider" minWidth="1" minHeight="42"/>
-                            <Region minHeight="18"/>
-                            <VBox alignment="TOP_RIGHT">
-                                <Label text="∞" style="-fx-font-size:36px; -fx-font-weight:800; -fx-text-fill:#818CF8;"/>
-                                <Label text="SCENARIOS" styleClass="zn-stat-label"/>
-                            </VBox>
+                            <Label text="WELCOME TO ZENORA"
+                                   style="-fx-font-size: 11px;
+                                          -fx-font-weight: 800;
+                                          -fx-text-fill: #818CF8;
+                                          -fx-font-family: 'Consolas', monospace;
+                                          -fx-letter-spacing: 2.5px;"/>
+                            <Region minHeight="20"/>
+                            <Label text="Your Financial"
+                                   style="-fx-font-size: 48px;
+                                          -fx-font-weight: 800;
+                                          -fx-text-fill: #F8FAFC;"/>
+                            <Label text="Command Center"
+                                   style="-fx-font-size: 48px;
+                                          -fx-font-weight: 800;
+                                          -fx-text-fill: #818CF8;"/>
+                            <Region minHeight="20"/>
+                            <Label text="Manage retirement, savings goals, emergency funds, and debt payoff in one unified platform."
+                                   wrapText="true" maxWidth="550"
+                                   style="-fx-font-size: 14px;
+                                          -fx-text-fill: #94A3B8;
+                                          -fx-line-spacing: 6px;"/>
                         </VBox>
                     </HBox>
 
-                    <!-- SECTION HEADER -->
-                    <HBox styleClass="fp-section-header" alignment="CENTER_LEFT" spacing="12">
-                        <Region styleClass="fp-section-line" minWidth="28" minHeight="2" maxHeight="2"/>
-                        <Label text="PLANNING MODULES" styleClass="fp-section-label"/>
+                    <!-- Section Divider -->
+                    <HBox alignment="CENTER" spacing="0" style="-fx-padding: 0 60 30 60;">
+                        <Region style="-fx-background-color: linear-gradient(to right, transparent, #4F46E5, transparent); -fx-min-height: 2; -fx-pref-width: 200;"/>
+                        <Label text="EXPLORE MODULES"
+                               style="-fx-font-size: 10px;
+                                      -fx-font-weight: 800;
+                                      -fx-text-fill: #2A3550;
+                                      -fx-font-family: 'Consolas', monospace;
+                                      -fx-letter-spacing: 2px;
+                                      -fx-padding: 0 20;"/>
+                        <Region style="-fx-background-color: linear-gradient(to right, transparent, #4F46E5, transparent); -fx-min-height: 2; -fx-pref-width: 200;"/>
                     </HBox>
 
-                    <!-- GRID -->
-                    <GridPane hgap="18" vgap="18" styleClass="fp-grid">
+                    <!-- Modules Grid -->
+                    <GridPane hgap="24" vgap="24" style="-fx-padding: 0 60 40 60;">
                         <columnConstraints>
                             <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
                             <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
                             <ColumnConstraints percentWidth="33.33" hgrow="ALWAYS"/>
                         </columnConstraints>
 
-                        <!-- 01 Retirement -->
+                        <!-- Card 1: Retirement -->
                         <VBox GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card, fp-card-featured" onMouseClicked="#openRetirement">
-                            <HBox alignment="CENTER_LEFT"><Label text="01" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
-                            <Region minHeight="14"/>
-                            <Label text="📈" styleClass="fp-icon fp-icon-gold"/>
-                            <Region minHeight="14"/>
-                            <Label text="Dana Pensiun" styleClass="fp-card-title"/>
+                              style="-fx-background-color: #111628;
+                                     -fx-background-radius: 24;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 24;
+                                     -fx-border-width: 1;
+                                     -fx-padding: 28 24 24 24;
+                                     -fx-cursor: hand;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);"
+                              onMouseClicked="#openRetirement">
+                            
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="01" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="→" style="-fx-font-size: 18px; -fx-text-fill: #2A3550; -fx-opacity: 0.6;"/>
+                            </HBox>
+                            <Region minHeight="20"/>
+                            
+                            <StackPane prefWidth="56" prefHeight="56"
+                                       style="-fx-background-color: rgba(129,140,248,0.12);
+                                              -fx-background-radius: 18;">
+                                <Label text="📈" style="-fx-font-size: 28px;"/>
+                            </StackPane>
+                            <Region minHeight="20"/>
+                            
+                            <Label text="Dana Pensiun" style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #F8FAFC;"/>
                             <Region minHeight="8"/>
-                            <Label text="Kalkulator + goal tracker dana pensiun dengan setoran &amp; progress nyata." wrapText="true" styleClass="fp-card-desc"/>
+                            
+                            <Label text="Kalkulator dan goal tracker untuk perencanaan pensiun yang matang."
+                                   wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #6B7E9A; -fx-line-spacing: 4px;"/>
                             <Region VBox.vgrow="ALWAYS"/>
-                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-gold"/></HBox>
+                            <Region minHeight="20"/>
+                            
+                            <HBox alignment="CENTER_RIGHT" style="-fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 16 0 0 0;">
+                                <Label text="Launch Module →" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #818CF8;"/>
+                            </HBox>
                         </VBox>
 
-                        <!-- 02 Goal -->
+                        <!-- Card 2: Goal Planning -->
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card" onMouseClicked="#openGoal">
-                            <HBox alignment="CENTER_LEFT"><Label text="02" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
-                            <Region minHeight="14"/>
-                            <Label text="🎯" styleClass="fp-icon fp-icon-blue"/>
-                            <Region minHeight="14"/>
-                            <Label text="Goal Planning" styleClass="fp-card-title"/>
+                              style="-fx-background-color: #111628;
+                                     -fx-background-radius: 24;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 24;
+                                     -fx-border-width: 1;
+                                     -fx-padding: 28 24 24 24;
+                                     -fx-cursor: hand;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);"
+                              onMouseClicked="#openGoal">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="02" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="→" style="-fx-font-size: 18px; -fx-text-fill: #2A3550; -fx-opacity: 0.6;"/>
+                            </HBox>
+                            <Region minHeight="20"/>
+                            <StackPane prefWidth="56" prefHeight="56"
+                                       style="-fx-background-color: rgba(34,211,238,0.12);
+                                              -fx-background-radius: 18;">
+                                <Label text="🎯" style="-fx-font-size: 28px;"/>
+                            </StackPane>
+                            <Region minHeight="20"/>
+                            <Label text="Goal Planning" style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #F8FAFC;"/>
                             <Region minHeight="8"/>
-                            <Label text="Bangun strategi tabungan untuk pembelian, pendidikan, perjalanan, atau target keuangan lainnya." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Buat target tabungan untuk liburan, properti, pendidikan, dan lainnya."
+                                   wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #6B7E9A; -fx-line-spacing: 4px;"/>
                             <Region VBox.vgrow="ALWAYS"/>
-                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-blue"/></HBox>
+                            <Region minHeight="20"/>
+                            <HBox alignment="CENTER_RIGHT" style="-fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 16 0 0 0;">
+                                <Label text="Launch Module →" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #22D3EE;"/>
+                            </HBox>
                         </VBox>
 
-                        <!-- 03 Emergency -->
+                        <!-- Card 3: Emergency -->
                         <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card" onMouseClicked="#openEmergency">
-                            <HBox alignment="CENTER_LEFT"><Label text="03" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
-                            <Region minHeight="14"/>
-                            <Label text="🛡" styleClass="fp-icon fp-icon-green"/>
-                            <Region minHeight="14"/>
-                            <Label text="Dana Darurat" styleClass="fp-card-title"/>
+                              style="-fx-background-color: #111628;
+                                     -fx-background-radius: 24;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 24;
+                                     -fx-border-width: 1;
+                                     -fx-padding: 28 24 24 24;
+                                     -fx-cursor: hand;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);"
+                              onMouseClicked="#openEmergency">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="03" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="→" style="-fx-font-size: 18px; -fx-text-fill: #2A3550; -fx-opacity: 0.6;"/>
+                            </HBox>
+                            <Region minHeight="20"/>
+                            <StackPane prefWidth="56" prefHeight="56"
+                                       style="-fx-background-color: rgba(52,211,153,0.12);
+                                              -fx-background-radius: 18;">
+                                <Label text="🛡️" style="-fx-font-size: 28px;"/>
+                            </StackPane>
+                            <Region minHeight="20"/>
+                            <Label text="Dana Darurat" style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #F8FAFC;"/>
                             <Region minHeight="8"/>
-                            <Label text="Kalkulator + goal tracker dana darurat dengan setoran &amp; progress nyata." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Bangun perlindungan finansial untuk situasi tak terduga."
+                                   wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #6B7E9A; -fx-line-spacing: 4px;"/>
                             <Region VBox.vgrow="ALWAYS"/>
-                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-green"/></HBox>
+                            <Region minHeight="20"/>
+                            <HBox alignment="CENTER_RIGHT" style="-fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 16 0 0 0;">
+                                <Label text="Launch Module →" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #34D399;"/>
+                            </HBox>
                         </VBox>
 
-                        <!-- 04 What-If -->
+                        <!-- Card 4: What-If -->
                         <VBox GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card" onMouseClicked="#openWhatIf">
-                            <HBox alignment="CENTER_LEFT"><Label text="04" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
-                            <Region minHeight="14"/>
-                            <Label text="⚡" styleClass="fp-icon fp-icon-purple"/>
-                            <Region minHeight="14"/>
-                            <Label text="What-If Simulation" styleClass="fp-card-title"/>
+                              style="-fx-background-color: #111628;
+                                     -fx-background-radius: 24;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 24;
+                                     -fx-border-width: 1;
+                                     -fx-padding: 28 24 24 24;
+                                     -fx-cursor: hand;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);"
+                              onMouseClicked="#openWhatIf">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="04" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="→" style="-fx-font-size: 18px; -fx-text-fill: #2A3550; -fx-opacity: 0.6;"/>
+                            </HBox>
+                            <Region minHeight="20"/>
+                            <StackPane prefWidth="56" prefHeight="56"
+                                       style="-fx-background-color: rgba(168,85,247,0.12);
+                                              -fx-background-radius: 18;">
+                                <Label text="⚡" style="-fx-font-size: 28px;"/>
+                            </StackPane>
+                            <Region minHeight="20"/>
+                            <Label text="What-If Simulation" style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #F8FAFC;"/>
                             <Region minHeight="8"/>
-                            <Label text="Eksplorasi skenario keuangan alternatif dan bandingkan hasil masa depan secara instan." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Bandingkan skenario keuangan dan lihat proyeksi masa depan."
+                                   wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #6B7E9A; -fx-line-spacing: 4px;"/>
                             <Region VBox.vgrow="ALWAYS"/>
-                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-purple"/></HBox>
+                            <Region minHeight="20"/>
+                            <HBox alignment="CENTER_RIGHT" style="-fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 16 0 0 0;">
+                                <Label text="Launch Module →" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #A78BFA;"/>
+                            </HBox>
                         </VBox>
 
-                        <!-- 05 Debt Payoff -->
+                        <!-- Card 5: Debt Payoff -->
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card" onMouseClicked="#openDebtPlanner">
-                            <HBox alignment="CENTER_LEFT"><Label text="05" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
-                            <Region minHeight="14"/>
-                            <Label text="💳" styleClass="fp-icon fp-icon-orange"/>
-                            <Region minHeight="14"/>
-                            <Label text="Debt Payoff Planner" styleClass="fp-card-title"/>
+                              style="-fx-background-color: #111628;
+                                     -fx-background-radius: 24;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 24;
+                                     -fx-border-width: 1;
+                                     -fx-padding: 28 24 24 24;
+                                     -fx-cursor: hand;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);"
+                              onMouseClicked="#openDebtPlanner">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="05" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="→" style="-fx-font-size: 18px; -fx-text-fill: #2A3550; -fx-opacity: 0.6;"/>
+                            </HBox>
+                            <Region minHeight="20"/>
+                            <StackPane prefWidth="56" prefHeight="56"
+                                       style="-fx-background-color: rgba(251,191,36,0.12);
+                                              -fx-background-radius: 18;">
+                                <Label text="💳" style="-fx-font-size: 28px;"/>
+                            </StackPane>
+                            <Region minHeight="20"/>
+                            <Label text="Debt Payoff" style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #F8FAFC;"/>
                             <Region minHeight="8"/>
-                            <Label text="Rencanakan pelunasan hutang dengan strategi Snowball atau Avalanche, lengkap dengan estimasi waktu dan bunga." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Strategi Snowball atau Avalanche untuk lunasi hutang lebih cepat."
+                                   wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #6B7E9A; -fx-line-spacing: 4px;"/>
                             <Region VBox.vgrow="ALWAYS"/>
-                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-orange"/></HBox>
+                            <Region minHeight="20"/>
+                            <HBox alignment="CENTER_RIGHT" style="-fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 16 0 0 0;">
+                                <Label text="Launch Module →" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #FBBF24;"/>
+                            </HBox>
                         </VBox>
 
-                        <!-- 06 Progress -->
+                        <!-- Card 6: Progress -->
                         <VBox GridPane.columnIndex="2" GridPane.rowIndex="1" spacing="0" maxWidth="Infinity"
-                              styleClass="fp-card" onMouseClicked="#openProgress">
-                            <HBox alignment="CENTER_LEFT"><Label text="06" styleClass="fp-card-num"/><Region HBox.hgrow="ALWAYS"/><Label text="↗" styleClass="fp-arr"/></HBox>
-                            <Region minHeight="14"/>
-                            <Label text="📊" styleClass="fp-icon fp-icon-teal"/>
-                            <Region minHeight="14"/>
-                            <Label text="Progress Tracker" styleClass="fp-card-title"/>
+                              style="-fx-background-color: #111628;
+                                     -fx-background-radius: 24;
+                                     -fx-border-color: rgba(255,255,255,0.06);
+                                     -fx-border-radius: 24;
+                                     -fx-border-width: 1;
+                                     -fx-padding: 28 24 24 24;
+                                     -fx-cursor: hand;
+                                     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 15, 0, 0, 5);"
+                              onMouseClicked="#openProgress">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="06" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <Label text="→" style="-fx-font-size: 18px; -fx-text-fill: #2A3550; -fx-opacity: 0.6;"/>
+                            </HBox>
+                            <Region minHeight="20"/>
+                            <StackPane prefWidth="56" prefHeight="56"
+                                       style="-fx-background-color: rgba(6,182,212,0.12);
+                                              -fx-background-radius: 18;">
+                                <Label text="📊" style="-fx-font-size: 28px;"/>
+                            </StackPane>
+                            <Region minHeight="20"/>
+                            <Label text="Progress Tracker" style="-fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #F8FAFC;"/>
                             <Region minHeight="8"/>
-                            <Label text="Monitor pertumbuhan tabungan, konsistensi setoran, dan pencapaian milestone dari waktu ke waktu." wrapText="true" styleClass="fp-card-desc"/>
+                            <Label text="Monitor pertumbuhan tabungan dan pencapaian milestone keuangan."
+                                   wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #6B7E9A; -fx-line-spacing: 4px;"/>
                             <Region VBox.vgrow="ALWAYS"/>
-                            <HBox styleClass="fp-card-foot"><Label text="Open module" styleClass="fp-cta fp-cta-teal"/></HBox>
+                            <Region minHeight="20"/>
+                            <HBox alignment="CENTER_RIGHT" style="-fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent; -fx-border-width: 1 0 0 0; -fx-padding: 16 0 0 0;">
+                                <Label text="Launch Module →" style="-fx-font-size: 12px; -fx-font-weight: 700; -fx-text-fill: #22D3EE;"/>
+                            </HBox>
                         </VBox>
-
                     </GridPane>
 
-                    <!-- FOOTER -->
-                    <HBox styleClass="fp-footer" alignment="CENTER_LEFT">
-                        <Label text="© 2026 Zenora" styleClass="fp-footer-copy"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <HBox spacing="20">
-                            <Label text="Dashboard" styleClass="fp-footer-link" onMouseClicked="#openDashboard"/>
-                            <Label text="Profil" styleClass="fp-footer-link" onMouseClicked="#openProfile"/>
-                        </HBox>
+                    <!-- Footer -->
+                    <HBox alignment="CENTER"
+                          style="-fx-padding: 30 60 40 60;
+                                 -fx-background-color: transparent;
+                                 -fx-border-color: rgba(255,255,255,0.05) transparent transparent transparent;
+                                 -fx-border-width: 1 0 0 0;">
+                        <Label text="© 2025 Zenora. All rights reserved."
+                               style="-fx-font-size: 11px; -fx-text-fill: #2A3550; -fx-font-family: 'Consolas', monospace;"/>
                     </HBox>
 
                 </VBox>

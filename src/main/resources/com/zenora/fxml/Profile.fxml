@@ -12,7 +12,7 @@
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
                 <Label text="Profil &amp; Pengaturan" styleClass="zn-page-title"/>
-                <Label text="DATA KEUANGAN PRIBADI" styleClass="zn-page-badge"/>
+                <Label text="DATA PRIBADI" styleClass="zn-page-badge"/>
             </VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="🗑  Hapus Akun" styleClass="zn-btn-danger" onAction="#deleteAccount"/>

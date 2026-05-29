@@ -25,14 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-/**
- * RetirementController — kalkulator + goal tracker dana pensiun.
- *
- * Optimasi: usia saat ini, inflasi, dan kapasitas menabung diambil OTOMATIS
- * dari Profil (UserProfile) untuk menghindari input ganda. User hanya
- * mengisi parameter spesifik pensiun (target umur, lama pensiun,
- * kebutuhan bulanan, asumsi return).
- */
+
 public class RetirementController extends BaseModuleController implements Initializable {
 
     @Override public String moduleTitle() { return "Dana Pensiun"; }
@@ -339,6 +332,7 @@ public class RetirementController extends BaseModuleController implements Initia
         colAmount.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
             }
         });

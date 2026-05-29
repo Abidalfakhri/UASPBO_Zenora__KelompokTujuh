@@ -11,7 +11,7 @@
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
                 <Label text="Contribution Log" styleClass="zn-page-title"/>
-                <Label text="CATAT SETORAN NYATA — terhubung ke semua progress &amp; reports" styleClass="zn-page-badge"/>
+                <Label text="CATAT SETORAN &amp; reports" styleClass="zn-page-badge"/>
             </VBox>
         </HBox>
     </top>

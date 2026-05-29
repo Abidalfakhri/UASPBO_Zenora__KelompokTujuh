@@ -8,7 +8,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class ZenoraApplication {
 
-    /** Spring context — bisa diakses oleh komponen JavaFX jika perlu. */
     private static ConfigurableApplicationContext springContext;
 
     public static void main(String[] args) {

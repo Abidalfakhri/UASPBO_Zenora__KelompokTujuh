@@ -96,6 +96,7 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         colApr.setCellFactory(c -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : String.format("%.2f %%", v.doubleValue()));
             }
         });
@@ -171,6 +172,7 @@ public class DebtPlannerController extends BaseModuleController implements Initi
         col.setCellFactory(c -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
             }
         });

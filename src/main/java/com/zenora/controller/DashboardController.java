@@ -18,8 +18,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
@@ -28,25 +32,33 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.prefs.Preferences;
 
 
 public class DashboardController implements Initializable {
 
     @FXML private Label greetingLabel, capacityLabel, savedLabel, targetLabel,
-            progressLabel, emergencyLabel, goalsCountLabel, contribCountLabel,
+            emergencyLabel, goalsCountLabel, contribCountLabel,
             efStatusLabel, runwayLabel, sidebarCapLabel,
             pensionPctLabel, pensionSavedLabel, pensionTargetLabel;
-    @FXML private ProgressBar overallProgress, efProgress, pensionProgress;
+    @FXML private ProgressBar efProgress, pensionProgress;
     @FXML private VBox alertsBox;
+    @FXML private VBox goalProgressBox;           // NEW: container untuk per-goal cards
+    @FXML private Label goalProgressEmptyLabel;   // NEW: label saat tidak ada goal terpilih
     @FXML private PieChart allocationChart;
     @FXML private TableView<Goal> recentGoalsTable;
     @FXML private TableColumn<Goal, String> colGoalName, colGoalCat, colGoalStorage;
     @FXML private TableColumn<Goal, Number> colGoalTarget, colGoalSaved, colGoalPct;
 
+    private static final String PREF_KEY = "dashboard.selectedGoalIds";
+    private final Set<String> selectedGoalIds = new LinkedHashSet<>();
+    private boolean selectionLoaded = false;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         wireTable();
+        loadSelectionFromPrefs();
         refresh();          // tampilkan cache lokal dulu
         syncFromBackend();  // lalu sync dari database
     }
@@ -102,7 +114,13 @@ public class DashboardController implements Initializable {
                 if (obj.has("targetAmount"))  g.setTargetAmount(obj.get("targetAmount").getAsDouble());
                 if (obj.has("currentSaving")) g.setCurrentSaving(obj.get("currentSaving").getAsDouble());
                 if (obj.has("months"))        g.setMonths(obj.get("months").getAsInt());
-                if (obj.has("interestRate"))  g.setInterestRate(obj.get("interestRate").getAsDouble());
+                if (obj.has("interestRate")) {
+                    double r = obj.get("interestRate").getAsDouble();
+                    // Auto-correct data korup dari versi lama (parser membuang titik desimal).
+                    // Backend sudah @Max(100), jadi >100 pasti hasil bug lama. mis. 48.0 -> 4.8, 125 -> 12.5
+                    while (r > 100) r /= 10.0;
+                    g.setInterestRate(r);
+                }
                 if (obj.has("priority"))      g.setPriority(obj.get("priority").getAsInt());
                 if (obj.has("category")) {
                     try { g.setCategory(Category.valueOf(obj.get("category").getAsString())); }
@@ -144,6 +162,57 @@ public class DashboardController implements Initializable {
         }
     }
 
+    // ── Selection persistence ─────────────────────────────────────────────
+
+    private Preferences prefs() {
+        String user = AppSession.getInstance().getUsername();
+        if (user == null || user.isBlank()) user = "default";
+        return Preferences.userRoot().node("com/zenora/dashboard/" + user.replaceAll("[^a-zA-Z0-9_-]", "_"));
+    }
+
+    private void loadSelectionFromPrefs() {
+        try {
+            String raw = prefs().get(PREF_KEY, "");
+            selectedGoalIds.clear();
+            if (!raw.isBlank()) {
+                for (String id : raw.split(",")) {
+                    String t = id.trim();
+                    if (!t.isEmpty()) selectedGoalIds.add(t);
+                }
+                selectionLoaded = true;
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private void saveSelectionToPrefs() {
+        try {
+            prefs().put(PREF_KEY, String.join(",", selectedGoalIds));
+        } catch (Exception ignored) {}
+    }
+
+    /** Goal yang berhak tampil di pemilihan (reguler — bukan Darurat/Pensiun). */
+    private List<Goal> selectableGoals() {
+        List<Goal> out = new ArrayList<>();
+        for (Goal g : DataStore.getInstance().getGoals()) {
+            if (g.getCategory() != null) {
+                String n = g.getCategory().name();
+                if (n.equals("DARURAT") || n.equals("PENSIUN")) continue;
+            }
+            out.add(g);
+        }
+        return out;
+    }
+
+    /** Goal yang sedang aktif ditampilkan di panel Progress. */
+    private List<Goal> visibleGoals() {
+        List<Goal> selectable = selectableGoals();
+        // Default: kalau user belum pernah pilih, tampilkan semuanya.
+        if (!selectionLoaded || selectedGoalIds.isEmpty()) return selectable;
+        List<Goal> out = new ArrayList<>();
+        for (Goal g : selectable) if (selectedGoalIds.contains(g.getId())) out.add(g);
+        return out;
+    }
+
     // ── UI ────────────────────────────────────────────────────────────────
 
     private void wireTable() {
@@ -161,12 +230,12 @@ public class DashboardController implements Initializable {
         colGoalPct.setCellFactory(c -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
-                if (empty || v == null) { setText(""); setStyle(""); return; }
+                if (empty || v == null) { setText(""); setStyle("-fx-background-color: transparent;"); return; }
                 double pct = v.doubleValue();
                 setText(String.format("%.1f%%", pct));
-                if (pct >= 100) setStyle("-fx-text-fill: #34D399; -fx-font-weight: 700;");
-                else if (pct >= 50) setStyle("-fx-text-fill: #FBBF24;");
-                else setStyle("-fx-text-fill: #F87171;");
+                if (pct >= 100) setStyle("-fx-background-color: transparent; -fx-text-fill: #34D399; -fx-font-weight: 700;");
+                else if (pct >= 50) setStyle("-fx-background-color: transparent; -fx-text-fill: #FBBF24;");
+                else setStyle("-fx-background-color: transparent; -fx-text-fill: #F87171;");
             }
         });
     }
@@ -175,6 +244,7 @@ public class DashboardController implements Initializable {
         col.setCellFactory(c -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
             }
         });
@@ -195,28 +265,16 @@ public class DashboardController implements Initializable {
         capacityLabel.setText(capStr);
         if (sidebarCapLabel != null) sidebarCapLabel.setText("Kapasitas: " + capStr);
 
-        // Progress agregat HANYA goal reguler (di luar DARURAT & PENSIUN — keduanya
-        // sudah punya panel sendiri dan nominalnya cenderung sangat besar sehingga
-        // membuat persentase total selalu kelihatan kecil/menyesatkan).
+        // ─── Stat card "TOTAL TERKUMPUL": tetap berdasarkan SEMUA goal reguler
+        // (bukan Darurat/Pensiun) — biar angka totalnya tidak berubah-ubah hanya
+        // karena user men-toggle pilihan di panel progress per-goal.
         double totalSaved = 0, totalTarget = 0;
-        for (Goal g : ds.getGoals()) {
-            if (g.getCategory() != null) {
-                String catName = g.getCategory().name();
-                if (catName.equals("DARURAT") || catName.equals("PENSIUN")) continue;
-            }
-            totalSaved += g.getCurrentSaving();
+        for (Goal g : selectableGoals()) {
+            totalSaved  += g.getCurrentSaving();
             totalTarget += g.getTargetAmount();
         }
         savedLabel.setText(CurrencyFormatter.format(totalSaved));
         targetLabel.setText(CurrencyFormatter.format(totalTarget));
-        double pct = totalTarget == 0 ? 0 : Math.min(1, totalSaved / totalTarget);
-        overallProgress.setProgress(pct);
-        progressLabel.setText(String.format("%.1f%%", pct * 100));
-
-        // PENTING: jangan hapus "progress-bar" — itu class default skin JavaFX.
-        if (pct >= 0.8) overallProgress.getStyleClass().setAll("progress-bar", "zn-progress", "zn-progress-green");
-        else if (pct >= 0.4) overallProgress.getStyleClass().setAll("progress-bar", "zn-progress");
-        else overallProgress.getStyleClass().setAll("progress-bar", "zn-progress", "zn-progress-amber");
 
         goalsCountLabel.setText(String.valueOf(ds.getGoals().size()));
         contribCountLabel.setText(String.valueOf(ds.getContributions().size()));
@@ -259,6 +317,9 @@ public class DashboardController implements Initializable {
                 pensionTargetLabel.setText("Target: " + (pensionTarget == 0 ? "-" : CurrencyFormatter.format(pensionTarget)));
         }
 
+        // ─── Per-goal progress cards ─────────────────────────────────────
+        renderGoalProgressCards();
+
         // Pie alokasi: keluarkan DARURAT & PENSIUN (kategori besar yang punya panel sendiri)
         allocationChart.getData().clear();
         for (Goal g : ds.getGoals()) {
@@ -296,8 +357,191 @@ public class DashboardController implements Initializable {
             alertsBox.getChildren().add(chip("ok", "✓ Semua sehat. Lanjutkan disiplin menabung bulan ini!"));
 
         recentGoalsTable.setItems(ds.getGoals());
-        recentGoalsTable.refresh(); // force re-render agar % progress selalu terbaru
+        recentGoalsTable.refresh();
     }
+
+    /** Bangun satu mini-card per goal yang dipilih, lengkap dengan progress bar. */
+    private void renderGoalProgressCards() {
+        if (goalProgressBox == null) return;
+        goalProgressBox.getChildren().clear();
+
+        List<Goal> visible = visibleGoals();
+        if (visible.isEmpty()) {
+            Label empty = new Label(selectableGoals().isEmpty()
+                    ? "Belum ada goal reguler. Tambahkan goal baru untuk mulai tracking."
+                    : "Tidak ada goal terpilih. Klik “⚙ Atur” untuk memilih goal yang ingin ditampilkan.");
+            empty.getStyleClass().add("zn-stat-label");
+            empty.setWrapText(true);
+            goalProgressBox.getChildren().add(empty);
+            return;
+        }
+
+        for (Goal g : visible) {
+            goalProgressBox.getChildren().add(buildGoalCard(g));
+        }
+    }
+
+    private VBox buildGoalCard(Goal g) {
+        double pct = g.getTargetAmount() <= 0 ? 0 : Math.min(1.0, g.getCurrentSaving() / g.getTargetAmount());
+        double pctRaw = g.getProgressPercent(); // bisa > 100
+
+        VBox card = new VBox(6);
+        card.getStyleClass().add("zn-sub-panel");
+        card.setPadding(new Insets(10, 12, 10, 12));
+        card.setStyle("-fx-background-color: rgba(255,255,255,0.03); -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(255,255,255,0.06); -fx-border-width: 1;");
+
+        // Header
+        HBox header = new HBox(8);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label name = new Label(g.getName());
+        name.getStyleClass().add("zn-panel-title");
+        name.setStyle("-fx-font-size: 13px;");
+        Label cat = new Label(g.getCategory() != null ? g.getCategory().getLabel() : "Umum");
+        cat.getStyleClass().add("zn-badge");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Label pctLabel = new Label(String.format("%.1f%%", pctRaw));
+        pctLabel.getStyleClass().add("zn-badge");
+        if (pctRaw >= 100)      pctLabel.setStyle("-fx-text-fill: #34D399; -fx-font-weight: 700;");
+        else if (pctRaw >= 50)  pctLabel.setStyle("-fx-text-fill: #FBBF24;");
+        else                    pctLabel.setStyle("-fx-text-fill: #F87171;");
+        header.getChildren().addAll(name, cat, spacer, pctLabel);
+
+        // Progress bar
+        ProgressBar bar = new ProgressBar(pct);
+        bar.setPrefHeight(10);
+        bar.setMaxWidth(Double.MAX_VALUE);
+        if (pct >= 0.8)      bar.getStyleClass().setAll("progress-bar", "zn-progress", "zn-progress-green");
+        else if (pct >= 0.4) bar.getStyleClass().setAll("progress-bar", "zn-progress");
+        else                 bar.getStyleClass().setAll("progress-bar", "zn-progress-amber");
+
+        // Footer line: Saved / Target  •  Sisa
+        double remaining = Math.max(0, g.getTargetAmount() - g.getCurrentSaving());
+        HBox footer = new HBox(10);
+        footer.setAlignment(Pos.CENTER_LEFT);
+        Label saved = new Label(CurrencyFormatter.format(g.getCurrentSaving())
+                + "  /  " + CurrencyFormatter.format(g.getTargetAmount()));
+        saved.getStyleClass().add("zn-stat-label");
+        Region sp = new Region();
+        HBox.setHgrow(sp, Priority.ALWAYS);
+        Label rest = new Label(remaining == 0 ? "✓ Tercapai" : "Sisa: " + CurrencyFormatter.format(remaining));
+        rest.getStyleClass().add("zn-stat-label");
+        footer.getChildren().addAll(saved, sp, rest);
+
+        card.getChildren().addAll(header, bar, footer);
+        return card;
+    }
+
+    /** Dialog untuk memilih goal mana yang ditampilkan di panel Progress. */
+    @FXML
+private void chooseGoalsForProgress() {
+    List<Goal> selectable = selectableGoals();
+    if (selectable.isEmpty()) {
+        showInfo("Belum Ada Goal", "Anda belum punya goal reguler (di luar Dana Darurat & Pensiun).");
+        return;
+    }
+
+    Dialog<List<String>> dlg = new Dialog<>();
+    dlg.setTitle("Pilih Goal");
+    dlg.setHeaderText("Pilih goal yang ingin ditampilkan di panel Progress dashboard.");
+
+    VBox box = new VBox(8);
+    box.setPadding(new Insets(10));
+    
+    List<CheckBox> checks = new ArrayList<>();
+    Set<String> currentSel = (!selectionLoaded || selectedGoalIds.isEmpty())
+            ? new LinkedHashSet<>() : new LinkedHashSet<>(selectedGoalIds);
+    boolean checkAll = currentSel.isEmpty();
+    
+    for (Goal g : selectable) {
+        HBox row = new HBox(10);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setStyle("-fx-background-color: #1E293B; -fx-background-radius: 8; -fx-padding: 10 12;");
+        
+        CheckBox cb = new CheckBox();
+        cb.setSelected(checkAll || currentSel.contains(g.getId()));
+        cb.setUserData(g.getId());
+        cb.setStyle("-fx-text-fill: #F8FAFC;");
+        checks.add(cb);
+        
+        Label nameLabel = new Label(g.getName());
+        nameLabel.setStyle("-fx-text-fill: #F8FAFC; -fx-font-size: 13px; -fx-font-weight: 600;");
+        
+        Label catLabel = new Label(g.getCategory() != null ? g.getCategory().getLabel() : "Umum");
+        catLabel.setStyle("-fx-text-fill: #818CF8; -fx-font-size: 10px; -fx-font-weight: 600; -fx-background-color: rgba(99,102,241,0.15); -fx-background-radius: 6; -fx-padding: 2 6;");
+        
+        VBox infoBox = new VBox(2);
+        infoBox.getChildren().addAll(nameLabel, catLabel);
+        
+        double pct = g.getTargetAmount() <= 0 ? 0 : (g.getCurrentSaving() / g.getTargetAmount()) * 100;
+        Label pctLabel = new Label(String.format("%.1f%%", pct));
+        pctLabel.setStyle("-fx-text-fill: #34D399; -fx-font-size: 11px; -fx-font-weight: 700;");
+        
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        row.getChildren().addAll(cb, infoBox, spacer, pctLabel);
+        box.getChildren().add(row);
+    }
+    
+    HBox quick = new HBox(8);
+    quick.setPadding(new Insets(8, 0, 4, 0));
+    
+    Button selAll = new Button("Pilih semua");
+    selAll.setStyle("-fx-background-color: #4F46E5; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 5 12; -fx-font-size: 11px; -fx-font-weight: 700; -fx-cursor: hand;");
+    selAll.setOnAction(e -> checks.forEach(c -> c.setSelected(true)));
+    
+    Button selNone = new Button("Kosongkan");
+    selNone.setStyle("-fx-background-color: transparent; -fx-text-fill: #F87171; -fx-border-color: #334155; -fx-border-radius: 6; -fx-padding: 5 12; -fx-font-size: 11px; -fx-font-weight: 600; -fx-cursor: hand;");
+    selNone.setOnAction(e -> checks.forEach(c -> c.setSelected(false)));
+    
+    quick.getChildren().addAll(selAll, selNone);
+    
+    Label countLabel = new Label();
+    countLabel.setStyle("-fx-text-fill: #818CF8; -fx-font-size: 10px; -fx-padding: 4 0 0 0;");
+    Runnable updateCount = () -> {
+        long count = checks.stream().filter(CheckBox::isSelected).count();
+        countLabel.setText(count + " goal terpilih");
+    };
+    updateCount.run();
+    checks.forEach(cb -> cb.selectedProperty().addListener((obs, old, val) -> updateCount.run()));
+    
+    ScrollPane scrollPane = new ScrollPane(box);
+    scrollPane.setFitToWidth(true);
+    scrollPane.setPrefViewportHeight(280);
+    scrollPane.setPrefViewportWidth(400);
+    scrollPane.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+    
+    VBox wrap = new VBox(8, quick, scrollPane, countLabel);
+    wrap.setPadding(new Insets(6));
+    wrap.setStyle("-fx-background-color: #0F172A;");
+    
+    dlg.getDialogPane().setContent(wrap);
+    dlg.getDialogPane().setStyle("-fx-background-color: #0F172A; -fx-background-radius: 16;");
+    dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    
+    Button okBtn = (Button) dlg.getDialogPane().lookupButton(ButtonType.OK);
+    okBtn.setStyle("-fx-background-color: linear-gradient(to right, #6366F1, #8B5CF6); -fx-text-fill: white; -fx-font-weight: 700; -fx-background-radius: 8; -fx-padding: 6 16;");
+    
+    Button cancelBtn = (Button) dlg.getDialogPane().lookupButton(ButtonType.CANCEL);
+    cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #94A3B8; -fx-border-color: #334155; -fx-border-radius: 8; -fx-padding: 6 16;");
+
+    dlg.setResultConverter(bt -> {
+        if (bt != ButtonType.OK) return null;
+        List<String> ids = new ArrayList<>();
+        for (CheckBox c : checks) if (c.isSelected()) ids.add((String) c.getUserData());
+        return ids;
+    });
+
+    Optional<List<String>> res = dlg.showAndWait();
+    if (res.isPresent()) {
+        selectedGoalIds.clear();
+        selectedGoalIds.addAll(res.get());
+        selectionLoaded = true;
+        saveSelectionToPrefs();
+        renderGoalProgressCards();
+    }
+}
 
     private LocalDate lastContributionDate(String goalId) {
         LocalDate last = null;

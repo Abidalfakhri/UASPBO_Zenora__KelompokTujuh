@@ -53,7 +53,7 @@ public class ContributionController extends BaseModuleController implements Init
                     setStyle("-fx-text-fill: #E5E7EB;");
                     if (item.isAfter(LocalDate.now())) {
                         setDisable(true);
-                        setStyle("-fx-text-fill: #4B5563;");
+                        setStyle("-fx-text-fill: #6B7E9A; -fx-opacity: 0.7;");
                     }
                 }
             }
@@ -71,6 +71,7 @@ public class ContributionController extends BaseModuleController implements Init
         colAmount.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Number v, boolean empty) {
                 super.updateItem(v, empty);
+                setStyle("-fx-background-color: transparent;");
                 setText(empty || v == null ? "" : CurrencyFormatter.format(v.doubleValue()));
             }
         });

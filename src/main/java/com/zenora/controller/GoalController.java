@@ -242,7 +242,15 @@ public class GoalController extends BaseModuleController implements Initializabl
         nameField.setText(sel.getName());
         targetField.setText(String.valueOf((long) sel.getTargetAmount()));
         monthsField.setText(String.valueOf(sel.getMonths()));
-        rateField.setText(String.valueOf(sel.getInterestRate()));
+        // Format rapi: 4.8 -> "4.8", 5.0 -> "5", 12.5 -> "12.5". Hindari "48.0" dsb.
+        double _rate = sel.getInterestRate();
+        // Pengaman tambahan jika ada data korup yang belum ter-koreksi (mis. dimuat lewat jalur lain)
+        while (_rate > 100) _rate /= 10.0;
+        rateField.setText(_rate == Math.floor(_rate)
+                ? String.valueOf((long) _rate)
+                : java.math.BigDecimal.valueOf(_rate)
+                        .setScale(4, java.math.RoundingMode.HALF_UP)
+                        .stripTrailingZeros().toPlainString());
         if (categoryChoice != null && sel.getCategory() != null)
             categoryChoice.setValue(sel.getCategory());
         if (storageTypeChoice != null && sel.getStorageType() != null)

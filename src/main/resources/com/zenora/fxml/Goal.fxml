@@ -12,7 +12,7 @@
             <Button text="← Kembali" styleClass="zn-btn-back" onAction="#back"/>
             <VBox spacing="2">
                 <Label text="Goal Planning" styleClass="zn-page-title"/>
-                <Label text="MODUL 02 — STRATEGI TABUNGAN PERSONAL" styleClass="zn-page-badge"/>
+                <Label text="KELOLA GOAL" styleClass="zn-page-badge"/>
             </VBox>
         </HBox>
     </top>
