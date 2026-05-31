@@ -432,116 +432,29 @@ public class DashboardController implements Initializable {
         return card;
     }
 
-    /** Dialog untuk memilih goal mana yang ditampilkan di panel Progress. */
+    /** Buka form modal untuk memilih goal yang ditampilkan di panel Progress. */
     @FXML
-private void chooseGoalsForProgress() {
-    List<Goal> selectable = selectableGoals();
-    if (selectable.isEmpty()) {
-        showInfo("Belum Ada Goal", "Anda belum punya goal reguler (di luar Dana Darurat & Pensiun).");
-        return;
+    private void chooseGoalsForProgress() {
+        List<Goal> selectable = selectableGoals();
+        if (selectable.isEmpty()) {
+            showInfo("Belum Ada Goal", "Anda belum punya goal reguler (di luar Dana Darurat & Pensiun).");
+            return;
+        }
+
+        boolean selectAllDefault = !selectionLoaded || selectedGoalIds.isEmpty();
+        Set<String> currentSel = new LinkedHashSet<>(selectedGoalIds);
+
+        Optional<List<String>> res = SelectGoalsController.open(
+                SceneNavigator.getPrimaryStage(), selectable, currentSel, selectAllDefault);
+
+        if (res.isPresent()) {
+            selectedGoalIds.clear();
+            selectedGoalIds.addAll(res.get());
+            selectionLoaded = true;
+            saveSelectionToPrefs();
+            renderGoalProgressCards();
+        }
     }
-
-    Dialog<List<String>> dlg = new Dialog<>();
-    dlg.setTitle("Pilih Goal");
-    dlg.setHeaderText("Pilih goal yang ingin ditampilkan di panel Progress dashboard.");
-
-    VBox box = new VBox(8);
-    box.setPadding(new Insets(10));
-    
-    List<CheckBox> checks = new ArrayList<>();
-    Set<String> currentSel = (!selectionLoaded || selectedGoalIds.isEmpty())
-            ? new LinkedHashSet<>() : new LinkedHashSet<>(selectedGoalIds);
-    boolean checkAll = currentSel.isEmpty();
-    
-    for (Goal g : selectable) {
-        HBox row = new HBox(10);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setStyle("-fx-background-color: #1E293B; -fx-background-radius: 8; -fx-padding: 10 12;");
-        
-        CheckBox cb = new CheckBox();
-        cb.setSelected(checkAll || currentSel.contains(g.getId()));
-        cb.setUserData(g.getId());
-        cb.setStyle("-fx-text-fill: #F8FAFC;");
-        checks.add(cb);
-        
-        Label nameLabel = new Label(g.getName());
-        nameLabel.setStyle("-fx-text-fill: #F8FAFC; -fx-font-size: 13px; -fx-font-weight: 600;");
-        
-        Label catLabel = new Label(g.getCategory() != null ? g.getCategory().getLabel() : "Umum");
-        catLabel.setStyle("-fx-text-fill: #818CF8; -fx-font-size: 10px; -fx-font-weight: 600; -fx-background-color: rgba(99,102,241,0.15); -fx-background-radius: 6; -fx-padding: 2 6;");
-        
-        VBox infoBox = new VBox(2);
-        infoBox.getChildren().addAll(nameLabel, catLabel);
-        
-        double pct = g.getTargetAmount() <= 0 ? 0 : (g.getCurrentSaving() / g.getTargetAmount()) * 100;
-        Label pctLabel = new Label(String.format("%.1f%%", pct));
-        pctLabel.setStyle("-fx-text-fill: #34D399; -fx-font-size: 11px; -fx-font-weight: 700;");
-        
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        
-        row.getChildren().addAll(cb, infoBox, spacer, pctLabel);
-        box.getChildren().add(row);
-    }
-    
-    HBox quick = new HBox(8);
-    quick.setPadding(new Insets(8, 0, 4, 0));
-    
-    Button selAll = new Button("Pilih semua");
-    selAll.setStyle("-fx-background-color: #4F46E5; -fx-text-fill: white; -fx-background-radius: 6; -fx-padding: 5 12; -fx-font-size: 11px; -fx-font-weight: 700; -fx-cursor: hand;");
-    selAll.setOnAction(e -> checks.forEach(c -> c.setSelected(true)));
-    
-    Button selNone = new Button("Kosongkan");
-    selNone.setStyle("-fx-background-color: transparent; -fx-text-fill: #F87171; -fx-border-color: #334155; -fx-border-radius: 6; -fx-padding: 5 12; -fx-font-size: 11px; -fx-font-weight: 600; -fx-cursor: hand;");
-    selNone.setOnAction(e -> checks.forEach(c -> c.setSelected(false)));
-    
-    quick.getChildren().addAll(selAll, selNone);
-    
-    Label countLabel = new Label();
-    countLabel.setStyle("-fx-text-fill: #818CF8; -fx-font-size: 10px; -fx-padding: 4 0 0 0;");
-    Runnable updateCount = () -> {
-        long count = checks.stream().filter(CheckBox::isSelected).count();
-        countLabel.setText(count + " goal terpilih");
-    };
-    updateCount.run();
-    checks.forEach(cb -> cb.selectedProperty().addListener((obs, old, val) -> updateCount.run()));
-    
-    ScrollPane scrollPane = new ScrollPane(box);
-    scrollPane.setFitToWidth(true);
-    scrollPane.setPrefViewportHeight(280);
-    scrollPane.setPrefViewportWidth(400);
-    scrollPane.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
-    
-    VBox wrap = new VBox(8, quick, scrollPane, countLabel);
-    wrap.setPadding(new Insets(6));
-    wrap.setStyle("-fx-background-color: #0F172A;");
-    
-    dlg.getDialogPane().setContent(wrap);
-    dlg.getDialogPane().setStyle("-fx-background-color: #0F172A; -fx-background-radius: 16;");
-    dlg.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-    
-    Button okBtn = (Button) dlg.getDialogPane().lookupButton(ButtonType.OK);
-    okBtn.setStyle("-fx-background-color: linear-gradient(to right, #6366F1, #8B5CF6); -fx-text-fill: white; -fx-font-weight: 700; -fx-background-radius: 8; -fx-padding: 6 16;");
-    
-    Button cancelBtn = (Button) dlg.getDialogPane().lookupButton(ButtonType.CANCEL);
-    cancelBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #94A3B8; -fx-border-color: #334155; -fx-border-radius: 8; -fx-padding: 6 16;");
-
-    dlg.setResultConverter(bt -> {
-        if (bt != ButtonType.OK) return null;
-        List<String> ids = new ArrayList<>();
-        for (CheckBox c : checks) if (c.isSelected()) ids.add((String) c.getUserData());
-        return ids;
-    });
-
-    Optional<List<String>> res = dlg.showAndWait();
-    if (res.isPresent()) {
-        selectedGoalIds.clear();
-        selectedGoalIds.addAll(res.get());
-        selectionLoaded = true;
-        saveSelectionToPrefs();
-        renderGoalProgressCards();
-    }
-}
 
     private LocalDate lastContributionDate(String goalId) {
         LocalDate last = null;

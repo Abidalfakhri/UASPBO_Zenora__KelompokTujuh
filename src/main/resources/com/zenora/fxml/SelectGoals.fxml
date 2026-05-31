@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.zenora.controller.SelectGoalsController"
+      styleClass="zn-root,zn-modal"
+      prefWidth="560" minWidth="460" spacing="0">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <VBox styleClass="zn-modal-header" spacing="12">
+        <HBox alignment="CENTER_LEFT" spacing="14">
+            <StackPane styleClass="zn-modal-icon" prefWidth="46" prefHeight="46">
+                <Label text="✓" styleClass="zn-modal-icon-glyph"/>
+            </StackPane>
+            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                <Label text="Pilih Goal Dashboard" styleClass="zn-modal-title"/>
+                <Label text="Tentukan goal mana yang tampil di panel Progress"
+                       styleClass="zn-modal-subtitle" wrapText="true"/>
+            </VBox>
+        </HBox>
+
+        <!-- Search -->
+        <TextField fx:id="searchField" promptText="Cari goal…"
+                   styleClass="zn-field" maxWidth="Infinity"/>
+
+        <!-- Toolbar -->
+        <HBox alignment="CENTER_LEFT" spacing="8">
+            <Button fx:id="selectAllBtn" text="Pilih Semua"
+                    styleClass="zn-btn-secondary" onAction="#selectAll"/>
+            <Button fx:id="clearBtn" text="Kosongkan"
+                    styleClass="zn-btn-secondary" onAction="#clearAll"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" text="0 dipilih" styleClass="zn-badge,zn-badge-indigo"/>
+        </HBox>
+    </VBox>
+
+    <!-- ═══════════ LIST ═══════════ -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true"
+                hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+                styleClass="zn-scroll" VBox.vgrow="ALWAYS"
+                prefViewportHeight="360">
+        <content>
+            <VBox fx:id="goalListBox" styleClass="zn-modal-list" spacing="9"/>
+        </content>
+    </ScrollPane>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <HBox styleClass="zn-modal-footer" alignment="CENTER_RIGHT" spacing="10">
+        <Button text="Batal" styleClass="zn-btn-secondary" onAction="#cancel"/>
+        <Button text="Simpan Pilihan" styleClass="zn-btn-primary" onAction="#save"/>
+    </HBox>
+</VBox>
